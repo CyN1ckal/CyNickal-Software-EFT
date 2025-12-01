@@ -24,7 +24,11 @@ int main()
 #else 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 #endif
+		if (GetAsyncKeyState(VK_END) & 1)
+			bRunning = false;
 	}
+
+	Conn->EndConnection();
 
 #ifndef DLL_FORM
 	MainWindow::Cleanup();

@@ -11,4 +11,9 @@ public:
 
 private:
 	static inline Process Proc{};
+
+private:
+	static inline uintptr_t GameObjectManagerAddress{ 0 };
+	static inline uintptr_t LastActiveNode{ 0 };
+	static inline uintptr_t ActiveNodes{ 0 };
 };

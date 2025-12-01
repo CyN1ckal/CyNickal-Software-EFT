@@ -157,6 +157,7 @@
     </ClCompile>
     <ClCompile Include="DMA\DMA.cpp" />
     <ClCompile Include="DMA\Process.cpp" />
+    <ClCompile Include="Game\Classes\CLinkedListEntry.cpp" />
     <ClCompile Include="Game\EFT.cpp" />
     <ClCompile Include="GUI\Main Window\Main Window.cpp" />
     <ClCompile Include="main.cpp" />
@@ -175,6 +176,8 @@
     <ClInclude Include="..\Dependencies\ImGui\imstb_truetype.h" />
     <ClInclude Include="DMA\DMA.h" />
     <ClInclude Include="DMA\Process.h" />
+    <ClInclude Include="Game\Classes\CGameObjectManager.h" />
+    <ClInclude Include="Game\Classes\CLinkedListEntry.h" />
     <ClInclude Include="Game\EFT.h" />
     <ClInclude Include="GUI\Main Window\Main Window.h" />
     <ClInclude Include="pch.h" />
