@@ -48,7 +48,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		std::println("[DLL] Marvel Rivals DMA Injected");
+		std::println("[DLL] EFT DMA Injected");
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)StartingThread, hModule, 0, 0);
 		break;
 	case DLL_THREAD_ATTACH:

@@ -110,6 +110,9 @@
     <ClInclude Include="Game\Classes\CObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Classes\CObjectInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EFT_DMA.rc">

@@ -3,5 +3,5 @@
     <BuildType Name="Release" />
     <Platform Name="x64" />
   </Configurations>
-  <Project Path="CyNickal Software EFT/CyNickal Software EFT.vcxproj" />
+  <Project Path="CyNickal Software EFT/CyNickal Software EFT.vcxproj" Id="4ccca66d-4a99-4709-a5bd-37495b04cecf" />
 </Solution>

@@ -3,6 +3,9 @@
 #include "DMA/DMA.h"
 #include "DMA/Process.h"
 
+#include "Classes/CObjectInfo.h"
+#include <string>
+
 class EFT
 {
 public:
@@ -10,7 +13,6 @@ public:
 	static const Process& GetProcess();
 
 private:
-	static void UpdateObjectList(DMA_Connection* Conn, uint32_t MaxNodes = std::numeric_limits<uint32_t>::max());
 	static uintptr_t GetGameWorldAddr(DMA_Connection* Conn);
 	static inline Process Proc{};
 
@@ -20,5 +22,11 @@ private:
 	static inline uintptr_t ActiveNodes{ 0 };
 
 private:
-	static inline std::vector<uintptr_t> ObjectList{};
+	static void GetObjectAddresses(DMA_Connection* Conn, uint32_t MaxNodes = std::numeric_limits<uint32_t>::max());
+	static inline std::vector<uintptr_t> m_ObjectAddresses{};
+
+public:
+	static void DumpAllObjectsToFile(const std::string& FileName);
+	static void PopulateObjectInfoListFromAddresses(DMA_Connection* Conn);
+	static inline std::vector<CObjectInfo> m_ObjectInfo{};
 };
