@@ -178,8 +178,11 @@
     <ClInclude Include="DMA\Process.h" />
     <ClInclude Include="Game\Classes\CGameObjectManager.h" />
     <ClInclude Include="Game\Classes\CLinkedListEntry.h" />
+    <ClInclude Include="Game\Classes\CLocalGameWorld.h" />
+    <ClInclude Include="Game\Classes\CMovementContext.h" />
     <ClInclude Include="Game\Classes\CObject.h" />
     <ClInclude Include="Game\Classes\CObjectInfo.h" />
+    <ClInclude Include="Game\Classes\CPlayer.h" />
     <ClInclude Include="Game\EFT.h" />
     <ClInclude Include="GUI\Main Window\Main Window.h" />
     <ClInclude Include="pch.h" />

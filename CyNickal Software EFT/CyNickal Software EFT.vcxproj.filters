@@ -113,6 +113,15 @@
     <ClInclude Include="Game\Classes\CObjectInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Classes\CLocalGameWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CMovementContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EFT_DMA.rc">

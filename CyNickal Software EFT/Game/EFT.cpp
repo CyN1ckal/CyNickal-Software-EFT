@@ -4,6 +4,9 @@
 #include "Classes/CGameObjectManager.h"
 #include "Classes/CLinkedListEntry.h"
 #include "Classes/CObject.h"
+#include "Classes/CLocalGameWorld.h"
+#include "Classes/CPlayer.h"
+#include "Classes/CMovementContext.h"
 
 bool EFT::Initialize(DMA_Connection* Conn)
 {
@@ -27,8 +30,16 @@ bool EFT::Initialize(DMA_Connection* Conn)
 
 	DumpAllObjectsToFile("ObjectDump.txt");
 
-	//uintptr_t GameWorld = GetGameWorldAddr(Conn);
-	//std::println("GameWorld Address: 0x{:X}", GameWorld);
+	uintptr_t LocalGameWorld = GetLocalGameWorldAddr(Conn);
+
+	auto MainPlayer = Proc.ReadMem<uintptr_t>(Conn, LocalGameWorld + offsetof(CLocalGameWorld, pMainPlayer));
+	std::println("[EFT] MainPlayer Address: 0x{:X}", MainPlayer);
+
+	auto PlayerMovementContext = Proc.ReadMem<uintptr_t>(Conn, MainPlayer + offsetof(CPlayer, pMovementContext));
+	std::println("[EFT] Main PlayerMovementContext Address: 0x{:X}", PlayerMovementContext);
+
+	auto PlayerMovementContextYaw = Proc.ReadMem<float>(Conn, PlayerMovementContext + offsetof(CMovementContext, Yaw));
+	std::println("[EFT] Main Player Yaw: {}", PlayerMovementContextYaw);
 
 	//uintptr_t GameWorldComponent = Proc.ReadMem<uintptr_t>(Conn, GameWorld + 0x58);
 	//uintptr_t UnknownPtr = Proc.ReadMem<uintptr_t>(Conn, GameWorldComponent + 0x18);
@@ -51,14 +62,15 @@ void EFT::GetObjectAddresses(DMA_Connection* Conn, uint32_t MaxNodes)
 	uint32_t NodeCount = 0;
 	DWORD BytesRead = 0;
 	uintptr_t CurrentActiveNode = ActiveNodes;
+	uintptr_t FirstNode = ActiveNodes;
 
-	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
+	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), Proc.GetPID(), 0);
 	while (CurrentActiveNode != LastActiveNode && CurrentActiveNode && NodeCount <= MaxNodes)
 	{
 		CLinkedListEntry NodeEntry{};
 		VMMDLL_Scatter_PrepareEx(vmsh, CurrentActiveNode, sizeof(CLinkedListEntry), reinterpret_cast<BYTE*>(&NodeEntry), &BytesRead);
 		VMMDLL_Scatter_Execute(vmsh);
-		VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
+		VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), 0);
 
 		if (BytesRead != sizeof(CLinkedListEntry))
 		{
@@ -66,8 +78,11 @@ void EFT::GetObjectAddresses(DMA_Connection* Conn, uint32_t MaxNodes)
 			break;
 		}
 
-		std::println("[EFT] UpdateObjectList; Found Object at 0x{:X}", NodeEntry.pObject);
+		//std::println("[EFT] UpdateObjectList; Found Object at 0x{:X}", NodeEntry.pObject);
 		m_ObjectAddresses.push_back(NodeEntry.pObject);
+
+		if (NodeEntry.pNextEntry == FirstNode)
+			break;
 
 		CurrentActiveNode = NodeEntry.pNextEntry;
 		NodeCount++;
@@ -112,6 +127,8 @@ uintptr_t EFT::GetGameWorldAddr(DMA_Connection* Conn)
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_CloseHandle(vmsh);
 
+	uintptr_t GameWorldAddress = 0;
+
 	for (int i = 0; i < m_ObjectAddresses.size(); i++)
 	{
 		if (ObjectNameAddresses[i].second != 64)
@@ -120,10 +137,27 @@ uintptr_t EFT::GetGameWorldAddr(DMA_Connection* Conn)
 		std::string Name(ObjectNameBuffers[i].Name, ObjectNameBuffers[i].Name + 64);
 
 		if (strcmp("GameWorld", ObjectNameBuffers[i].Name) == 0)
-			return m_ObjectAddresses[i];
+		{
+			GameWorldAddress = m_ObjectAddresses[i];
+			break;
+		}
 	}
 
-	return 0;
+	std::println("[EFT] GameWorld Address: 0x{:X}", GameWorldAddress);
+
+	return GameWorldAddress;
+}
+uintptr_t EFT::GetLocalGameWorldAddr(DMA_Connection* Conn)
+{
+	auto GameWorldAddr = GetGameWorldAddr(Conn);
+
+	auto Deref1 = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddr + 0x58);
+	auto Deref2 = Proc.ReadMem<uintptr_t>(Conn, Deref1 + 0x18);
+	auto LocalWorldAddr = Proc.ReadMem<uintptr_t>(Conn, Deref2 + 0x30);
+
+	std::println("[EFT] LocalGameWorld Address: 0x{:X}", LocalWorldAddr);
+
+	return LocalWorldAddr;
 }
 
 void EFT::DumpAllObjectsToFile(const std::string& FileName)

@@ -4,8 +4,6 @@
 #include "DMA/Process.h"
 
 #include "Classes/CObjectInfo.h"
-#include <string>
-
 class EFT
 {
 public:
@@ -13,6 +11,7 @@ public:
 	static const Process& GetProcess();
 
 private:
+	static uintptr_t GetLocalGameWorldAddr(DMA_Connection* Conn);
 	static uintptr_t GetGameWorldAddr(DMA_Connection* Conn);
 	static inline Process Proc{};
 
