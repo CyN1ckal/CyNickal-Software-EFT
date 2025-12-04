@@ -2,6 +2,7 @@
 
 #include "GUI/Main Window/Main Window.h"
 #include "DMA/DMA.h"
+#include "DMA/DMA Thread.h"
 #include "Game/EFT.h"
 
 std::atomic<bool> bRunning{ true };
@@ -9,9 +10,7 @@ int main()
 {
 	std::println("Hello, EFT_DMA!");
 
-	DMA_Connection* Conn = DMA_Connection::GetInstance();
-
-	EFT::Initialize(Conn);
+	std::thread DMAThread(DMA_Thread_Main);
 
 #ifndef DLL_FORM
 	MainWindow::Initialize();
@@ -19,16 +18,16 @@ int main()
 
 	while (bRunning)
 	{
+		if (GetAsyncKeyState(VK_END) & 1)	bRunning = false;
+
 #ifndef DLL_FORM
 		MainWindow::OnFrame();
 #else 
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 #endif
-		if (GetAsyncKeyState(VK_END) & 1)
-			bRunning = false;
 	}
 
-	Conn->EndConnection();
+	DMAThread.join();
 
 #ifndef DLL_FORM
 	MainWindow::Cleanup();

@@ -155,13 +155,18 @@
     <ClCompile Include="..\Dependencies\ImGui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DMA\DMA Thread.cpp" />
     <ClCompile Include="DMA\DMA.cpp" />
     <ClCompile Include="DMA\Process.cpp" />
     <ClCompile Include="Game\Classes\CEFTPlayer.cpp" />
     <ClCompile Include="Game\Classes\CLinkedListEntry.cpp" />
     <ClCompile Include="Game\EFT.cpp" />
+    <ClCompile Include="Game\GOM\GOM.cpp" />
     <ClCompile Include="Game\Player List\Player List.cpp" />
+    <ClCompile Include="GUI\Fuser\Fuser.cpp" />
     <ClCompile Include="GUI\Main Window\Main Window.cpp" />
+    <ClCompile Include="GUI\Player Table\Player Table.cpp" />
+    <ClCompile Include="GUI\Radar\Radar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -176,6 +181,7 @@
     <ClInclude Include="..\Dependencies\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Dependencies\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\ImGui\imstb_truetype.h" />
+    <ClInclude Include="DMA\DMA Thread.h" />
     <ClInclude Include="DMA\DMA.h" />
     <ClInclude Include="DMA\Process.h" />
     <ClInclude Include="Game\Classes\CEFTPlayer.h" />
@@ -186,9 +192,13 @@
     <ClInclude Include="Game\Classes\CPlayer.h" />
     <ClInclude Include="Game\Classes\Vector.h" />
     <ClInclude Include="Game\EFT.h" />
+    <ClInclude Include="Game\GOM\GOM.h" />
     <ClInclude Include="Game\Offsets\Offsets.h" />
     <ClInclude Include="Game\Player List\Player List.h" />
+    <ClInclude Include="GUI\Fuser\Fuser.h" />
     <ClInclude Include="GUI\Main Window\Main Window.h" />
+    <ClInclude Include="GUI\Player Table\Player Table.h" />
+    <ClInclude Include="GUI\Radar\Radar.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

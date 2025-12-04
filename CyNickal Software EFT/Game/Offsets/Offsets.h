@@ -10,6 +10,10 @@ namespace Offsets
 	//48 8B 0D ? ? ? ? 4C 8D 4C 24 ? 4C 8D 44 24 ? 89 44 24
 	inline constexpr std::ptrdiff_t pGOM{ 0x1A208D8 };
 
+	namespace CObject
+	{
+		inline constexpr std::ptrdiff_t pName{ 0x88 };
+	}
 	namespace CGameObjectManager
 	{
 		inline constexpr std::ptrdiff_t pActiveNodes{ 0x20 };

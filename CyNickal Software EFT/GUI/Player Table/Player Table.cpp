@@ -1,0 +1,31 @@
+#include "pch.h"
+#include "Player Table.h"
+#include "Game/Player List/Player List.h"
+
+void PlayerTable::Render()
+{
+	ImGui::Begin("Player Table");
+
+	if (ImGui::BeginTable("##Players", 2))
+	{
+		ImGui::TableSetupColumn("Address");
+		ImGui::TableSetupColumn("Position");
+		ImGui::TableHeadersRow();
+
+		std::scoped_lock Lock(PlayerList::m_PlayerMutex);
+		for (auto& Player : PlayerList::m_Players)
+		{
+			if (Player.IsInvalid())
+				continue;
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("0x%llX", Player.m_EntityAddress);
+			ImGui::TableNextColumn();
+			ImGui::Text("%.2f, %.2f, %.2f", Player.m_BasePosition.x, Player.m_BasePosition.y, Player.m_BasePosition.z);
+		}
+	}
+	ImGui::EndTable();
+
+	ImGui::End();
+}
