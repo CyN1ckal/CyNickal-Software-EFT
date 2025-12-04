@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CEFTPlayer.h"
 #include "CPlayer.h"
+#include "Game/Offsets/Offsets.h"
 
 void CEFTPlayer::SetInvalid()
 {
@@ -14,21 +15,23 @@ bool CEFTPlayer::IsInvalid() const
 
 void CEFTPlayer::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
 {
-	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + offsetof(CPlayer, pPlayerBody), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_PlayerBodyAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pPlayerBody, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_PlayerBodyAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pMovementContext, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_MovementContextAddress), nullptr);
 }
 
 void CEFTPlayer::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
 {
-	if (m_BytesRead != sizeof(uintptr_t) || !m_PlayerBodyAddress)
+	if (m_BytesRead != sizeof(uintptr_t) || !m_PlayerBodyAddress || !m_MovementContextAddress)
 	{
 		SetInvalid();
-		std::println("[CEFTPlayer] Invalid PlayerBody Address.");
+		std::println("[CEFTPlayer] Invalid level 1 read");
 	}
 
 	if (IsInvalid())
 		return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_PlayerBodyAddress + offsetof(CPlayerBody, pSkeleton), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_SkeletonRootAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_PlayerBodyAddress + Offsets::CPlayerBody::pSkeleton, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_SkeletonRootAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_MovementContextAddress + Offsets::CMovementContext::Rotation, sizeof(float), reinterpret_cast<BYTE*>(&m_Yaw), nullptr);
 }
 
 void CEFTPlayer::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
@@ -125,6 +128,7 @@ void CEFTPlayer::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
+	VMMDLL_Scatter_PrepareEx(vmsh, m_MovementContextAddress + Offsets::CMovementContext::Rotation, sizeof(float), reinterpret_cast<BYTE*>(&m_Yaw), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_TransformHierarchyAddress + offsetof(CTransformHierarchy, Position), sizeof(Vector3), reinterpret_cast<BYTE*>(&m_BasePosition), reinterpret_cast<DWORD*>(&m_BytesRead));
 }
 

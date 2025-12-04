@@ -41,4 +41,12 @@ namespace Offsets
 		inline constexpr std::ptrdiff_t pLocation{ 0x868 };
 		inline constexpr std::ptrdiff_t pProfile{ 0x8E0 };
 	}
+	namespace CMovementContext
+	{
+		inline constexpr std::ptrdiff_t Rotation{ 0xC8 };
+	}
+	namespace CPlayerBody
+	{
+		inline constexpr std::ptrdiff_t pSkeleton{ 0x30 };
+	}
 };

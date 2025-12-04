@@ -15,6 +15,8 @@ public:
 	uintptr_t m_BoneTransformsAddress{ 0 };
 	uintptr_t m_BasePositionTransformAddress{ 0 };
 	uintptr_t m_TransformHierarchyAddress{ 0 };
+	uintptr_t m_MovementContextAddress{ 0 };
+	float m_Yaw{ 0.0f };
 	uint32_t m_BytesRead{ 0 };
 	uint8_t m_Flags{ 0 };
 
