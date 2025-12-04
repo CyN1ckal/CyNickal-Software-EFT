@@ -5,6 +5,7 @@
 #include "GUI/Radar/Radar.h"
 #include "GUI/Fuser/Fuser.h"
 #include "GUI/Player Table/Player Table.h"
+#include "GUI/Color Picker/Color Picker.h"
 
 void Render(ImGuiContext* ctx)
 {
@@ -15,6 +16,7 @@ void Render(ImGuiContext* ctx)
 	Radar::Render();
 	Fuser::Render();
 	PlayerTable::Render();
+	ColorPicker::Render();
 }
 
 bool MainWindow::OnFrame()
