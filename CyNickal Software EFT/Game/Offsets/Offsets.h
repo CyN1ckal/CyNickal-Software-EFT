@@ -46,6 +46,23 @@ namespace Offsets
 		inline constexpr std::ptrdiff_t pLocation{ 0x868 };
 		inline constexpr std::ptrdiff_t pProfile{ 0x8E0 };
 	}
+	namespace CObservedPlayer
+	{
+		inline constexpr std::ptrdiff_t pPlayerBody{ 0xC8 };
+		inline constexpr std::ptrdiff_t pPlayerController{ 0x20 };
+	}
+	namespace CPlayerController
+	{
+		inline constexpr std::ptrdiff_t pMovementController{ 0x30 };
+	}
+	namespace CMovementController
+	{
+		inline constexpr std::ptrdiff_t pObservedPlayerState{ 0x28 };
+	}
+	namespace CObservedMovementState
+	{
+		inline constexpr std::ptrdiff_t Rotation{ 0x20 };
+	}
 	namespace CMovementContext
 	{
 		inline constexpr std::ptrdiff_t Rotation{ 0xC8 };
@@ -70,5 +87,17 @@ namespace Offsets
 	namespace CCameraInfo
 	{
 		inline constexpr std::ptrdiff_t Matrix{ 0x128 };
+	}
+	namespace CSkeleton
+	{
+		inline constexpr std::ptrdiff_t pValues{ 0x30 };
+	}
+	namespace CValues
+	{
+		inline constexpr std::ptrdiff_t pArr1{ 0x10 };
+	}
+	namespace CTransformHierarchy
+	{
+		inline constexpr std::ptrdiff_t Position{ 0xB0 };
 	}
 };

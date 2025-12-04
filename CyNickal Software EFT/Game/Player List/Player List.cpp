@@ -13,53 +13,58 @@ void PlayerList::FullUpdate(DMA_Connection* Conn)
 
 	const auto PID = EFT::GetProcess().GetPID();
 
-	for (auto& PlayerAddr : m_PlayerAddr)
-		m_Players.emplace_back(CEFTPlayer(PlayerAddr));
+	m_Players.emplace_back(CClientPlayer(m_PlayerAddr[0]));
+
+	for (int i = 1; i < m_PlayerAddr.size(); i++)
+	{
+		auto& PlayerAddr = m_PlayerAddr[i];
+		m_Players.emplace_back(CObservedPlayer(PlayerAddr));
+	}
 
 	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), PID, VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.PrepareRead_1(vmsh);
+		std::visit([vmsh](auto& p) { p.PrepareRead_1(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.PrepareRead_2(vmsh);
+		std::visit([vmsh](auto& p) { p.PrepareRead_2(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.PrepareRead_3(vmsh);
+		std::visit([vmsh](auto& p) { p.PrepareRead_3(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.PrepareRead_4(vmsh);
+		std::visit([vmsh](auto& p) { p.PrepareRead_4(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.PrepareRead_5(vmsh);
+		std::visit([vmsh](auto& p) { p.PrepareRead_5(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.PrepareRead_6(vmsh);
+		std::visit([vmsh](auto& p) { p.PrepareRead_6(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.PrepareRead_7(vmsh);
+		std::visit([vmsh](auto& p) { p.PrepareRead_7(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.PrepareRead_8(vmsh);
+		std::visit([vmsh](auto& p) { p.PrepareRead_8(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_CloseHandle(vmsh);
 
 	for (auto& Player : m_Players)
-		Player.Finalize();
+		std::visit([](auto& p) { p.Finalize(); }, Player);
 
 	std::println("[Player List] Full update complete. {} players.", m_Players.size());
 }
@@ -71,24 +76,24 @@ void PlayerList::QuickUpdate(DMA_Connection* Conn)
 	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), EFT::GetProcess().GetPID(), VMMDLL_FLAG_NOCACHE);
 
 	for (auto& Player : m_Players)
-		Player.QuickRead(vmsh);
+		std::visit([vmsh](auto& p) { p.QuickRead(vmsh); }, Player);
 
 	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_CloseHandle(vmsh);
 
 	for (auto& Player : m_Players)
-		Player.QuickFinalize();
+		std::visit([](auto& p) { p.QuickFinalize(); }, Player);
 }
 
 void PlayerList::PrintPlayers()
 {
 	std::scoped_lock Lock(m_PlayerMutex);
-	for (int i = 0; i < m_Players.size(); i++)
-	{
-		auto& Player = m_Players[i];
-		if (Player.IsInvalid()) continue;
-		std::println("Player #{0:d} @ 0x{1:X} - Base Position: X: {2:f}, Y: {3:f}, Z: {4:f}", i, Player.m_EntityAddress, Player.m_BasePosition.x, Player.m_BasePosition.y, Player.m_BasePosition.z);
-	}
+	//for (int i = 0; i < m_Players.size(); i++)
+	//{
+	//	auto& Player = m_Players[i];
+	//	if (Player.IsInvalid()) continue;
+	//	std::println("Player #{0:d} @ 0x{1:X} - Base Position: X: {2:f}, Y: {3:f}, Z: {4:f}", i, Player.m_EntityAddress, Player.m_BasePosition.x, Player.m_BasePosition.y, Player.m_BasePosition.z);
+	//}
 	std::println("");
 }
 

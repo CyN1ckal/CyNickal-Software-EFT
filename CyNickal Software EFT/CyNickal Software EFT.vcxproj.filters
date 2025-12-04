@@ -57,9 +57,6 @@
     <ClCompile Include="Game\Classes\CLinkedListEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Classes\CEFTPlayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Player List\Player List.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -79,6 +76,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Camera\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Fuser\Draw\Players.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CBaseEntity\CBaseEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\Players\CBaseEFTPlayer\CBaseEFTPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\Players\CObservedPlayer\CObservedPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\Players\CClientPlayer\CClientPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,12 +149,6 @@
     <ClInclude Include="Game\Classes\CObjectInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Classes\CPlayer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Classes\CEFTPlayer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Classes\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -168,6 +174,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Camera\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Fuser\Draw\Players.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\Players\CBaseEFTPlayer\CBaseEFTPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CBaseEntity\CBaseEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\Players\CClientPlayer\CClientPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\Players\CObservedPlayer\CObservedPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,26 +6,26 @@ void PlayerTable::Render()
 {
 	ImGui::Begin("Player Table");
 
-	if (ImGui::BeginTable("##Players", 3))
+	if (ImGui::BeginTable("##Players", 2))
 	{
 		ImGui::TableSetupColumn("Address");
 		ImGui::TableSetupColumn("Position");
-		ImGui::TableSetupColumn("Yaw");
 		ImGui::TableHeadersRow();
 
 		std::scoped_lock Lock(PlayerList::m_PlayerMutex);
 		for (auto& Player : PlayerList::m_Players)
 		{
-			if (Player.IsInvalid())
-				continue;
+			std::visit([](auto& Player) {
+				if (Player.IsInvalid())
+					return;
 
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			ImGui::Text("0x%llX", Player.m_EntityAddress);
-			ImGui::TableNextColumn();
-			ImGui::Text("%.2f, %.2f, %.2f", Player.m_BasePosition.x, Player.m_BasePosition.y, Player.m_BasePosition.z);
-			ImGui::TableNextColumn();
-			ImGui::Text("%.2f", Player.m_Yaw);
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				ImGui::Text("0x%llX", Player.m_EntityAddress);
+				ImGui::TableNextColumn();
+				ImGui::Text("%.2f, %.2f, %.2f", Player.m_RootPosition.x, Player.m_RootPosition.y, Player.m_RootPosition.z);
+				}
+			, Player);
 		}
 	}
 	ImGui::EndTable();

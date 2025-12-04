@@ -1,12 +1,14 @@
 #pragma once
-#include "Game/Classes/CEFTPlayer.h"
+#include "Game/Classes/Players/CClientPlayer/CClientPlayer.h"
+#include "Game/Classes/Players/CObservedPlayer/CObservedPlayer.h"
 #include "DMA/DMA.h"
 
 class PlayerList
 {
 public:
 	static inline std::mutex m_PlayerMutex{};
-	static inline std::vector<CEFTPlayer> m_Players{};
+	using Player = std::variant<CClientPlayer, CObservedPlayer>;
+	static inline std::vector<Player> m_Players{};
 	static inline std::vector<uintptr_t> m_PlayerAddr{};
 
 public:
