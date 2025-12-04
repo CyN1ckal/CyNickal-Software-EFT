@@ -1,9 +1,7 @@
 #include "pch.h"
 
 #include "GUI/Main Window/Main Window.h"
-#include "DMA/DMA.h"
 #include "DMA/DMA Thread.h"
-#include "Game/EFT.h"
 
 std::atomic<bool> bRunning{ true };
 int main()
