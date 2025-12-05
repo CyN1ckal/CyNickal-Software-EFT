@@ -10,6 +10,13 @@ struct Vector3
 	{
 		return Vector3(x - rhs.x, y - rhs.y, z - rhs.z);
 	}
+	float DistanceTo(const Vector3& other) const
+	{
+		float dx = x - other.x;
+		float dy = y - other.y;
+		float dz = z - other.z;
+		return sqrtf(dx * dx + dy * dy + dz * dz);
+	}
 };
 
 struct Vector2

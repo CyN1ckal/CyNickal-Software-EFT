@@ -1,8 +1,23 @@
 #include "pch.h"
-#include "GUI/Fuser/Draw/Players.h"
+#include "Players.h"
+#include "Game/Player List/Player List.h"
 #include "Game/Camera/Camera.h"
 #include "GUI/Color Picker/Color Picker.h"
-#include "Players.h"
+
+void DrawESPPlayers::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
+{
+	std::scoped_lock lk(PlayerList::m_PlayerMutex);
+
+	if (PlayerList::m_Players.empty()) return;
+
+	m_LatestLocalPlayerPos = std::get<CClientPlayer>(PlayerList::m_Players[0]).m_RootPosition;
+
+	for (int i = 1; i < PlayerList::m_Players.size(); i++)
+	{
+		auto& Player = PlayerList::m_Players[i];
+		std::visit([WindowPos, DrawList](auto Player) {DrawESPPlayers::Draw(Player, WindowPos, DrawList); }, Player);
+	}
+}
 
 void DrawTextAtPosition(ImDrawList* DrawList, const ImVec2& Position, const ImColor& Color, const std::string& Text)
 {
@@ -23,11 +38,13 @@ void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, 
 	Vector2 ScreenPos{};
 	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
 
+	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.IsAi() ? ScavLabel : PlayerLabel, Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos));
+
 	DrawTextAtPosition(
 		DrawList,
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
 		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor,
-		Player.IsAi() ? ScavLabel : PlayerLabel
+		Text
 		);
 }
 
@@ -38,10 +55,12 @@ void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos
 	Vector2 ScreenPos{};
 	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
 
+	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.IsAi() ? ScavLabel : PlayerLabel, Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos));
+
 	DrawTextAtPosition(
 		DrawList,
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
 		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor,
-		Player.IsAi() ? ScavLabel : PlayerLabel
+		Text
 	);
 }
