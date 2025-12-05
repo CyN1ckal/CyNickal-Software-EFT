@@ -5,11 +5,14 @@ class CClientPlayer : public CBaseEFTPlayer
 {
 public:
 	uintptr_t m_MovementContextAddress{ 0 };
+	uintptr_t m_AiDataAddress{ 0 };
 	float m_Yaw{ 0.0f };
+	std::byte m_AiByte{ 0 };
 
 public:
 	CClientPlayer(uintptr_t EntityAddress) : CBaseEFTPlayer(EntityAddress) {}
 	void PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh);
 	void QuickRead(VMMDLL_SCATTER_HANDLE vmsh);
+	const bool IsAi() const;
 };

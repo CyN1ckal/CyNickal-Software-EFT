@@ -25,9 +25,9 @@ void DrawPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, ImD
 	DrawTextAtPosition(
 		DrawList,
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
-		ColorPicker::m_EnemyColor,
-		PlayerLabel
-	);
+		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor,
+		Player.IsAi() ? ScavLabel : PlayerLabel
+		);
 }
 
 void DrawPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
@@ -37,12 +37,10 @@ void DrawPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos, I
 	Vector2 ScreenPos{};
 	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
 
-	ImColor PlayerColor = Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor;
-
 	DrawTextAtPosition(
 		DrawList,
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
-		PlayerColor,
+		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor,
 		Player.IsAi() ? ScavLabel : PlayerLabel
 	);
 }
