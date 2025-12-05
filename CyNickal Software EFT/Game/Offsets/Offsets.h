@@ -59,7 +59,7 @@ namespace Offsets
 	}
 	namespace CMovementController
 	{
-		inline constexpr std::ptrdiff_t pObservedPlayerState{ 0x28 };
+		inline constexpr std::ptrdiff_t pObservedPlayerState{ 0x98 };
 	}
 	namespace CObservedMovementState
 	{
@@ -101,5 +101,9 @@ namespace Offsets
 	namespace CTransformHierarchy
 	{
 		inline constexpr std::ptrdiff_t Position{ 0xB0 };
+	}
+	namespace CObservedPlayerController
+	{
+		inline constexpr std::ptrdiff_t pMovementController{ 0xD8 };
 	}
 };
