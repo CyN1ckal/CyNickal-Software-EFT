@@ -50,6 +50,8 @@ namespace Offsets
 	{
 		inline constexpr std::ptrdiff_t pPlayerBody{ 0xC8 };
 		inline constexpr std::ptrdiff_t pPlayerController{ 0x20 };
+		inline constexpr std::ptrdiff_t IsAi{ 0x98 };
+		inline constexpr std::ptrdiff_t pVoice{ 0x38 };
 	}
 	namespace CPlayerController
 	{

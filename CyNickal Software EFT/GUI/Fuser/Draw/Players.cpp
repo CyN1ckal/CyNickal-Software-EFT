@@ -3,18 +3,46 @@
 #include "Game/Camera/Camera.h"
 #include "GUI/Color Picker/Color Picker.h"
 
-void DrawPlayers::Draw(const CBaseEFTPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
+void DrawTextAtPosition(ImDrawList* DrawList, const ImVec2& Position, const ImColor& Color, const std::string& Text)
+{
+	auto TextSize = ImGui::CalcTextSize(Text.c_str());
+	DrawList->AddText(
+		ImVec2(Position.x - (TextSize.x / 2.0f), Position.y),
+		Color,
+		Text.c_str()
+	);
+}
+
+static const std::string PlayerLabel = "Player";
+static const std::string ScavLabel = "Scav";
+void DrawPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
 	if (Player.IsInvalid())	return;
 
 	Vector2 ScreenPos{};
 	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
 
-	static const std::string TempLabel = "Player";
-	auto TextSize = ImGui::CalcTextSize(TempLabel.c_str());
-	DrawList->AddText(
-		ImVec2(WindowPos.x + ScreenPos.x - (TextSize.x / 2.0f), WindowPos.y + ScreenPos.y),
+	DrawTextAtPosition(
+		DrawList,
+		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
 		ColorPicker::m_EnemyColor,
-		TempLabel.c_str()
+		PlayerLabel
+	);
+}
+
+void DrawPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
+{
+	if (Player.IsInvalid())	return;
+
+	Vector2 ScreenPos{};
+	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
+
+	ImColor PlayerColor = Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor;
+
+	DrawTextAtPosition(
+		DrawList,
+		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
+		PlayerColor,
+		Player.IsAi() ? ScavLabel : PlayerLabel
 	);
 }
