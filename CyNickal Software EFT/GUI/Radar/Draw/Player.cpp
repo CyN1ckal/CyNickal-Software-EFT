@@ -35,7 +35,8 @@ void DrawRadarPlayers::Draw(const CClientPlayer& Player, const ImVec2& CenterScr
 	Delta3D.x *= Radar::fScale;
 	Delta3D.z *= Radar::fScale;
 
-	auto Color = Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor;
+	auto Color = Player.GetSideColor();
+
 	ImVec2 DotPosition = ImVec2(CenterScreen.x + Delta3D.z, CenterScreen.y + Delta3D.x);
 	DrawList->AddCircleFilled(DotPosition, 5, Color);
 
@@ -54,7 +55,8 @@ void DrawRadarPlayers::Draw(const CObservedPlayer& Player, const ImVec2& CenterS
 	Delta3D.x *= Radar::fScale;
 	Delta3D.z *= Radar::fScale;
 
-	auto Color = Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor;
+	auto Color = Player.GetSideColor();
+
 	ImVec2 DotPosition = ImVec2(CenterScreen.x + Delta3D.z, CenterScreen.y + Delta3D.x);
 	DrawList->AddCircleFilled(DotPosition, 5, Color);
 

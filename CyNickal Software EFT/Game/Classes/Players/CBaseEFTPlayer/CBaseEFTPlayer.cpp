@@ -92,3 +92,44 @@ void CBaseEFTPlayer::QuickFinalize()
 	if (m_BytesRead != sizeof(Vector3))
 		SetInvalid();
 }
+
+bool CBaseEFTPlayer::IsAi() const
+{
+	return m_AiByte != std::byte{ 0 };
+}
+
+bool CBaseEFTPlayer::IsPMC() const
+{
+	return (m_Side == EPlayerSide::USEC || m_Side == EPlayerSide::BEAR);
+}
+
+bool CBaseEFTPlayer::IsPlayerScav() const
+{
+	return IsAi() == false && m_Side == EPlayerSide::SCAV;
+}
+
+const std::string PMCLabel = "PMC";
+const std::string PlayerScavLabel = "PScav";
+const std::string ScavLabel = "Scav";
+const std::string& CBaseEFTPlayer::GetBaseName() const
+{
+	if (IsPlayerScav())
+		return PlayerScavLabel;
+
+	if (IsAi())
+		return ScavLabel;
+
+	return PMCLabel;
+}
+
+#include "GUI/Color Picker/Color Picker.h"
+const ImColor CBaseEFTPlayer::GetSideColor() const
+{
+	if (IsPlayerScav())
+		return ColorPicker::m_PlayerScavColor;
+
+	if (IsAi())
+		return ColorPicker::m_ScavColor;
+
+	return ColorPicker::m_PMCColor;
+}

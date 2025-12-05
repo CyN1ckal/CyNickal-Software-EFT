@@ -6,10 +6,9 @@ void ColorPicker::Render()
 {
 	ImGui::Begin("Color Picker");
 
-	MyColorPicker("Enemy Color", m_EnemyColor);
-
+	MyColorPicker("PMC Color", m_PMCColor);
 	MyColorPicker("Scav Color", m_ScavColor);
-
+	MyColorPicker("Player Scav Color", m_PlayerScavColor);
 	MyColorPicker("Local Player Color", m_LocalPlayerColor);
 
 	ImGui::End();

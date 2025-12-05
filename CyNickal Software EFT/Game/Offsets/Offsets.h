@@ -52,6 +52,7 @@ namespace Offsets
 		inline constexpr std::ptrdiff_t pPlayerBody{ 0xC8 };
 		inline constexpr std::ptrdiff_t pPlayerController{ 0x20 };
 		inline constexpr std::ptrdiff_t IsAi{ 0x98 };
+		inline constexpr std::ptrdiff_t PlayerSide{ 0x8C };
 		inline constexpr std::ptrdiff_t pVoice{ 0x38 };
 	}
 	namespace CPlayerController
@@ -110,5 +111,13 @@ namespace Offsets
 	namespace CAIData
 	{
 		inline constexpr std::ptrdiff_t bIsAi{ 0x100 };
+	}
+	namespace CProfile
+	{
+		inline constexpr std::ptrdiff_t pProfileInfo{ 0x48 };
+	}
+	namespace CProfileInfo
+	{
+		inline constexpr std::ptrdiff_t Side{ 0x48 };
 	}
 };

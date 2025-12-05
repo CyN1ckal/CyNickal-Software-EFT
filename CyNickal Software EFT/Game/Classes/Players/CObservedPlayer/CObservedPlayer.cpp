@@ -9,8 +9,9 @@ void CObservedPlayer::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
 	if (IsInvalid())
 		return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CObservedPlayer::IsAi, sizeof(std::byte), reinterpret_cast<BYTE*>(&m_IsAiByte), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CObservedPlayer::IsAi, sizeof(std::byte), reinterpret_cast<BYTE*>(&m_AiByte), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CObservedPlayer::pPlayerController, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_PlayerControllerAddress), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CObservedPlayer::PlayerSide, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_Side), nullptr);
 }
 
 void CObservedPlayer::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
@@ -51,9 +52,4 @@ void CObservedPlayer::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 		return;
 
 	VMMDLL_Scatter_PrepareEx(vmsh, m_ObservedMovementStateAddress + Offsets::CObservedMovementState::Rotation, sizeof(float), reinterpret_cast<BYTE*>(&m_Yaw), nullptr);
-}
-
-const bool CObservedPlayer::IsAi() const
-{
-	return m_IsAiByte != std::byte{ 0 };
 }

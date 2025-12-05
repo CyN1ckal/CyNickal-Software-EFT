@@ -29,8 +29,6 @@ void DrawTextAtPosition(ImDrawList* DrawList, const ImVec2& Position, const ImCo
 	);
 }
 
-static const std::string PlayerLabel = "Player";
-static const std::string ScavLabel = "Scav";
 void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
 	if (Player.IsInvalid())	return;
@@ -38,12 +36,12 @@ void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, 
 	Vector2 ScreenPos{};
 	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
 
-	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.IsAi() ? ScavLabel : PlayerLabel, Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos));
+	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos));
 
 	DrawTextAtPosition(
 		DrawList,
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
-		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor,
+		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_PMCColor,
 		Text
 		);
 }
@@ -55,12 +53,12 @@ void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos
 	Vector2 ScreenPos{};
 	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
 
-	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.IsAi() ? ScavLabel : PlayerLabel, Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos));
+	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos));
 
 	DrawTextAtPosition(
 		DrawList,
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
-		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor,
+		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_PMCColor,
 		Text
 	);
 }
