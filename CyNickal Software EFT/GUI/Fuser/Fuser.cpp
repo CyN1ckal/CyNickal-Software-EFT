@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Fuser.h"
-#include "Game/Player List/Player List.h"
 #include "Draw/Players.h"
 
 void Fuser::Render()
@@ -11,9 +10,7 @@ void Fuser::Render()
 	auto WindowPos = ImGui::GetWindowPos();
 	auto DrawList = ImGui::GetWindowDrawList();
 
-	std::scoped_lock lk(PlayerList::m_PlayerMutex);
-	for (auto& Player : PlayerList::m_Players)
-		std::visit([WindowPos, DrawList](auto Player) {DrawESPPlayers::Draw(Player, WindowPos, DrawList); }, Player);
+	DrawESPPlayers::DrawAll(WindowPos, DrawList);
 
 	ImGui::End();
 	ImGui::PopStyleColor();
