@@ -9,7 +9,10 @@ public:
 	static inline std::mutex m_PlayerMutex{};
 	using Player = std::variant<CClientPlayer, CObservedPlayer>;
 	static inline std::vector<Player> m_Players{};
-	static inline std::vector<uintptr_t> m_PlayerAddr{};
+
+private:
+	static inline std::vector<uintptr_t> m_ClientPlayerAddresses{};
+	static inline std::vector<uintptr_t> m_ObservedPlayerAddresses{};
 
 public:
 	static void QuickUpdate(DMA_Connection* Conn);
