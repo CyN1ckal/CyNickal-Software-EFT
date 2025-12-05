@@ -1,8 +1,15 @@
 #pragma once
 
-namespace Radar
+class Radar
 {
-	void Render();
+public:
+	static void Render();
+	static void RenderSettings();
 
-	inline float fScale{ 0.5f };
-}
+public:
+	static inline bool bLocalViewRay{ true };
+	static inline bool bOtherPlayerViewRays{ true };
+	static inline float fScale{ 0.5f };
+	static inline float fLocalViewRayLength{ 100.0f };
+	static inline float fOtherViewRayLength{ 33.0f };
+};

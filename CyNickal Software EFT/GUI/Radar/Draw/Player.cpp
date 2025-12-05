@@ -38,7 +38,9 @@ void DrawRadarPlayers::Draw(const CClientPlayer& Player, const ImVec2& CenterScr
 	auto Color = Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor;
 	ImVec2 DotPosition = ImVec2(CenterScreen.x + Delta3D.z, CenterScreen.y + Delta3D.x);
 	DrawList->AddCircleFilled(DotPosition, 5, Color);
-	DrawCharacterViewRay(Player, DotPosition, DrawList, Color);
+
+	if (Radar::bOtherPlayerViewRays)
+		DrawCharacterViewRay(Player, DotPosition, DrawList, Color);
 }
 
 void DrawRadarPlayers::Draw(const CObservedPlayer& Player, const ImVec2& CenterScreen, const Vector3& LocalPos, ImDrawList* DrawList)
@@ -55,34 +57,35 @@ void DrawRadarPlayers::Draw(const CObservedPlayer& Player, const ImVec2& CenterS
 	auto Color = Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_EnemyColor;
 	ImVec2 DotPosition = ImVec2(CenterScreen.x + Delta3D.z, CenterScreen.y + Delta3D.x);
 	DrawList->AddCircleFilled(DotPosition, 5, Color);
-	DrawCharacterViewRay(Player, DotPosition, DrawList, Color);
+
+	if (Radar::bOtherPlayerViewRays)
+		DrawCharacterViewRay(Player, DotPosition, DrawList, Color);
 }
 
-void DrawRadarPlayers::DrawViewRay(float Yaw, const ImVec2& EntityPosition, ImDrawList* DrawList, ImColor Color)
+void DrawRadarPlayers::DrawViewRay(float Yaw, const ImVec2& EntityPosition, ImDrawList* DrawList, ImColor Color, float Length)
 {
-	constexpr float ViewRayLength = 50.0f;
 	constexpr float AnglesToRadians = 0.01745329f;
 	float LocalYawInRadians = Yaw * AnglesToRadians;
 	auto ViewRayEndPos = ImVec2(
-		EntityPosition.x + (std::cos(LocalYawInRadians) * ViewRayLength),
-		EntityPosition.y + (std::sin(LocalYawInRadians) * ViewRayLength)
+		EntityPosition.x + (std::cos(LocalYawInRadians) * Length),
+		EntityPosition.y + (std::sin(LocalYawInRadians) * Length)
 	);
 	DrawList->AddLine(EntityPosition, ViewRayEndPos, Color, 2.0f);
 }
 
 void DrawRadarPlayers::DrawCharacterViewRay(const CObservedPlayer& Player, const ImVec2& EntityPosition, ImDrawList* DrawList, ImColor Color)
 {
-	DrawViewRay(Player.m_Yaw, EntityPosition, DrawList, Color);
+	DrawViewRay(Player.m_Yaw, EntityPosition, DrawList, Color, Radar::fOtherViewRayLength);
 }
 
-void DrawRadarPlayers::DrawCharacterViewRay(const CClientPlayer& Player, const ImVec2& EntityPosition, ImDrawList* DrawList, ImColor Color)
+void DrawRadarPlayers::DrawCharacterViewRay(const CClientPlayer& Player, const ImVec2& EntityPosition, ImDrawList* DrawList, ImColor Color, bool bIsLocalPlayer)
 {
-	DrawViewRay(Player.m_Yaw, EntityPosition, DrawList, Color);
+	DrawViewRay(Player.m_Yaw, EntityPosition, DrawList, Color, (bIsLocalPlayer) ? Radar::fLocalViewRayLength : Radar::fOtherViewRayLength);
 }
 
 void DrawRadarPlayers::DrawLocalPlayer(const CClientPlayer& Player, const ImVec2& CenterScreen, ImDrawList* DrawList)
 {
 	DrawList->AddCircleFilled(CenterScreen, 5, ColorPicker::m_LocalPlayerColor);
 
-	DrawCharacterViewRay(Player, CenterScreen, DrawList, ColorPicker::m_LocalPlayerColor);
+	DrawCharacterViewRay(Player, CenterScreen, DrawList, ColorPicker::m_LocalPlayerColor, true);
 }

@@ -14,6 +14,7 @@ void Render(ImGuiContext* ctx)
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
 	Radar::Render();
+	Radar::RenderSettings();
 	Fuser::Render();
 	PlayerTable::Render();
 	ColorPicker::Render();
