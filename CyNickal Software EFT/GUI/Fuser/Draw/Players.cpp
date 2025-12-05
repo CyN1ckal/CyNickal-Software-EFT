@@ -2,7 +2,6 @@
 #include "Players.h"
 #include "Game/Player List/Player List.h"
 #include "Game/Camera/Camera.h"
-#include "GUI/Color Picker/Color Picker.h"
 
 void DrawESPPlayers::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 {
@@ -36,12 +35,12 @@ void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, 
 	Vector2 ScreenPos{};
 	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
 
-	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos));
+	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos), std::to_underlying(Player.m_SpawnType));
 
 	DrawTextAtPosition(
 		DrawList,
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
-		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_PMCColor,
+		Player.GetSideColor(),
 		Text
 		);
 }
@@ -58,7 +57,7 @@ void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos
 	DrawTextAtPosition(
 		DrawList,
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
-		Player.IsAi() ? ColorPicker::m_ScavColor : ColorPicker::m_PMCColor,
+		Player.GetSideColor(),
 		Text
 	);
 }

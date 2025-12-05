@@ -2,6 +2,7 @@
 
 #include "Main Window.h"
 
+#include "GUI/Fonts/Fonts.h"
 #include "GUI/Radar/Radar.h"
 #include "GUI/Fuser/Fuser.h"
 #include "GUI/Player Table/Player Table.h"
@@ -148,6 +149,8 @@ bool MainWindow::Initialize()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+
+	Fonts::Initialize(io);
 
 	ImGui::StyleColorsDark();
 

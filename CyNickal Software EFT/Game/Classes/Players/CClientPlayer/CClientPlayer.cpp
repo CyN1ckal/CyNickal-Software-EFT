@@ -12,7 +12,6 @@ void CClientPlayer::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
 		return;
 
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pMovementContext, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_MovementContextAddress), nullptr);
-	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pAiData, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_AiDataAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pProfile, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_ProfileAddress), nullptr);
 }
 
@@ -25,7 +24,6 @@ void CClientPlayer::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
 
 	VMMDLL_Scatter_PrepareEx(vmsh, m_ProfileAddress + Offsets::CProfile::pProfileInfo, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_ProfileInfoAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_MovementContextAddress + Offsets::CMovementContext::Rotation, sizeof(float), reinterpret_cast<BYTE*>(&m_Yaw), nullptr);
-	VMMDLL_Scatter_PrepareEx(vmsh, m_AiDataAddress + Offsets::CAIData::bIsAi, sizeof(std::byte), reinterpret_cast<BYTE*>(&m_AiByte), nullptr);
 }
 
 void CClientPlayer::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)

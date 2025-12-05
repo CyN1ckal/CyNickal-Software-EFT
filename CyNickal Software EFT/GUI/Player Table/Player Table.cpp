@@ -6,12 +6,13 @@ void PlayerTable::Render()
 {
 	ImGui::Begin("Player Table");
 
-	if (ImGui::BeginTable("##Players", 4))
+	if (ImGui::BeginTable("##Players", 5))
 	{
 		ImGui::TableSetupColumn("Address");
 		ImGui::TableSetupColumn("Position");
 		ImGui::TableSetupColumn("Yaw");
 		ImGui::TableSetupColumn("Side");
+		ImGui::TableSetupColumn("Spawn Type");
 		ImGui::TableHeadersRow();
 
 		std::scoped_lock Lock(PlayerList::m_PlayerMutex);
@@ -30,6 +31,8 @@ void PlayerTable::Render()
 				ImGui::Text("%.2f", Player.m_Yaw);
 				ImGui::TableNextColumn();
 				ImGui::Text("%d", Player.m_Side);
+				ImGui::TableNextColumn();
+				ImGui::Text("%d", Player.m_SpawnType);
 				}
 			, Player);
 		}

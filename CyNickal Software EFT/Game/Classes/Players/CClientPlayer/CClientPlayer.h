@@ -5,7 +5,6 @@ class CClientPlayer : public CBaseEFTPlayer
 {
 public:
 	uintptr_t m_MovementContextAddress{ 0 };
-	uintptr_t m_AiDataAddress{ 0 };
 	uintptr_t m_ProfileAddress{ 0 };
 	uintptr_t m_ProfileInfoAddress{ 0 };
 
