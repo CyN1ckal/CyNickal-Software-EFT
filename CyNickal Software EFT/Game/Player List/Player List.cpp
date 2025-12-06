@@ -191,6 +191,7 @@ void PlayerList::PopulatePlayerAddresses(DMA_Connection* Conn)
 		{
 			auto& ObjName = ObjectNames[i];
 			auto& ObjAddress = UniqueObjectAddresses[i];
+			std::println("Object {0:X} is type '{1:s}'", ObjAddress, ObjName.Name);
 			NameMap[ObjAddress] = std::string(ObjName.Name);
 		}
 	}

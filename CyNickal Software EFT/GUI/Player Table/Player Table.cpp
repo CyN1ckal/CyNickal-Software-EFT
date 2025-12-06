@@ -6,38 +6,61 @@ void PlayerTable::Render()
 {
 	ImGui::Begin("Player Table");
 
-	if (ImGui::BeginTable("##Players", 5))
+	if (ImGui::BeginTable("##Players", 6))
 	{
 		ImGui::TableSetupColumn("Address");
 		ImGui::TableSetupColumn("Position");
 		ImGui::TableSetupColumn("Yaw");
 		ImGui::TableSetupColumn("Side");
 		ImGui::TableSetupColumn("Spawn Type");
+		ImGui::TableSetupColumn("Voice");
 		ImGui::TableHeadersRow();
 
 		std::scoped_lock Lock(PlayerList::m_PlayerMutex);
 		for (auto& Player : PlayerList::m_Players)
-		{
-			std::visit([](auto& Player) {
-				if (Player.IsInvalid())
-					return;
-
-				ImGui::TableNextRow();
-				ImGui::TableNextColumn();
-				ImGui::Text("0x%llX", Player.m_EntityAddress);
-				ImGui::TableNextColumn();
-				ImGui::Text("%.2f, %.2f, %.2f", Player.m_RootPosition.x, Player.m_RootPosition.y, Player.m_RootPosition.z);
-				ImGui::TableNextColumn();
-				ImGui::Text("%.2f", Player.m_Yaw);
-				ImGui::TableNextColumn();
-				ImGui::Text("%d", Player.m_Side);
-				ImGui::TableNextColumn();
-				ImGui::Text("%d", Player.m_SpawnType);
-				}
-			, Player);
-		}
+			std::visit([](auto& Player) { PlayerTable::AddRow(Player); }, Player);
 	}
 	ImGui::EndTable();
 
 	ImGui::End();
+}
+
+void PlayerTable::AddRow(const CClientPlayer& Player)
+{
+	if (Player.IsInvalid())
+		return;
+
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text("0x%llX", Player.m_EntityAddress);
+	ImGui::TableNextColumn();
+	ImGui::Text("%.2f, %.2f, %.2f", Player.m_RootPosition.x, Player.m_RootPosition.y, Player.m_RootPosition.z);
+	ImGui::TableNextColumn();
+	ImGui::Text("%.2f", Player.m_Yaw);
+	ImGui::TableNextColumn();
+	ImGui::Text("%d", Player.m_Side);
+	ImGui::TableNextColumn();
+	ImGui::Text("%d", Player.m_SpawnType);
+	ImGui::TableNextColumn();
+	ImGui::Text("N/A");
+}
+
+void PlayerTable::AddRow(const CObservedPlayer& Player)
+{
+	if (Player.IsInvalid())
+		return;
+
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text("0x%llX", Player.m_EntityAddress);
+	ImGui::TableNextColumn();
+	ImGui::Text("%.2f, %.2f, %.2f", Player.m_RootPosition.x, Player.m_RootPosition.y, Player.m_RootPosition.z);
+	ImGui::TableNextColumn();
+	ImGui::Text("%.2f", Player.m_Yaw);
+	ImGui::TableNextColumn();
+	ImGui::Text("%d", Player.m_Side);
+	ImGui::TableNextColumn();
+	ImGui::Text("%d", Player.m_SpawnType);
+	ImGui::TableNextColumn();
+	ImGui::Text("%s", Player.m_Voice);
 }

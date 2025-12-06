@@ -49,7 +49,7 @@ enum class ESpawnType : uint32_t
 	BirdEye = 28,
 	Zryachiy = 29,
 	followerZryachiy = 30,
-	bossBoar = 32,
+	Kaban = 32,
 	followerBoar = 33,
 	arenaFighter = 34,
 	arenaFighterEvent = 35,

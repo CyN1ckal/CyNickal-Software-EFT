@@ -27,14 +27,15 @@ void CBaseEFTPlayer::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
 	if (!m_PlayerBodyAddress)
 		SetInvalid();
 
-	if (!m_AIDataAddress)
-		SetInvalid();
-
 	if (IsInvalid()) return;
 
 	VMMDLL_Scatter_PrepareEx(vmsh, m_PlayerBodyAddress + Offsets::CPlayerBody::pSkeleton, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_SkeletonRootAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
-	VMMDLL_Scatter_PrepareEx(vmsh, m_AIDataAddress + Offsets::CAIData::bIsAi, sizeof(std::byte), reinterpret_cast<BYTE*>(&m_AiByte), nullptr);
-	VMMDLL_Scatter_PrepareEx(vmsh, m_AIDataAddress + Offsets::CAIData::pBotOwner, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_BotOwnerAddress), nullptr);
+
+	if (m_AIDataAddress)
+	{
+		VMMDLL_Scatter_PrepareEx(vmsh, m_AIDataAddress + Offsets::CAIData::bIsAi, sizeof(std::byte), reinterpret_cast<BYTE*>(&m_AiByte), nullptr);
+		VMMDLL_Scatter_PrepareEx(vmsh, m_AIDataAddress + Offsets::CAIData::pBotOwner, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_BotOwnerAddress), nullptr);
+	}
 }
 
 void CBaseEFTPlayer::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
