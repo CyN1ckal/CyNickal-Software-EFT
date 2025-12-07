@@ -12,12 +12,12 @@ void DrawESPPlayers::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 	auto& LocalPlayer = std::get<CClientPlayer>(PlayerList::m_Players[0]);
 	if (LocalPlayer.IsInvalid()) return;
 
-	m_LatestLocalPlayerPos = LocalPlayer.m_RootPosition;
+	m_LatestLocalPlayerPos = LocalPlayer.m_pSkeleton->m_BonePositions[0];
 
 	for (int i = 1; i < PlayerList::m_Players.size(); i++)
 	{
 		auto& Player = PlayerList::m_Players[i];
-		std::visit([WindowPos, DrawList](auto Player) {DrawESPPlayers::Draw(Player, WindowPos, DrawList); }, Player);
+		std::visit([WindowPos, DrawList](auto& Player) { DrawESPPlayers::Draw(Player, WindowPos, DrawList); }, Player);
 	}
 }
 
@@ -36,9 +36,9 @@ void DrawESPPlayers::Draw(const CBaseEFTPlayer& Player, const ImVec2& WindowPos,
 	if (Player.IsInvalid())	return;
 
 	Vector2 ScreenPos{};
-	if (!Camera::WorldToScreen(Player.m_RootPosition, ScreenPos)) return;
+	if (!Camera::WorldToScreen(Player.GetBonePosition(EBoneIndex::Root), ScreenPos)) return;
 
-	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.m_RootPosition.DistanceTo(m_LatestLocalPlayerPos), std::to_underlying(Player.m_SpawnType));
+	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.GetBonePosition(EBoneIndex::Root).DistanceTo(m_LatestLocalPlayerPos), std::to_underlying(Player.m_SpawnType));
 
 	DrawTextAtPosition(
 		DrawList,
@@ -47,7 +47,7 @@ void DrawESPPlayers::Draw(const CBaseEFTPlayer& Player, const ImVec2& WindowPos,
 		Text
 	);
 
-	if (!Camera::WorldToScreen(Player.m_HeadPos, ScreenPos)) return;
+	if (!Camera::WorldToScreen(Player.GetBonePosition(EBoneIndex::Head), ScreenPos)) return;
 	DrawList->AddCircle(
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
 		5.0f,

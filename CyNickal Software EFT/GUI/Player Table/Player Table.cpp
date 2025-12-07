@@ -34,7 +34,8 @@ void PlayerTable::AddRow(const CClientPlayer& Player)
 	ImGui::TableNextColumn();
 	ImGui::Text("0x%llX", Player.m_EntityAddress);
 	ImGui::TableNextColumn();
-	ImGui::Text("%.2f, %.2f, %.2f", Player.m_RootPosition.x, Player.m_RootPosition.y, Player.m_RootPosition.z);
+	auto& RootPos = Player.GetBonePosition(EBoneIndex::Root);
+	ImGui::Text("%.2f, %.2f, %.2f", RootPos.x, RootPos.y, RootPos.z);
 	ImGui::TableNextColumn();
 	ImGui::Text("%.2f", Player.m_Yaw);
 	ImGui::TableNextColumn();
@@ -54,7 +55,7 @@ void PlayerTable::AddRow(const CObservedPlayer& Player)
 	ImGui::TableNextColumn();
 	ImGui::Text("0x%llX", Player.m_EntityAddress);
 	ImGui::TableNextColumn();
-	ImGui::Text("%.2f, %.2f, %.2f", Player.m_RootPosition.x, Player.m_RootPosition.y, Player.m_RootPosition.z);
+	ImGui::Text("%.2f, %.2f, %.2f", Player.GetBonePosition(EBoneIndex::Root).x, Player.GetBonePosition(EBoneIndex::Root).y, Player.GetBonePosition(EBoneIndex::Root).z);
 	ImGui::TableNextColumn();
 	ImGui::Text("%.2f", Player.m_Yaw);
 	ImGui::TableNextColumn();
