@@ -58,6 +58,16 @@ void PlayerList::FullUpdate(DMA_Connection* Conn)
 	for (auto& Player : m_Players)
 		std::visit([vmsh](auto& p) { p.PrepareRead_8(vmsh); }, Player);
 	VMMDLL_Scatter_Execute(vmsh);
+	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
+
+	for (auto& Player : m_Players)
+		std::visit([vmsh](auto& p) { p.PrepareRead_9(vmsh); }, Player);
+	VMMDLL_Scatter_Execute(vmsh);
+	VMMDLL_Scatter_Clear(vmsh, PID, VMMDLL_FLAG_NOCACHE);
+
+	for (auto& Player : m_Players)
+		std::visit([vmsh](auto& p) { p.PrepareRead_10(vmsh); }, Player);
+	VMMDLL_Scatter_Execute(vmsh);
 	VMMDLL_Scatter_CloseHandle(vmsh);
 
 	for (auto& Player : m_Players)

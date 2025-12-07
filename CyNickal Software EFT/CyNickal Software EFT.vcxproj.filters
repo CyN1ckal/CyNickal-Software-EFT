@@ -102,6 +102,9 @@
     <ClCompile Include="GUI\Fonts\Fonts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Classes\CUnityTransform\CUnityTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -213,6 +216,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Fonts\Data\IBMPlexMono.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CUnityTransform\CUnityTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

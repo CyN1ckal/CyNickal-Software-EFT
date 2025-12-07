@@ -161,6 +161,7 @@
     <ClCompile Include="Game\Camera\Camera.cpp" />
     <ClCompile Include="Game\Classes\CBaseEntity\CBaseEntity.cpp" />
     <ClCompile Include="Game\Classes\CLinkedListEntry.cpp" />
+    <ClCompile Include="Game\Classes\CUnityTransform\CUnityTransform.cpp" />
     <ClCompile Include="Game\Classes\Players\CBaseEFTPlayer\CBaseEFTPlayer.cpp" />
     <ClCompile Include="Game\Classes\Players\CClientPlayer\CClientPlayer.cpp" />
     <ClCompile Include="Game\Classes\Players\CObservedPlayer\CObservedPlayer.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Game\Classes\CLinkedListEntry.h" />
     <ClInclude Include="Game\Classes\CObject.h" />
     <ClInclude Include="Game\Classes\CObjectInfo.h" />
+    <ClInclude Include="Game\Classes\CUnityTransform\CUnityTransform.h" />
     <ClInclude Include="Game\Classes\Players\CBaseEFTPlayer\BossNameMap.h" />
     <ClInclude Include="Game\Classes\Players\CBaseEFTPlayer\CBaseEFTPlayer.h" />
     <ClInclude Include="Game\Classes\Players\CClientPlayer\CClientPlayer.h" />

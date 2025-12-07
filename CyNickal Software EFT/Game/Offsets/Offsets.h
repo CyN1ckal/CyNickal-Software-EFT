@@ -95,7 +95,7 @@ namespace Offsets
 	}
 	namespace CSkeleton
 	{
-		inline constexpr std::ptrdiff_t pValues{ 0x30 };
+		inline constexpr std::ptrdiff_t pSkeletonValues{ 0x30 };
 	}
 	namespace CValues
 	{
@@ -103,6 +103,9 @@ namespace Offsets
 	}
 	namespace CTransformHierarchy
 	{
+		inline constexpr std::ptrdiff_t pVertices{ 0x8 };
+		inline constexpr std::ptrdiff_t pIndices{ 0xA0 };
+
 		inline constexpr std::ptrdiff_t Position{ 0xB0 };
 	}
 	namespace CObservedPlayerController
@@ -129,5 +132,18 @@ namespace Offsets
 	namespace CSpawnProfileData
 	{
 		inline constexpr std::ptrdiff_t SpawnType{ 0x10 };
+	}
+	namespace CUnityTransform
+	{
+		inline constexpr std::ptrdiff_t pTransformHierarchy{ 0x70 };
+		inline constexpr std::ptrdiff_t Index{ 0x78 };
+	}
+	namespace CBoneArray
+	{
+		inline constexpr std::ptrdiff_t ArrayStart{ 0x20 };
+	}
+	namespace CSkeletonValues
+	{
+		inline constexpr std::ptrdiff_t pBoneArray{ 0x10 };
 	}
 };

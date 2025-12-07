@@ -29,3 +29,11 @@ struct Vector2
 		return Vector2(x - rhs.x, y - rhs.y);
 	}
 };
+
+struct Vector4
+{
+	float x{ 0.0f };
+	float y{ 0.0f };
+	float z{ 0.0f };
+	float w{ 0.0f };
+};
