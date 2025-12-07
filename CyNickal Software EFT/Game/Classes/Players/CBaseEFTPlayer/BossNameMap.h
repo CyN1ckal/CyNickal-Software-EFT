@@ -6,6 +6,7 @@ std::unordered_map<ESpawnType, std::string> BossNameMap = {
 	{ ESpawnType::Knight, "Knight" },
 	{ ESpawnType::Reshala, "Reshala" },
 	{ ESpawnType::Killa, "Killa" },
+	{ ESpawnType::Kaban, "Kaban" },
 	{ ESpawnType::Partisan, "Partisan" },
 	{ ESpawnType::Sanitar, "Sanitar" },
 	{ ESpawnType::Gluhar, "Gluhar" },

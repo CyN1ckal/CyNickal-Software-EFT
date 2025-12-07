@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CBaseEFTPlayer.h"
 #include "Game/Offsets/Offsets.h"
-#include "Game/Classes/CPlayer.h"
+#include "Game/Classes/CUnityTransform/CUnityTransform.h"
 
 void CBaseEFTPlayer::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh, EPlayerType playerType)
 {
@@ -42,7 +42,7 @@ void CBaseEFTPlayer::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_SkeletonRootAddress + Offsets::CSkeleton::pValues, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_ValuesArrayAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_SkeletonRootAddress + Offsets::CSkeleton::pSkeletonValues, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_SkeletonValuesAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
 
 	if (m_BotOwnerAddress)
 		VMMDLL_Scatter_PrepareEx(vmsh, m_BotOwnerAddress + Offsets::CBotOwner::pSpawnProfileData, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_SpawnProfileDataAddress), nullptr);
@@ -52,7 +52,7 @@ void CBaseEFTPlayer::PrepareRead_4(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_ValuesArrayAddress + Offsets::CValues::pArr1, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_Arr1Address), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_SkeletonValuesAddress + Offsets::CSkeletonValues::pBoneArray, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_BoneArrayAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
 
 	if (m_SpawnProfileDataAddress)
 		VMMDLL_Scatter_PrepareEx(vmsh, m_SpawnProfileDataAddress + Offsets::CSpawnProfileData::SpawnType, sizeof(ESpawnType), reinterpret_cast<BYTE*>(&m_SpawnType), nullptr);
@@ -62,47 +62,76 @@ void CBaseEFTPlayer::PrepareRead_5(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_Arr1Address + offsetof(CArr1, pBoneTransforms), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_BoneTransformsAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_BoneArrayAddress + Offsets::CBoneArray::ArrayStart + (0x8 * std::to_underlying(EBoneIndex::Root)), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HumanRootPtrAddr), nullptr);
 }
 
 void CBaseEFTPlayer::PrepareRead_6(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_BoneTransformsAddress + offsetof(CBoneTransforms, pBaseTransform), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_BasePositionTransformAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_HumanRootPtrAddr + 0x10, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HumanRootAddr), nullptr);
 }
 
 void CBaseEFTPlayer::PrepareRead_7(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_BasePositionTransformAddress + offsetof(CUnityTransform, pTransformHierarchy), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_TransformHierarchyAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	m_Transforms.clear();
+
+	/* Bone at index [0] is root */
+	m_Transforms.emplace_back(CUnityTransform(m_HumanRootAddr));
+	//m_Transforms.emplace_back(CUnityTransform(m_HumanHeadPtrAddr));
+
+	for (auto& Transform : m_Transforms)
+		Transform.PrepareRead_1(vmsh);
 }
 
 void CBaseEFTPlayer::PrepareRead_8(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_TransformHierarchyAddress + Offsets::CTransformHierarchy::Position, sizeof(Vector3), reinterpret_cast<BYTE*>(&m_RootPosition), reinterpret_cast<DWORD*>(&m_BytesRead));
+	for (auto& Transform : m_Transforms)
+		Transform.PrepareRead_2(vmsh);
+}
+
+void CBaseEFTPlayer::PrepareRead_9(VMMDLL_SCATTER_HANDLE vmsh)
+{
+	if (IsInvalid()) return;
+
+	for (auto& Transform : m_Transforms)
+		Transform.PrepareRead_3(vmsh);
+}
+
+void CBaseEFTPlayer::PrepareRead_10(VMMDLL_SCATTER_HANDLE vmsh)
+{
+	if (IsInvalid()) return;
+
+	for (auto& Transform : m_Transforms)
+		Transform.PrepareRead_4(vmsh);
 }
 
 void CBaseEFTPlayer::Finalize()
 {
-	if (m_BytesRead != sizeof(Vector3))
-		SetInvalid();
+	if (IsInvalid())
+		return;
+
+	m_RootPosition = m_Transforms[0].GetPosition();
 }
 
 void CBaseEFTPlayer::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_TransformHierarchyAddress + Offsets::CTransformHierarchy::Position, sizeof(Vector3), reinterpret_cast<BYTE*>(&m_RootPosition), reinterpret_cast<DWORD*>(&m_BytesRead));
+	for (auto& Transform : m_Transforms)
+		Transform.QuickRead(vmsh);
 }
 
 void CBaseEFTPlayer::QuickFinalize()
 {
-	if (m_BytesRead != sizeof(Vector3))
-		SetInvalid();
+	if (IsInvalid())
+		return;
+
+	m_RootPosition = m_Transforms[0].GetPosition();
 }
 
 const bool CBaseEFTPlayer::IsAi() const
@@ -167,6 +196,7 @@ const bool CBaseEFTPlayer::IsBoss() const
 	case ESpawnType::BirdEye:
 	case ESpawnType::Knight:
 	case ESpawnType::Killa:
+	case ESpawnType::Kaban:
 	case ESpawnType::Partisan:
 	case ESpawnType::Sanitar:
 	case ESpawnType::Gluhar:
@@ -178,4 +208,9 @@ const bool CBaseEFTPlayer::IsBoss() const
 	default:
 		return false;
 	}
+}
+
+const bool CBaseEFTPlayer::IsInvalid() const
+{
+	return CBaseEntity::IsInvalid();
 }

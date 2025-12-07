@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Classes/CBaseEntity/CBaseEntity.h"
 #include "Game/Classes/Vector.h"
+#include "Game/Classes/CUnityTransform/CUnityTransform.h"
 
 enum class EPlayerType
 {
@@ -92,9 +93,16 @@ enum class ESpawnType : uint32_t
 	UNKNOWN = std::numeric_limits<uint32_t>::max()
 };
 
+enum class EBoneIndex : uint32_t
+{
+	Root = 0,
+	Head = 133
+};
+
 class CBaseEFTPlayer : public CBaseEntity
 {
 public:
+	std::vector<CUnityTransform> m_Transforms{};
 	Vector3 m_RootPosition{};
 	float m_Yaw{ 0.0f };
 	EPlayerSide m_Side{ EPlayerSide::UNKNOWN };
@@ -105,14 +113,13 @@ private:
 	uintptr_t m_PlayerBodyAddress{ 0 };
 	uintptr_t m_SkeletonRootAddress{ 0 };
 	uintptr_t m_SkeletonValuesAddress{ 0 };
-	uintptr_t m_ValuesArrayAddress{ 0 };
-	uintptr_t m_Arr1Address{ 0 };
-	uintptr_t m_BoneTransformsAddress{ 0 };
-	uintptr_t m_BasePositionTransformAddress{ 0 };
-	uintptr_t m_TransformHierarchyAddress{ 0 };
+	uintptr_t m_BoneArrayAddress{ 0 };
 	uintptr_t m_AIDataAddress{ 0 };
 	uintptr_t m_BotOwnerAddress{ 0 };
 	uintptr_t m_SpawnProfileDataAddress{ 0 };
+
+	uintptr_t m_HumanRootPtrAddr{ 0 };
+	uintptr_t m_HumanRootAddr{ 0 };
 
 public:
 	CBaseEFTPlayer(uintptr_t EntityAddress) : CBaseEntity(EntityAddress) {}
@@ -124,6 +131,8 @@ public:
 	void PrepareRead_6(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_7(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_8(VMMDLL_SCATTER_HANDLE vmsh);
+	void PrepareRead_9(VMMDLL_SCATTER_HANDLE vmsh);
+	void PrepareRead_10(VMMDLL_SCATTER_HANDLE vmsh);
 	void Finalize();
 	void QuickRead(VMMDLL_SCATTER_HANDLE vmsh);
 	void QuickFinalize();
@@ -135,6 +144,7 @@ public:
 	const std::string& GetBaseName() const;
 	const ImColor GetSideColor() const;
 	const bool IsBoss() const;
+	const bool IsInvalid() const;
 
 private:
 	const std::string& GetBossName() const;

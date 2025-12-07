@@ -9,7 +9,10 @@ void DrawESPPlayers::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 
 	if (PlayerList::m_Players.empty()) return;
 
-	m_LatestLocalPlayerPos = std::get<CClientPlayer>(PlayerList::m_Players[0]).m_RootPosition;
+	auto& LocalPlayer = std::get<CClientPlayer>(PlayerList::m_Players[0]);
+	if (LocalPlayer.IsInvalid()) return;
+
+	m_LatestLocalPlayerPos = LocalPlayer.m_RootPosition;
 
 	for (int i = 1; i < PlayerList::m_Players.size(); i++)
 	{
@@ -42,7 +45,7 @@ void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, 
 		ImVec2(WindowPos.x + ScreenPos.x, WindowPos.y + ScreenPos.y),
 		Player.GetSideColor(),
 		Text
-		);
+	);
 }
 
 void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)

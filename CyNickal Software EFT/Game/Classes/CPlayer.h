@@ -129,15 +129,6 @@ public:
 	char pad_0018[240]; //0x0018
 }; //Size: 0x0108
 
-class CUnityTransform
-{
-public:
-	char pad_0000[112]; //0x0000
-	class CTransformHierarcy* pTransformHierarchy; //0x0070
-	int32_t Index; //0x0078
-	char pad_007C[996]; //0x007C
-}; //Size: 0x0460
-
 class CTransformHierarchy
 {
 public:

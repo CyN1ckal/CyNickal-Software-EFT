@@ -16,6 +16,10 @@ void DrawRadarPlayers::DrawAll()
 	auto DrawList = ImGui::GetWindowDrawList();
 	auto CenterScreen = ImVec2(WindowPos.x + (WindowSize.x / 2), WindowPos.y + (WindowSize.y / 2));
 	auto LocalPlayer = std::get<CClientPlayer>(PlayerList::m_Players[0]);
+
+	if (LocalPlayer.IsInvalid())
+		return;
+
 	auto LocalPos = LocalPlayer.m_RootPosition;
 
 	DrawLocalPlayer(LocalPlayer, CenterScreen, DrawList);
@@ -29,6 +33,9 @@ void DrawRadarPlayers::DrawAll()
 
 void DrawRadarPlayers::Draw(const CClientPlayer& Player, const ImVec2& CenterScreen, const Vector3& LocalPos, ImDrawList* DrawList)
 {
+	if (Player.IsInvalid())
+		return;
+
 	auto& PlayerPos = Player.m_RootPosition;
 	auto Delta3D = PlayerPos - LocalPos;
 
