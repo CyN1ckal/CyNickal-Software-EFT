@@ -42,7 +42,11 @@ void CBaseEFTPlayer::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_SkeletonRootAddress + Offsets::CSkeleton::pSkeletonValues, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_SkeletonValuesAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	std::println("[CBaseEFTPlayer] Skeleton Address {}", m_SkeletonRootAddress);
+
+	m_pSkeleton = std::make_unique<CPlayerSkeleton>(m_SkeletonRootAddress);
+
+	m_pSkeleton->PrepareRead_1(vmsh);
 
 	if (m_BotOwnerAddress)
 		VMMDLL_Scatter_PrepareEx(vmsh, m_BotOwnerAddress + Offsets::CBotOwner::pSpawnProfileData, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_SpawnProfileDataAddress), nullptr);
@@ -52,7 +56,7 @@ void CBaseEFTPlayer::PrepareRead_4(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_SkeletonValuesAddress + Offsets::CSkeletonValues::pBoneArray, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_BoneArrayAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	m_pSkeleton->PrepareRead_2(vmsh);
 
 	if (m_SpawnProfileDataAddress)
 		VMMDLL_Scatter_PrepareEx(vmsh, m_SpawnProfileDataAddress + Offsets::CSpawnProfileData::SpawnType, sizeof(ESpawnType), reinterpret_cast<BYTE*>(&m_SpawnType), nullptr);
@@ -62,52 +66,42 @@ void CBaseEFTPlayer::PrepareRead_5(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_BoneArrayAddress + Offsets::CBoneArray::ArrayStart + (0x8 * std::to_underlying(EBoneIndex::Root)), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HumanRootPtrAddr), nullptr);
-	VMMDLL_Scatter_PrepareEx(vmsh, m_BoneArrayAddress + Offsets::CBoneArray::ArrayStart + (0x8 * std::to_underlying(EBoneIndex::Head)), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HumanHeadPtrAddr), nullptr);
+	m_pSkeleton->PrepareRead_3(vmsh);
 }
 
 void CBaseEFTPlayer::PrepareRead_6(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_HumanRootPtrAddr + 0x10, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HumanRootAddr), nullptr);
-	VMMDLL_Scatter_PrepareEx(vmsh, m_HumanHeadPtrAddr + 0x10, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HumanHeadAddr), nullptr);
+	m_pSkeleton->PrepareRead_4(vmsh);
 }
 
 void CBaseEFTPlayer::PrepareRead_7(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	m_Transforms.clear();
-	m_Transforms.emplace_back(CUnityTransform(m_HumanRootAddr));
-	m_Transforms.emplace_back(CUnityTransform(m_HumanHeadAddr));
-
-	for (auto& Transform : m_Transforms)
-		Transform.PrepareRead_1(vmsh);
+	m_pSkeleton->PrepareRead_5(vmsh);
 }
 
 void CBaseEFTPlayer::PrepareRead_8(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	for (auto& Transform : m_Transforms)
-		Transform.PrepareRead_2(vmsh);
+	m_pSkeleton->PrepareRead_6(vmsh);
 }
 
 void CBaseEFTPlayer::PrepareRead_9(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	for (auto& Transform : m_Transforms)
-		Transform.PrepareRead_3(vmsh);
+	m_pSkeleton->PrepareRead_7(vmsh);
 }
 
 void CBaseEFTPlayer::PrepareRead_10(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	for (auto& Transform : m_Transforms)
-		Transform.PrepareRead_4(vmsh);
+	m_pSkeleton->PrepareRead_8(vmsh);
 }
 
 void CBaseEFTPlayer::Finalize()
@@ -115,16 +109,14 @@ void CBaseEFTPlayer::Finalize()
 	if (IsInvalid())
 		return;
 
-	m_RootPosition = m_Transforms[0].GetPosition();
-	m_HeadPos = m_Transforms[1].GetPosition();
+	m_pSkeleton->Finalize();
 }
 
 void CBaseEFTPlayer::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	for (auto& Transform : m_Transforms)
-		Transform.QuickRead(vmsh);
+	m_pSkeleton->QuickRead(vmsh);
 }
 
 void CBaseEFTPlayer::QuickFinalize()
@@ -132,8 +124,7 @@ void CBaseEFTPlayer::QuickFinalize()
 	if (IsInvalid())
 		return;
 
-	m_RootPosition = m_Transforms[0].GetPosition();
-	m_HeadPos = m_Transforms[1].GetPosition();
+	m_pSkeleton->QuickFinalize();
 }
 
 const bool CBaseEFTPlayer::IsAi() const
@@ -215,4 +206,13 @@ const bool CBaseEFTPlayer::IsBoss() const
 const bool CBaseEFTPlayer::IsInvalid() const
 {
 	return CBaseEntity::IsInvalid();
+}
+
+static Vector3 invalidPosition{ 0.0f,0.0f,0.0f };
+const Vector3& CBaseEFTPlayer::GetBonePosition(EBoneIndex boneIndex) const
+{
+	if (m_pSkeleton == nullptr)
+		return invalidPosition;
+
+	return m_pSkeleton->GetBonePosition(boneIndex);
 }

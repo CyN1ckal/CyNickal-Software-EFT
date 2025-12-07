@@ -161,6 +161,7 @@
     <ClCompile Include="Game\Camera\Camera.cpp" />
     <ClCompile Include="Game\Classes\CBaseEntity\CBaseEntity.cpp" />
     <ClCompile Include="Game\Classes\CLinkedListEntry.cpp" />
+    <ClCompile Include="Game\Classes\CPlayerSkeleton\CPlayerSkeleton.cpp" />
     <ClCompile Include="Game\Classes\CUnityTransform\CUnityTransform.cpp" />
     <ClCompile Include="Game\Classes\Players\CBaseEFTPlayer\CBaseEFTPlayer.cpp" />
     <ClCompile Include="Game\Classes\Players\CClientPlayer\CClientPlayer.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Game\Classes\CLinkedListEntry.h" />
     <ClInclude Include="Game\Classes\CObject.h" />
     <ClInclude Include="Game\Classes\CObjectInfo.h" />
+    <ClInclude Include="Game\Classes\CPlayerSkeleton\CPlayerSkeleton.h" />
     <ClInclude Include="Game\Classes\CUnityTransform\CUnityTransform.h" />
     <ClInclude Include="Game\Classes\Players\CBaseEFTPlayer\BossNameMap.h" />
     <ClInclude Include="Game\Classes\Players\CBaseEFTPlayer\CBaseEFTPlayer.h" />
@@ -206,6 +208,9 @@
     <ClInclude Include="Game\Classes\Players\CObservedPlayer\CObservedPlayer.h" />
     <ClInclude Include="Game\Classes\Vector.h" />
     <ClInclude Include="Game\EFT.h" />
+    <ClInclude Include="Game\Enums\EBoneIndex.h" />
+    <ClInclude Include="Game\Enums\EPlayerSide.h" />
+    <ClInclude Include="Game\Enums\ESpawnType.h" />
     <ClInclude Include="Game\GOM\GOM.h" />
     <ClInclude Include="Game\Offsets\Offsets.h" />
     <ClInclude Include="Game\Player List\Player List.h" />
