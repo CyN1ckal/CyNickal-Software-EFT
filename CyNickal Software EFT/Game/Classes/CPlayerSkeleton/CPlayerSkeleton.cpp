@@ -19,20 +19,20 @@ void CPlayerSkeleton::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
 
 void CPlayerSkeleton::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
 {
-	for (int i = 0; i < NUMBONES; i++)
-		VMMDLL_Scatter_PrepareEx(vmsh, m_BoneArrayAddress + Offsets::CBoneArray::ArrayStart + (0x8 * std::to_underlying(BoneIndices[i])), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_RootPtrs[i]), nullptr);
+	for (int i = 0; i < SKELETON_NUMBONES; i++)
+		VMMDLL_Scatter_PrepareEx(vmsh, m_BoneArrayAddress + Offsets::CBoneArray::ArrayStart + (0x8 * std::to_underlying(Skeleton_UnityIndices[i])), sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_RootPtrs[i]), nullptr);
 }
 
 void CPlayerSkeleton::PrepareRead_4(VMMDLL_SCATTER_HANDLE vmsh)
 {
-	for (int i = 0; i < NUMBONES; i++)
+	for (int i = 0; i < SKELETON_NUMBONES; i++)
 		VMMDLL_Scatter_PrepareEx(vmsh, m_RootPtrs[i] + 0x10, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_RootAddresses[i]), nullptr);
 }
 
 void CPlayerSkeleton::PrepareRead_5(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	m_Transforms.fill(CUnityTransform{ 0x0 });
-	for (int i = 0; i < NUMBONES; i++)
+	for (int i = 0; i < SKELETON_NUMBONES; i++)
 		m_Transforms[i] = CUnityTransform(m_RootAddresses[i]);
 
 	for (auto& Transform : m_Transforms)
@@ -60,7 +60,7 @@ void CPlayerSkeleton::PrepareRead_8(VMMDLL_SCATTER_HANDLE vmsh)
 void CPlayerSkeleton::Finalize()
 {
 	m_BonePositions.fill({});
-	for (size_t i = 0; i < NUMBONES; i++)
+	for (size_t i = 0; i < SKELETON_NUMBONES; i++)
 		m_BonePositions[i] = m_Transforms[i].GetPosition();
 }
 
@@ -73,15 +73,15 @@ void CPlayerSkeleton::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 void CPlayerSkeleton::QuickFinalize()
 {
 	m_BonePositions.fill({});
-	for (size_t i = 0; i < NUMBONES; i++)
+	for (size_t i = 0; i < SKELETON_NUMBONES; i++)
 		m_BonePositions[i] = m_Transforms[i].GetPosition();
 }
 
 const Vector3& CPlayerSkeleton::GetBonePosition(EBoneIndex boneIndex) const
 {
-	auto it = BoneArrayIndices.find(boneIndex);
+	auto it = Sketon_MyIndicies.find(boneIndex);
 
-	if (it != BoneArrayIndices.end())
+	if (it != Sketon_MyIndicies.end())
 		return m_BonePositions[it->second];
 
 	static Vector3 InvalidPos{ 0.0f,0.0f,0.0f };
