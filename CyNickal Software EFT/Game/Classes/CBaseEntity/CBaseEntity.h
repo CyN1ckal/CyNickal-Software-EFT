@@ -11,4 +11,5 @@ public:
 	CBaseEntity(uintptr_t EntityAddress);
 	void SetInvalid();
 	bool IsInvalid() const;
+	bool operator==(const CBaseEntity& other) const;
 };

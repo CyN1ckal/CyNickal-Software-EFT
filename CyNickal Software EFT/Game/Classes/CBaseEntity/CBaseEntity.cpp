@@ -17,3 +17,8 @@ bool CBaseEntity::IsInvalid() const
 {
 	return m_Flags & 0x1;
 }
+
+bool CBaseEntity::operator==(const CBaseEntity& other) const
+{
+	return other.m_EntityAddress == m_EntityAddress;
+}

@@ -101,13 +101,11 @@ uintptr_t GOM::GetLocalGameWorldAddr(DMA_Connection* Conn)
 {
 	auto GameWorldAddrs = GetGameWorldAddresses(Conn);
 
-	wchar_t MapNameBuffer[64]{};
-
 	auto& Proc = EFT::GetProcess();
 
 	for (auto& GameWorldAddr : GameWorldAddrs)
 	{
-		auto Deref1 = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddr + 0x58);
+		auto Deref1 = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddr + Offsets::CGameObject::pComponents);
 		auto Deref2 = Proc.ReadMem<uintptr_t>(Conn, Deref1 + 0x18);
 		auto LocalWorldAddr = Proc.ReadMem<uintptr_t>(Conn, Deref2 + 0x30);
 		auto MainPlayerAddr = Proc.ReadMem<uintptr_t>(Conn, LocalWorldAddr + Offsets::CLocalGameWorld::pMainPlayer);
@@ -117,11 +115,6 @@ uintptr_t GOM::GetLocalGameWorldAddr(DMA_Connection* Conn)
 			std::println("[EFT] LocalGameWorld Address: 0x{:X}\n", LocalWorldAddr);
 			return LocalWorldAddr;
 		}
-		//struct MapNameBuff{wchar_t MapName[64]{ 0 };};
-		//auto MapNameAddr = Proc.ReadMem<uintptr_t>(Conn, LocalWorldAddr + Offsets::CLocalGameWorld::pMapName);
-		//MapNameBuff buffer = Proc.ReadMem<MapNameBuff>(Conn, MapNameAddr + 0x14);
-		//std::wstring MapNameStr(buffer.MapName);
-		//std::string MapNameNarrow(MapNameStr.begin(), MapNameStr.end());
 	}
 
 	throw std::runtime_error("Failed to find valid LocalGameWorld address.");

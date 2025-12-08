@@ -42,8 +42,6 @@ void CBaseEFTPlayer::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	if (IsInvalid()) return;
 
-	std::println("[CBaseEFTPlayer] Skeleton Address {}", m_SkeletonRootAddress);
-
 	m_pSkeleton = std::make_unique<CPlayerSkeleton>(m_SkeletonRootAddress);
 
 	m_pSkeleton->PrepareRead_1(vmsh);

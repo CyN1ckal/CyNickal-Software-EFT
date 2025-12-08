@@ -4,7 +4,7 @@
 
 CPlayerSkeleton::CPlayerSkeleton(uintptr_t SkeletonRootAddress) : CBaseEntity(SkeletonRootAddress)
 {
-	std::println("[CPlayerSkeleton] Constructed with {0:X}", SkeletonRootAddress);
+	//std::println("[CPlayerSkeleton] Constructed with {0:X}", m_EntityAddress);
 }
 
 void CPlayerSkeleton::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)

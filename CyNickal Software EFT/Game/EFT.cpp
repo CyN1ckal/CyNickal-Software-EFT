@@ -19,8 +19,6 @@ bool EFT::Initialize(DMA_Connection* Conn)
 
 	LootList::CompleteUpdate(Conn, LocalGameWorldAddr);
 
-	PlayerList::CompleteUpdate(Conn, LocalGameWorldAddr);
-
 	return false;
 }
 
