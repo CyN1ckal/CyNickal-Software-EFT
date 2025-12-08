@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/Classes/Vector.h"
+#include "Game/Classes/CBaseEntity/CBaseEntity.h"
 
 struct VertexEntry
 {
@@ -8,7 +9,7 @@ struct VertexEntry
 	__m128 Scale;
 };
 
-class CUnityTransform
+class CUnityTransform : public CBaseEntity
 {
 private:
 	std::vector<VertexEntry> m_Vertices{};
@@ -18,7 +19,6 @@ private:
 	uintptr_t m_IndicesAddress{ 0 };
 	uintptr_t m_VerticesAddress{ 0 };
 	int32_t m_Index{ 0 };
-	uint32_t m_Flags{ 0 };
 
 public:
 	CUnityTransform(uintptr_t TransformAddress);
@@ -27,8 +27,7 @@ public:
 	void PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_4(VMMDLL_SCATTER_HANDLE vmsh);
 	void QuickRead(VMMDLL_SCATTER_HANDLE vmsh);
-	const bool IsInvalid() const;
-	void SetInvalid();
+	void QuickFinalize();
 	Vector3 GetPosition() const;
 
 	void Print();

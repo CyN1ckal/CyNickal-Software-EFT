@@ -13,7 +13,7 @@ void DrawESPPlayers::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 	auto& LocalPlayer = std::get<CClientPlayer>(PlayerList::m_Players[0]);
 	if (LocalPlayer.IsInvalid()) return;
 
-	m_LatestLocalPlayerPos = LocalPlayer.m_pSkeleton->m_BonePositions[0];
+	m_LatestLocalPlayerPos = LocalPlayer.GetBonePosition(EBoneIndex::Root);
 
 	for (int i = 1; i < PlayerList::m_Players.size(); i++)
 	{
@@ -46,24 +46,18 @@ void DrawESPPlayers::Draw(const CBaseEFTPlayer& Player, const ImVec2& WindowPos,
 
 	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.GetBonePosition(EBoneIndex::Root).DistanceTo(m_LatestLocalPlayerPos), std::to_underlying(Player.m_SpawnType));
 
-	auto& ProjectedRootPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Root]];
-	DrawTextAtPosition(
-		DrawList,
-		ImVec2(WindowPos.x + ProjectedRootPos.x, WindowPos.y + ProjectedRootPos.y),
-		Player.GetSideColor(),
-		Text
-	);
+	if (bNameText) {
+		auto& ProjectedRootPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Root]];
+		DrawTextAtPosition(DrawList, ImVec2(WindowPos.x + ProjectedRootPos.x, WindowPos.y + ProjectedRootPos.y), Player.GetSideColor(), Text);
+	}
 
-	auto& ProjectedHeadPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Head]];
-	DrawList->AddCircle(
-		ImVec2(WindowPos.x + ProjectedHeadPos.x, WindowPos.y + ProjectedHeadPos.y),
-		4.0f,
-		Player.GetSideColor(),
-		12,
-		1.0f
-	);
+	if (bHeadDot) {
+		auto& ProjectedHeadPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Head]];
+		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.x, WindowPos.y + ProjectedHeadPos.y), 4.0f, Player.GetSideColor(), 12, 1.0f);
+	}
 
-	DrawSkeleton(*Player.m_pSkeleton, WindowPos, DrawList);
+	if (bSkeleton)
+		DrawSkeleton(*Player.m_pSkeleton, WindowPos, DrawList);
 }
 
 void ConnectBones(const Vector2& BoneA, const Vector2& BoneB, const ImVec2& WindowPos, ImDrawList* DrawList, const ImColor& Color, float Thickness)

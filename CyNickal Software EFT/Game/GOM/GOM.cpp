@@ -157,7 +157,7 @@ void GOM::PopulateObjectInfoListFromAddresses(DMA_Connection* Conn)
 	for (int i = 0; i < m_ObjectAddresses.size(); i++)
 	{
 		auto& ObjAddr = m_ObjectAddresses[i];
-		uintptr_t NameAddress = ObjAddr + Offsets::CObject::pName;
+		uintptr_t NameAddress = ObjAddr + Offsets::CGameObject::pName;
 		VMMDLL_Scatter_PrepareEx(vmsh, NameAddress, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&ObjectDataBuffers[i].first), nullptr);
 	}
 

@@ -72,6 +72,9 @@ void CPlayerSkeleton::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 
 void CPlayerSkeleton::QuickFinalize()
 {
+	for (auto& Transform : m_Transforms)
+		Transform.QuickFinalize();
+
 	m_BonePositions.fill({});
 	for (size_t i = 0; i < SKELETON_NUMBONES; i++)
 		m_BonePositions[i] = m_Transforms[i].GetPosition();

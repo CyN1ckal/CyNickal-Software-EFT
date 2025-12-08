@@ -3,6 +3,7 @@
 #include "Game/GOM/GOM.h"
 #include "Game/Camera/Camera.h"
 #include "Game/Player List/Player List.h"
+#include "Game/Loot List/Loot List.h"
 
 bool EFT::Initialize(DMA_Connection* Conn)
 {
@@ -15,6 +16,8 @@ bool EFT::Initialize(DMA_Connection* Conn)
 	Camera::Initialize(Conn);
 
 	auto LocalGameWorldAddr = GOM::GetLocalGameWorldAddr(Conn);
+
+	LootList::CompleteUpdate(Conn, LocalGameWorldAddr);
 
 	PlayerList::CompleteUpdate(Conn, LocalGameWorldAddr);
 

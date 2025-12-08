@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Fuser.h"
 #include "Draw/Players.h"
+#include "Draw/Loot.h"
 
 void Fuser::Render()
 {
@@ -11,7 +12,18 @@ void Fuser::Render()
 	auto DrawList = ImGui::GetWindowDrawList();
 
 	DrawESPPlayers::DrawAll(WindowPos, DrawList);
+	DrawESPLoot::DrawAll(WindowPos, DrawList);
 
 	ImGui::End();
 	ImGui::PopStyleColor();
+}
+
+void Fuser::RenderSettings()
+{
+	ImGui::Begin("Fuser Settings");
+	ImGui::Checkbox("Player Names", &DrawESPPlayers::bNameText);
+	ImGui::Checkbox("Player Skeletons", &DrawESPPlayers::bSkeleton);
+	ImGui::Checkbox("Player Head Dots", &DrawESPPlayers::bHeadDot);
+	ImGui::Checkbox("Loot", &DrawESPLoot::bMasterToggle);
+	ImGui::End();
 }

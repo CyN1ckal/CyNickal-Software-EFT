@@ -218,3 +218,13 @@ void PlayerList::PopulatePlayerAddresses(DMA_Connection* Conn)
 			m_ObservedPlayerAddresses.push_back(PlayerInfo.PlayerAddress);
 	}
 }
+
+Vector3 PlayerList::GetLocalPlayerPosition()
+{
+	std::scoped_lock Lock(m_PlayerMutex);
+
+	if (m_Players.empty())
+		return Vector3();
+
+	return std::get<CClientPlayer>(m_Players[0]).GetBonePosition(EBoneIndex::Root);
+}

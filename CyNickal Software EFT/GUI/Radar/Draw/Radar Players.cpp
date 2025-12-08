@@ -1,19 +1,16 @@
 #include "pch.h"
-#include "Player.h"
+#include "Radar Players.h"
 #include "GUI/Radar/Radar.h"
 #include "GUI/Color Picker/Color Picker.h"
 #include "Game/Player List/Player List.h"
 
-void DrawRadarPlayers::DrawAll()
+void DrawRadarPlayers::DrawAll(const ImVec2& WindowPos, const ImVec2& WindowSize, ImDrawList* DrawList)
 {
 	std::scoped_lock lk(PlayerList::m_PlayerMutex);
 
 	if (PlayerList::m_Players.empty())
 		return;
 
-	auto WindowPos = ImGui::GetWindowPos();
-	auto WindowSize = ImGui::GetWindowSize();
-	auto DrawList = ImGui::GetWindowDrawList();
 	auto CenterScreen = ImVec2(WindowPos.x + (WindowSize.x / 2), WindowPos.y + (WindowSize.y / 2));
 	auto& LocalPlayer = std::get<CClientPlayer>(PlayerList::m_Players[0]);
 
@@ -27,6 +24,7 @@ void DrawRadarPlayers::DrawAll()
 	for (int i = 1; i < PlayerList::m_Players.size(); i++)
 	{
 		auto& Player = PlayerList::m_Players[i];
+
 		std::visit([CenterScreen, DrawList, LocalPos](auto& Player) { Draw(Player, CenterScreen, LocalPos, DrawList);  }, Player);
 	}
 }

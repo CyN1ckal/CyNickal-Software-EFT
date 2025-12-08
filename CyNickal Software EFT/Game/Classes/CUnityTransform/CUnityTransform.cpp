@@ -4,53 +4,62 @@
 
 #include "Game/Offsets/Offsets.h"
 
-CUnityTransform::CUnityTransform(uintptr_t TransformAddress) : m_TransformAddress(TransformAddress)
-{
+CUnityTransform::CUnityTransform(uintptr_t TransformAddress) : CBaseEntity(TransformAddress) {
 	//std::println("[CUnityTransform] Constructed with {0:X}", m_TransformAddress);
 }
 
 void CUnityTransform::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
 {
-	VMMDLL_Scatter_PrepareEx(vmsh, m_TransformAddress + Offsets::CUnityTransform::pTransformHierarchy, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HierarchyAddress), nullptr);
-	VMMDLL_Scatter_PrepareEx(vmsh, m_TransformAddress + Offsets::CUnityTransform::Index, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_Index), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CUnityTransform::pTransformHierarchy, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HierarchyAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CUnityTransform::Index, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_Index), nullptr);
 }
 
 void CUnityTransform::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
 {
+	if (m_BytesRead != sizeof(uintptr_t))
+		SetInvalid();
+
+	if (IsInvalid()) return;
+
 	VMMDLL_Scatter_PrepareEx(vmsh, m_HierarchyAddress + Offsets::CTransformHierarchy::pIndices, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_IndicesAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_HierarchyAddress + Offsets::CTransformHierarchy::pVertices, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_VerticesAddress), nullptr);
 }
 
 void CUnityTransform::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
 {
+	if (IsInvalid()) return;
+
 	m_Indices.resize(static_cast<size_t>(m_Index) + 1);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_IndicesAddress, sizeof(uint32_t) * (static_cast<size_t>(m_Index) + 1), reinterpret_cast<BYTE*>(m_Indices.data()), nullptr);
 }
 
 void CUnityTransform::PrepareRead_4(VMMDLL_SCATTER_HANDLE vmsh)
 {
+	if (IsInvalid()) return;
+
 	m_Vertices.resize(static_cast<size_t>(m_Index) + 1);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_VerticesAddress, sizeof(VertexEntry) * (static_cast<size_t>(m_Index) + 1), reinterpret_cast<BYTE*>(m_Vertices.data()), nullptr);
 }
 
 void CUnityTransform::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 {
-	VMMDLL_Scatter_PrepareEx(vmsh, m_VerticesAddress, sizeof(VertexEntry) * (m_Indices[m_Index] + 1), reinterpret_cast<BYTE*>(m_Vertices.data()), nullptr);
+	if (IsInvalid()) return;
+
+	VMMDLL_Scatter_PrepareEx(vmsh, m_VerticesAddress, sizeof(VertexEntry) * (m_Indices[m_Index] + 1), reinterpret_cast<BYTE*>(m_Vertices.data()), reinterpret_cast<DWORD*>(&m_BytesRead));
 }
 
-const bool CUnityTransform::IsInvalid() const
+void CUnityTransform::QuickFinalize()
 {
-	return m_Flags & 0x1;
-}
-
-void CUnityTransform::SetInvalid()
-{
-	m_Flags |= 0x1;
+	if (m_BytesRead != sizeof(VertexEntry) * (m_Indices[m_Index] + 1))
+		SetInvalid();
 }
 
 /* THANK YOU https://www.unknowncheats.me/forum/4527852-post13624.html */
 Vector3 CUnityTransform::GetPosition() const
 {
+	if (IsInvalid())
+		return Vector3{ 0.f, 0.f, 0.f };
+
 	static constexpr __m128 MulVec1 = { -2.f, 2.f, -2.f, 0.f };
 	static constexpr __m128 MulVec2 = { 2.f, -2.f, -2.f, 0.f };
 	static constexpr __m128 MulVec3 = { -2.f, -2.f, 2.f, 0.f };

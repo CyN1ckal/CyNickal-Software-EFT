@@ -80,7 +80,7 @@ bool Camera::Initialize(DMA_Connection* Conn)
 	std::println("[Camera] FPS Camera Address: 0x{:X}", FPSCamAddress);
 
 	auto ObjectAddress = Proc.ReadMem<uintptr_t>(Conn, FPSCamAddress + Offsets::CComponent::pGameObject);
-	auto ComponentAddress = Proc.ReadMem<uintptr_t>(Conn, ObjectAddress + Offsets::CObject::pComponents);
+	auto ComponentAddress = Proc.ReadMem<uintptr_t>(Conn, ObjectAddress + Offsets::CGameObject::pComponents);
 	auto CameraInfoAddress = Proc.ReadMem<uintptr_t>(Conn, ComponentAddress + Offsets::CCamera::pCameraInfo);
 
 	m_ViewMatrixAddress = CameraInfoAddress + Offsets::CCameraInfo::Matrix;
@@ -113,7 +113,7 @@ bool Camera::InitializeCameraCache(DMA_Connection* Conn)
 	{
 		uintptr_t CameraAddr = Proc.ReadMem<uintptr_t>(Conn, m_CameraHeadAddress + (i * sizeof(uintptr_t)));
 		uintptr_t GameObjectAddress = Proc.ReadMem<uintptr_t>(Conn, CameraAddr + Offsets::CComponent::pGameObject);
-		uintptr_t NameAddress = Proc.ReadMem<uintptr_t>(Conn, GameObjectAddress + Offsets::CObject::pName);
+		uintptr_t NameAddress = Proc.ReadMem<uintptr_t>(Conn, GameObjectAddress + Offsets::CGameObject::pName);
 		NameBuff Buffer = Proc.ReadMem<NameBuff>(Conn, NameAddress);
 		std::string NameStr(Buffer.Name);
 		m_CameraCache.push_back({ CameraAddr, NameStr });

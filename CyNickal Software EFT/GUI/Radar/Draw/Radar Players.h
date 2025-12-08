@@ -5,7 +5,7 @@
 class DrawRadarPlayers
 {
 public:
-	static void DrawAll();
+	static void DrawAll(const ImVec2& WindowPos, const ImVec2& WindowSize, ImDrawList* DrawList);
 
 private:
 	static void Draw(const CClientPlayer& Player, const ImVec2& CenterScreen, const Vector3& LocalPos, ImDrawList* DrawList);

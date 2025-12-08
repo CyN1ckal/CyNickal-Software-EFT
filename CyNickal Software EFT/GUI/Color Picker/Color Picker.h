@@ -14,4 +14,5 @@ public:
 	static inline ImColor m_PlayerScavColor{ ImColor(220,170,0) };
 	static inline ImColor m_LocalPlayerColor{ ImColor(0,200,0) };
 	static inline ImColor m_BossColor{ ImColor(225,0,225) };
+	static inline ImColor m_LootColor{ ImColor(0,255,0) };
 };

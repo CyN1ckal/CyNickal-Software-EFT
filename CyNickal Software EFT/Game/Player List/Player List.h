@@ -22,6 +22,8 @@ public:
 	static void UpdateBaseAddresses(DMA_Connection* Conn, uintptr_t LocalGameWorld);
 	static void PopulatePlayerAddresses(DMA_Connection* Conn);
 
+	static Vector3 GetLocalPlayerPosition();
+
 private:
 	static void PrintPlayers();
 

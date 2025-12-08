@@ -96,7 +96,7 @@
     <ClCompile Include="GUI\Color Picker\Color Picker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Radar\Draw\Player.cpp">
+    <ClCompile Include="GUI\Radar\Draw\Radar Players.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Fonts\Fonts.cpp">
@@ -106,6 +106,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Classes\CPlayerSkeleton\CPlayerSkeleton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Loot List\Loot List.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CLoot\CLoot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Fuser\Draw\Loot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Radar\Draw\RadarLoot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -209,9 +221,6 @@
     <ClInclude Include="GUI\Color Picker\Color Picker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Radar\Draw\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Classes\Players\CBaseEFTPlayer\BossNameMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -234,6 +243,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Enums\EPlayerSide.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Loot List\Loot List.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CLoot\CLoot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Fuser\Draw\Loot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Radar\Draw\Radar Loot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Radar\Draw\Radar Players.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

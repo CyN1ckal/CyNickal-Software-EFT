@@ -11,6 +11,7 @@ void ColorPicker::Render()
 	MyColorPicker("Boss Color", m_BossColor);
 	MyColorPicker("Player Scav Color", m_PlayerScavColor);
 	MyColorPicker("Local Player Color", m_LocalPlayerColor);
+	MyColorPicker("Loot Color", m_LootColor);
 
 	ImGui::End();
 }

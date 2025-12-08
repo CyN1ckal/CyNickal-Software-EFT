@@ -17,11 +17,6 @@ namespace Offsets
 	//48 8B 05 ? ? ? ? 49 C7 C6 ? ? ? ? 8B 48 ? 85 C9 0F 84 ? ? ? ? 48 89 9C 24
 	inline constexpr std::ptrdiff_t pCameras{ 0x19F0100 };
 
-	namespace CObject
-	{
-		inline constexpr std::ptrdiff_t pComponents{ 0x58 };
-		inline constexpr std::ptrdiff_t pName{ 0x88 };
-	}
 	namespace CGameObjectManager
 	{
 		inline constexpr std::ptrdiff_t pActiveNodes{ 0x20 };
@@ -32,6 +27,7 @@ namespace Offsets
 		inline constexpr std::ptrdiff_t pMapName{ 0xC0 };
 		inline constexpr std::ptrdiff_t pRegisteredPlayers{ 0x198 };
 		inline constexpr std::ptrdiff_t pMainPlayer{ 0x1E8 };
+		inline constexpr std::ptrdiff_t pLootList{ 0x180 };
 	};
 	namespace CRegisteredPlayers
 	{
@@ -145,5 +141,10 @@ namespace Offsets
 	namespace CSkeletonValues
 	{
 		inline constexpr std::ptrdiff_t pBoneArray{ 0x10 };
+	}
+	namespace CGameObject
+	{
+		inline constexpr std::ptrdiff_t pComponents{ 0x58 };
+		inline constexpr std::ptrdiff_t pName{ 0x88 };
 	}
 };

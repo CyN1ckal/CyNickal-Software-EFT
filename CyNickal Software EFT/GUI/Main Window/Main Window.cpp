@@ -22,6 +22,7 @@ void Render(ImGuiContext* ctx)
 	Radar::Render();
 	Radar::RenderSettings();
 	Fuser::Render();
+	Fuser::RenderSettings();
 	PlayerTable::Render();
 	ColorPicker::Render();
 

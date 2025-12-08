@@ -7,10 +7,15 @@ class DrawESPPlayers
 public:
 	static void DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList);
 
+public:
+	static inline bool bNameText{ true };
+	static inline bool bSkeleton{ true };
+	static inline bool bHeadDot{ true };
+
 private:
 	static void Draw(const CBaseEFTPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList);
 	static void DrawSkeleton(const CPlayerSkeleton& Skeleton, const ImVec2& WindowPos, ImDrawList* DrawList);
 
-private: 
+private:
 	static inline Vector3 m_LatestLocalPlayerPos{};
 };

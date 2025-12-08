@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GUI/Radar/Radar.h"
-#include "GUI/Radar/Draw/Player.h"
+#include "GUI/Radar/Draw/Radar Players.h"
+#include "GUI/Radar/Draw/Radar Loot.h"
 
 void Radar::Render()
 {
@@ -15,7 +16,8 @@ void Radar::Render()
 
 	DrawList->AddRectFilled(RectTopLeft, RectBottomRight, IM_COL32(55, 55, 55, 255));
 
-	DrawRadarPlayers::DrawAll();
+	DrawRadarPlayers::DrawAll(WindowPos, WindowSize, DrawList);
+	DrawRadarLoot::DrawAll(WindowPos, WindowSize, DrawList);
 
 	ImGui::End();
 }
@@ -29,6 +31,7 @@ void Radar::RenderSettings()
 	ImGui::SliderFloat("Other View Ray Length", &Radar::fOtherViewRayLength, 10.0f, 500.0f, "%.1f");
 	ImGui::Checkbox("Local Player View Ray", &Radar::bLocalViewRay);
 	ImGui::Checkbox("Players View Rays", &Radar::bOtherPlayerViewRays);
+	ImGui::Checkbox("Loot", &DrawRadarLoot::bMasterToggle);
 
 	ImGui::End();
 }
