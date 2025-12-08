@@ -66,10 +66,16 @@ Vector3 CUnityTransform::GetPosition() const
 
 	__m128 Intermediate = m_Vertices[m_Index].Translation;
 	auto DependencyIndex = m_Indices[m_Index];
+	static constexpr size_t MaxIterations = 128;
+	size_t IterationCount = 0;
 
 	while (DependencyIndex >= 0)
 	{
 		if (static_cast<size_t>(DependencyIndex) >= m_Vertices.size() || static_cast<size_t>(DependencyIndex) >= m_Indices.size())
+			break;
+
+		IterationCount++;
+		if (IterationCount >= MaxIterations)
 			break;
 
 		VertexEntry m = m_Vertices[DependencyIndex];

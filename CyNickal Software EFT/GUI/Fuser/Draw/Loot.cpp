@@ -3,12 +3,15 @@
 #include "Game/Loot List/Loot List.h"
 #include "Game/Camera/Camera.h"
 #include "GUI/Color Picker/Color Picker.h"
+#include "Game/Player List/Player List.h"
 
 void DrawESPLoot::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 {
 	if (!bMasterToggle) return;
 
 	std::scoped_lock lk(LootList::m_LootMutex);
+
+	auto LocalPlayerPos = PlayerList::GetLocalPlayerPosition();
 
 	Vector2 ScreenPos{};
 	for (auto& Loot : LootList::m_LootList)
@@ -17,7 +20,15 @@ void DrawESPLoot::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 
 		if (!Camera::WorldToScreen(Loot.m_Position, ScreenPos))	continue;
 
-		std::string Text = std::format("{0:s}", Loot.m_Name.data());
+		float Distance = LocalPlayerPos.DistanceTo(Loot.m_Position);
+
+		if (Distance > fMaxDistance)
+			continue;
+
+		if (m_LootFilter.IsActive() && !m_LootFilter.PassFilter(Loot.m_Name.data()))
+			continue;
+
+			std::string Text = std::format("{0:s} [{1:.0f}m]", Loot.m_Name.data(), Distance);
 
 		auto TextSize = ImGui::CalcTextSize(Text.c_str());
 
