@@ -37,8 +37,8 @@ void LootTable::Render()
 			ImGui::Text("%.0fm", LocalPlayerPos.DistanceTo(Loot.m_Position));
 		}
 
+		ImGui::EndTable();
 	}
-	ImGui::EndTable();
 
 	ImGui::End();
 }

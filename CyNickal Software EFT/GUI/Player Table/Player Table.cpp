@@ -24,8 +24,9 @@ void PlayerTable::Render()
 		std::scoped_lock Lock(PlayerList::m_PlayerMutex);
 		for (auto& Player : PlayerList::m_Players)
 			std::visit([](auto& Player) { PlayerTable::AddRow(Player); }, Player);
+
+		ImGui::EndTable();
 	}
-	ImGui::EndTable();
 
 	ImGui::End();
 }

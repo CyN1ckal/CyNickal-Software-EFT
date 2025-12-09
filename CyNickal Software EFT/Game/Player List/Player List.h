@@ -16,6 +16,7 @@ public: /* Interface methods */
 	static void UpdateBaseAddresses(DMA_Connection* Conn, uintptr_t LocalGameWorld);
 	static void HandlePlayerAllocations(DMA_Connection* Conn);
 	static Vector3 GetLocalPlayerPosition();
+	static Vector3 GetPlayerPosition(uintptr_t m_EntityAddress, EBoneIndex BoneIndex);
 
 private: /* Private methods */
 	static void GetPlayerAddresses(DMA_Connection* Conn, std::vector<uintptr_t>& OutClientPlayers, std::vector<uintptr_t>& OutObservedPlayers);

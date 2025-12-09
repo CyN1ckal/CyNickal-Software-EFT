@@ -278,6 +278,26 @@ Vector3 PlayerList::GetLocalPlayerPosition()
 	return ReturnPosition;
 }
 
+Vector3 PlayerList::GetPlayerPosition(uintptr_t m_EntityAddress, EBoneIndex BoneIndex)
+{
+	std::scoped_lock Lock(m_PlayerMutex);
+	Vector3 BonePos{};
+	bool bFound{ false };
+
+	for (auto& Player : m_Players)
+	{
+		std::visit([&](auto& p) {
+			if (p.m_EntityAddress == m_EntityAddress) {
+				bFound = true;
+				BonePos = p.GetBonePosition(BoneIndex);
+			}
+			}, Player);
+
+		if (bFound)	return BonePos;
+	}
+	return BonePos;
+}
+
 void PlayerList::AllocatePlayersFromVector(DMA_Connection* Conn, std::vector<uintptr_t> PlayerAddresses, EPlayerType playerType)
 {
 	std::println("[PlayerList] Allocating {} players of type {}", PlayerAddresses.size(),

@@ -6,6 +6,7 @@
 #include "GUI/Main Menu/Main Menu.h"
 #include "GUI/Radar/Radar.h"
 #include "GUI/Fuser/Fuser.h"
+#include "GUI/Aimbot/Aimbot.h"
 #include "GUI/Player Table/Player Table.h"
 #include "GUI/Loot Table/Loot Table.h"
 #include "GUI/Color Picker/Color Picker.h"
@@ -25,6 +26,7 @@ void Render(ImGuiContext* ctx)
 	Radar::RenderSettings();
 	Fuser::Render();
 	Fuser::RenderSettings();
+	Aimbot::RenderSettings();
 	PlayerTable::Render();
 	LootTable::Render();
 	ColorPicker::Render();
