@@ -120,10 +120,11 @@ void PlayerList::QuickUpdate(DMA_Connection* Conn)
 		std::visit([vmsh](auto& p) { p.QuickRead(vmsh); }, Player);
 
 	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_CloseHandle(vmsh);
 
 	for (auto& Player : m_Players)
 		std::visit([](auto& p) { p.QuickFinalize(); }, Player);
+
+	VMMDLL_Scatter_CloseHandle(vmsh);
 }
 
 void PlayerList::FullUpdate(DMA_Connection* Conn, uintptr_t LocalGameWorld)

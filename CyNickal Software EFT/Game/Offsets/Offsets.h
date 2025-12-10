@@ -42,6 +42,7 @@ namespace Offsets
 		inline constexpr std::ptrdiff_t pLocation{ 0x868 };
 		inline constexpr std::ptrdiff_t pProfile{ 0x8E0 };
 		inline constexpr std::ptrdiff_t pAiData{ 0x920 };
+		inline constexpr std::ptrdiff_t pHandsController{ 0x960 };
 	}
 	namespace CObservedPlayer
 	{
@@ -55,6 +56,7 @@ namespace Offsets
 	namespace CPlayerController
 	{
 		inline constexpr std::ptrdiff_t pMovementController{ 0x30 };
+		inline constexpr std::ptrdiff_t pHands{ 0x30 };
 	}
 	namespace CMovementController
 	{
@@ -63,6 +65,7 @@ namespace Offsets
 	namespace CObservedMovementState
 	{
 		inline constexpr std::ptrdiff_t Rotation{ 0x20 };
+		inline constexpr std::ptrdiff_t pObservedPlayerHands{ 0x130 };
 	}
 	namespace CMovementContext
 	{
@@ -126,6 +129,14 @@ namespace Offsets
 	{
 		inline constexpr std::ptrdiff_t pSpawnProfileData{ 0x3C0 };
 	}
+	namespace CItem
+	{
+		inline constexpr std::ptrdiff_t pTemplate{ 0x60 };
+	}
+	namespace CTemplate
+	{
+		inline constexpr std::ptrdiff_t pName{ 0x18 };
+	}
 	namespace CSpawnProfileData
 	{
 		inline constexpr std::ptrdiff_t SpawnType{ 0x10 };
@@ -151,5 +162,16 @@ namespace Offsets
 	namespace CHealthController
 	{
 		inline constexpr std::ptrdiff_t HealthStatus{ 0x10 };
+	}
+
+	/*namespace: , class: ItemHandsController : AbstractHandsController */
+	namespace CHandsController
+	{
+		inline constexpr std::ptrdiff_t pItem{ 0x70 };
+	}	
+	/* namespace: EFT.NextObservedPlayer, class: ObservedPlayerHandsController : System::Object */
+	namespace CObservedPlayerHands
+	{
+		inline constexpr std::ptrdiff_t pItem{ 0x58 };
 	}
 };

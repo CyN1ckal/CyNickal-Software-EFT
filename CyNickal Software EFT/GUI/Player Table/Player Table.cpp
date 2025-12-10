@@ -9,7 +9,7 @@ void PlayerTable::Render()
 
 	ImGui::Begin("Player Table", &bMasterToggle);
 
-	if (ImGui::BeginTable("##Players", 8))
+	if (ImGui::BeginTable("##Players", 10))
 	{
 		ImGui::TableSetupColumn("Address");
 		ImGui::TableSetupColumn("Position");
@@ -19,6 +19,8 @@ void PlayerTable::Render()
 		ImGui::TableSetupColumn("Voice");
 		ImGui::TableSetupColumn("Local Player?");
 		ImGui::TableSetupColumn("Tag Status");
+		ImGui::TableSetupColumn("Weapon");
+		ImGui::TableSetupColumn("Copy");
 		ImGui::TableHeadersRow();
 
 		std::scoped_lock Lock(PlayerList::m_PlayerMutex);
@@ -54,6 +56,11 @@ void PlayerTable::AddRow(const CClientPlayer& Player)
 	ImGui::Text("%d", (Player.IsLocalPlayer()) ? 1 : 0);
 	ImGui::TableNextColumn();
 	ImGui::Text("N/A");
+	ImGui::TableNextColumn();
+	ImGui::Text((Player.m_pHands) ? Player.m_pHands->m_HeldItem.GetItemName() : "N/A");
+	ImGui::TableNextColumn();
+	std::string Copy = "Copy##" + std::to_string(Player.m_EntityAddress);
+	if (ImGui::Button(Copy.c_str())) ImGui::SetClipboardText(std::to_string(Player.m_EntityAddress).c_str());
 }
 
 void PlayerTable::AddRow(const CObservedPlayer& Player)
@@ -79,4 +86,9 @@ void PlayerTable::AddRow(const CObservedPlayer& Player)
 	ImGui::Text("N/A");
 	ImGui::TableNextColumn();
 	ImGui::Text("%X", Player.m_TagStatus);
+	ImGui::TableNextColumn();
+	ImGui::Text((Player.m_pHands) ? Player.m_pHands->m_HeldItem.GetItemName() : "N/A");
+	ImGui::TableNextColumn();
+	std::string Copy = "Copy##" + std::to_string(Player.m_EntityAddress);
+	if (ImGui::Button(Copy.c_str())) ImGui::SetClipboardText(std::to_string(Player.m_EntityAddress).c_str());
 }

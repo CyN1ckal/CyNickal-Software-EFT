@@ -7,7 +7,9 @@
 
 void Aimbot::RenderSettings()
 {
-	ImGui::Begin("Aimbot Settings");
+	if (!bSettings) return;
+
+	ImGui::Begin("Aimbot Settings", &bSettings);
 
 	if (m_Device.isConnected() == false)
 	{

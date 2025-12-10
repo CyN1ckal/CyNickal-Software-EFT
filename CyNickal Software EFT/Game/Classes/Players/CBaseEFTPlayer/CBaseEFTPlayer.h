@@ -2,19 +2,17 @@
 #include "Game/Classes/CBaseEntity/CBaseEntity.h"
 #include "Game/Classes/Vector.h"
 #include "Game/Classes/CPlayerSkeleton/CPlayerSkeleton.h"
+#include "Game/Classes/CHeldItem/CHeldItem.h"
+#include "Game/Classes/CItem/CItem.h"
 #include "Game/Enums/EPlayerSide.h"
 #include "Game/Enums/ESpawnType.h"
-
-enum class EPlayerType
-{
-	eMainPlayer,
-	eObservedPlayer
-};
+#include "Game/Enums/EPlayerType.h"
 
 class CBaseEFTPlayer : public CBaseEntity
 {
 public:
 	std::unique_ptr<CPlayerSkeleton> m_pSkeleton{ nullptr };
+	std::unique_ptr<CHeldItem> m_pHands{ nullptr };
 	float m_Yaw{ 0.0f };
 	EPlayerSide m_Side{ EPlayerSide::UNKNOWN };
 	ESpawnType m_SpawnType{ ESpawnType::UNKNOWN };
@@ -40,7 +38,7 @@ public:
 	void PrepareRead_9(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_10(VMMDLL_SCATTER_HANDLE vmsh);
 	void Finalize();
-	void QuickRead(VMMDLL_SCATTER_HANDLE vmsh);
+	void QuickRead(VMMDLL_SCATTER_HANDLE vmsh, EPlayerType playerType);
 	void QuickFinalize();
 
 public:

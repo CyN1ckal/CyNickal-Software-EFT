@@ -55,6 +55,23 @@ void DrawESPPlayers::DrawObservedPlayerHealthText(const CObservedPlayer& Player,
 	LineNumber++;
 }
 
+void DrawESPPlayers::DrawPlayerWeapon(const CHeldItem* pHands, const ImVec2& WindowPos, ImDrawList* DrawList, uint8_t& LineNumber)
+{
+	if (pHands == nullptr)
+		return;
+
+	if (pHands->IsInvalid()) return;
+
+	auto TextSize = ImGui::CalcTextSize(pHands->m_HeldItem.GetItemName());
+	auto& ProjectedRootPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]];
+	DrawList->AddText(
+		ImVec2(WindowPos.x + ProjectedRootPos.x - (TextSize.x / 2.0f), WindowPos.y + ProjectedRootPos.y + (ImGui::GetTextLineHeight() * LineNumber)),
+		ImColor(255, 255, 255, 255),
+		pHands->m_HeldItem.GetItemName()
+	);
+	LineNumber++;
+}
+
 void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
 	if (Player.IsInvalid())	return;
@@ -70,6 +87,7 @@ void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos
 
 	if (bNameText) {
 		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetSideColor(), LineNumber);
+		DrawPlayerWeapon(Player.m_pHands.get(), WindowPos, DrawList, LineNumber);
 		DrawObservedPlayerHealthText(Player, WindowPos, DrawList, LineNumber);
 	}
 
@@ -99,6 +117,7 @@ void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, 
 
 	if (bNameText) {
 		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetSideColor(), LineNumber);
+		DrawPlayerWeapon(Player.m_pHands.get(), WindowPos, DrawList, LineNumber);
 	}
 
 	if (bHeadDot) {

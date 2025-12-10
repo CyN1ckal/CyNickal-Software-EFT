@@ -232,6 +232,8 @@
     <ClCompile Include="DMA\Process.cpp" />
     <ClCompile Include="Game\Camera\Camera.cpp" />
     <ClCompile Include="Game\Classes\CBaseEntity\CBaseEntity.cpp" />
+    <ClCompile Include="Game\Classes\CHeldItem\CHeldItem.cpp" />
+    <ClCompile Include="Game\Classes\CItem\CItem.cpp" />
     <ClCompile Include="Game\Classes\CLinkedListEntry.cpp" />
     <ClCompile Include="Game\Classes\CLoot\CLoot.cpp" />
     <ClCompile Include="Game\Classes\CPlayerSkeleton\CPlayerSkeleton.cpp" />
@@ -278,6 +280,8 @@
     <ClInclude Include="Game\Camera\Camera.h" />
     <ClInclude Include="Game\Classes\CBaseEntity\CBaseEntity.h" />
     <ClInclude Include="Game\Classes\CGameObjectManager.h" />
+    <ClInclude Include="Game\Classes\CHeldItem\CHeldItem.h" />
+    <ClInclude Include="Game\Classes\CItem\CItem.h" />
     <ClInclude Include="Game\Classes\CLinkedListEntry.h" />
     <ClInclude Include="Game\Classes\CLoot\CLoot.h" />
     <ClInclude Include="Game\Classes\CObject.h" />
@@ -292,6 +296,7 @@
     <ClInclude Include="Game\EFT.h" />
     <ClInclude Include="Game\Enums\EBoneIndex.h" />
     <ClInclude Include="Game\Enums\EPlayerSide.h" />
+    <ClInclude Include="Game\Enums\EPlayerType.h" />
     <ClInclude Include="Game\Enums\ESpawnType.h" />
     <ClInclude Include="Game\GOM\GOM.h" />
     <ClInclude Include="Game\Loot List\Loot List.h" />
