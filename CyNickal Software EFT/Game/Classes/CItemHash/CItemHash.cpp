@@ -66,6 +66,8 @@ const std::unordered_map<uint32_t, std::string> gItemNames
 	{0xA3337E07, "AK-103"},
 	{0x7DD65260, "IWI UZI"},
 	{0x9A6EDF14, "PPSh-41"},
+	{0xFB2CD802, "M4A1"},
+	{0x71A0A377, "M16A1"},
 
 	/* Other items */
 	{0x7107CDBF, "Power Cord"},
@@ -99,6 +101,8 @@ const std::unordered_map<uint32_t, std::string> gItemNames
 	{0xFE8849CF, "Static Corpse"},
 	{0x71DF944E, "Static Corpse"},
 	{0x3B201746, "Static Corpse"},
+	{0xA9904ABD, "Ammo Crate"},
+	{0x84CAE97A, "Weapon Box"},
 };
 
 const std::unordered_map<uint32_t, std::string> gValuables

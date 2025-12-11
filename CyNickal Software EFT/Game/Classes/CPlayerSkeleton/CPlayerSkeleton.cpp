@@ -72,6 +72,8 @@ void CPlayerSkeleton::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 
 void CPlayerSkeleton::QuickFinalize()
 {
+	if (IsInvalid()) return;
+
 	for (auto& Transform : m_Transforms)
 		Transform.QuickFinalize();
 

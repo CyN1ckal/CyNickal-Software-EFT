@@ -124,7 +124,8 @@ void CBaseEFTPlayer::QuickFinalize()
 	if (IsInvalid())
 		return;
 
-	m_pSkeleton->QuickFinalize();
+	if (m_pSkeleton)
+		m_pSkeleton->QuickFinalize();
 }
 
 const bool CBaseEFTPlayer::IsAi() const
