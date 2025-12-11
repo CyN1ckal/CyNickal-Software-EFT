@@ -166,7 +166,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)Dependencies\MemProcFS;$(SolutionDir)Dependencies\ImGui;$(SolutionDir)Dependencies\Makcu\include;$(SolutionDir)Dependencies\sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)Dependencies\MemProcFS;$(SolutionDir)Dependencies\ImGui;$(SolutionDir)Dependencies\Makcu\include;$(SolutionDir)Dependencies\sqlite;$(SolutionDir)Dependencies\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -189,7 +189,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)Dependencies\MemProcFS;$(SolutionDir)Dependencies\ImGui;$(SolutionDir)Dependencies\Makcu\include;$(SolutionDir)Dependencies\sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)Dependencies\MemProcFS;$(SolutionDir)Dependencies\ImGui;$(SolutionDir)Dependencies\Makcu\include;$(SolutionDir)Dependencies\sqlite;$(SolutionDir)Dependencies\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdclatest</LanguageStandard_C>
     </ClCompile>
     <Link>
