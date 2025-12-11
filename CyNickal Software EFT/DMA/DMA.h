@@ -9,6 +9,7 @@ private:
 	static inline DMA_Connection* m_Instance = nullptr;
 
 public:
+	static void LightRefreshWrapper();
 	VMM_HANDLE GetHandle();
 	bool EndConnection();
 

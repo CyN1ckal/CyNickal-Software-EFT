@@ -10,6 +10,8 @@ CUnityTransform::CUnityTransform(uintptr_t TransformAddress) : CBaseEntity(Trans
 
 void CUnityTransform::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
 {
+	if (IsInvalid()) return;
+
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CUnityTransform::pTransformHierarchy, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HierarchyAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CUnityTransform::Index, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_Index), nullptr);
 }
@@ -50,6 +52,8 @@ void CUnityTransform::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 
 void CUnityTransform::QuickFinalize()
 {
+	if (IsInvalid()) return;
+
 	if (m_BytesRead != sizeof(VertexEntry) * (m_Indices[m_Index] + 1))
 		SetInvalid();
 }

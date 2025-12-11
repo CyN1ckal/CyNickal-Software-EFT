@@ -10,6 +10,11 @@ DMA_Connection* DMA_Connection::GetInstance()
 	return m_Instance;
 }
 
+void DMA_Connection::LightRefreshWrapper()
+{
+	VMMDLL_ConfigSet(GetInstance()->GetHandle(), VMMDLL_OPT_REFRESH_FREQ_TLB, 1);
+}
+
 VMM_HANDLE DMA_Connection::GetHandle()
 {
 	return m_VMMHandle;
@@ -26,9 +31,9 @@ DMA_Connection::DMA_Connection()
 {
 	std::println("Connecting to DMA...");
 
-	LPCSTR args[] = { "", "-device", "FPGA" };
+	LPCSTR args[] = { "", "-device", "FPGA", "-norefresh"};
 
-	m_VMMHandle = VMMDLL_Initialize(3, args);
+	m_VMMHandle = VMMDLL_Initialize(4, args);
 
 	if (!m_VMMHandle)
 		throw std::runtime_error("Failed to initialize VMM DLL");
