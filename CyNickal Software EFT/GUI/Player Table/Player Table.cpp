@@ -9,7 +9,8 @@ void PlayerTable::Render()
 
 	ImGui::Begin("Player Table", &bMasterToggle);
 
-	if (ImGui::BeginTable("##Players", 12))
+	ImGuiTableFlags TableFlags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Sortable | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoBordersInBody;
+	if (ImGui::BeginTable("##Players", 12, TableFlags))
 	{
 		ImGui::TableSetupColumn("Address");
 		ImGui::TableSetupColumn("Copy Addr");
