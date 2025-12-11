@@ -107,7 +107,7 @@ uintptr_t GOM::GetLocalGameWorldAddr(DMA_Connection* Conn)
 	{
 		auto Deref1 = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddr + Offsets::CGameObject::pComponents);
 		auto Deref2 = Proc.ReadMem<uintptr_t>(Conn, Deref1 + 0x18);
-		auto LocalWorldAddr = Proc.ReadMem<uintptr_t>(Conn, Deref2 + 0x30);
+		auto LocalWorldAddr = Proc.ReadMem<uintptr_t>(Conn, Deref2 + Offsets::CComponent::pObjectClass);
 		auto MainPlayerAddr = Proc.ReadMem<uintptr_t>(Conn, LocalWorldAddr + Offsets::CLocalGameWorld::pMainPlayer);
 
 		if (MainPlayerAddr)
