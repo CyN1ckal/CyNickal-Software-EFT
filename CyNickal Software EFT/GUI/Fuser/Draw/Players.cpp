@@ -62,6 +62,8 @@ void DrawESPPlayers::DrawPlayerWeapon(const CHeldItem* pHands, const ImVec2& Win
 
 	if (pHands->IsInvalid()) return;
 
+	const char* ItemName = pHands->m_HeldItem.GetSanitizedName();
+
 	auto TextSize = ImGui::CalcTextSize(pHands->m_HeldItem.GetSanitizedName());
 	auto& ProjectedRootPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]];
 	DrawList->AddText(

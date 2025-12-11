@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Classes/CBaseEntity/CBaseEntity.h"
 #include "Game/Classes/CUnityTransform/CUnityTransform.h"
+#include "Game/Classes/CItemHash/CItemHash.h"
 
 class CLoot : public CBaseEntity
 {
@@ -18,9 +19,14 @@ public:
 	void Finalize();
 	void QuickFinalize();
 
+	const char* GetName() const;
+	const ImColor GetColor() const;
+	const bool IsValuable() const;
+
 public:
 	std::array<char, 64> m_Name{};
 	Vector3 m_Position{};
+	CItemHash m_ItemHash{ "" };
 
 private:
 	CUnityTransform m_Transform{ 0x0 };
@@ -30,4 +36,5 @@ private:
 	uintptr_t m_NameAddress{ 0 };
 	uintptr_t m_ComponentAddress{ 0 };
 	uintptr_t m_TransformAddress{ 0 };
+	bool m_bIsValuable{ false };
 };

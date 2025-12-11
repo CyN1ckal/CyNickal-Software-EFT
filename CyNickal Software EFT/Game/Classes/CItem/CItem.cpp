@@ -104,5 +104,10 @@ const char* CItem::GetUnfilteredName() const
 
 const char* CItem::GetSanitizedName() const
 {
-	return m_ItemHash.GetName().c_str();
+	auto HashName = m_ItemHash.GetName();
+
+	if (HashName)
+		return HashName;
+
+	return "Unknown";
 }

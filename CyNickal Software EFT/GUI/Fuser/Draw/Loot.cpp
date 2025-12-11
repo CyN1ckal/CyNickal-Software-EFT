@@ -22,19 +22,24 @@ void DrawESPLoot::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 
 		float Distance = LocalPlayerPos.DistanceTo(Loot.m_Position);
 
-		if (Distance > fMaxDistance)
-			continue;
+		if (Loot.IsValuable() == false)
+		{
+			if (Distance > fMaxDistance)
+				continue;
 
-		if (m_LootFilter.IsActive() && !m_LootFilter.PassFilter(Loot.m_Name.data()))
-			continue;
+			if (m_LootFilter.IsActive() && !m_LootFilter.PassFilter(Loot.m_Name.data()))
+				continue;
+		}
 
-			std::string Text = std::format("{0:s} [{1:.0f}m]", Loot.m_Name.data(), Distance);
+		const char* ItemName = Loot.GetName();
+
+		std::string Text = std::format("{0:s} [{1:.0f}m]", ItemName, Distance);
 
 		auto TextSize = ImGui::CalcTextSize(Text.c_str());
 
 		DrawList->AddText(
 			ImVec2(WindowPos.x + ScreenPos.x - (TextSize.x / 2.0f), WindowPos.y + ScreenPos.y),
-			ColorPicker::m_LootColor,
+			Loot.GetColor(),
 			Text.c_str()
 		);
 	}

@@ -11,11 +11,15 @@ void LootTable::Render()
 
 	m_LootFilter.Draw("##LootTableFilter", -FLT_MIN);
 
-	if (ImGui::BeginTable("#LootTable", 3))
+	ImGuiTableFlags TableFlags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoBordersInBody;
+	if (ImGui::BeginTable("#LootTable", 5, TableFlags))
 	{
-		ImGui::TableSetupColumn("Name");
+		ImGui::TableSetupColumn("Raw Name");
 		ImGui::TableSetupColumn("Position");
 		ImGui::TableSetupColumn("Distance");
+		ImGui::TableSetupColumn("Sanitized Name");
+		ImGui::TableSetupColumn("JOAAT");
+		ImGui::TableSetupScrollFreeze(1, 1);
 		ImGui::TableHeadersRow();
 
 		auto LocalPlayerPos = PlayerList::GetLocalPlayerPosition();
@@ -35,6 +39,14 @@ void LootTable::Render()
 			ImGui::Text("%.0f %.0f %.0f", Loot.m_Position.x, Loot.m_Position.y, Loot.m_Position.z);
 			ImGui::TableNextColumn();
 			ImGui::Text("%.0fm", LocalPlayerPos.DistanceTo(Loot.m_Position));
+			ImGui::TableNextColumn();
+			auto ItemName = Loot.GetName();
+			if (ItemName)
+				ImGui::Text(Loot.GetName());
+			ImGui::TableNextColumn();
+			std::string Joaat = "Copy##" + std::to_string(Loot.m_EntityAddress);
+			if (ImGui::Button(Joaat.c_str()))
+				ImGui::SetClipboardText(std::format("0x{0:X}", Loot.m_ItemHash.GetHash()).c_str());
 		}
 
 		ImGui::EndTable();

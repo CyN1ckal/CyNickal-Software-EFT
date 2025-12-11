@@ -9,7 +9,7 @@ void PlayerTable::Render()
 
 	ImGui::Begin("Player Table", &bMasterToggle);
 
-	ImGuiTableFlags TableFlags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_Sortable | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoBordersInBody;
+	ImGuiTableFlags TableFlags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoBordersInBody;
 	if (ImGui::BeginTable("##Players", 12, TableFlags))
 	{
 		ImGui::TableSetupColumn("Address");
@@ -65,7 +65,7 @@ void PlayerTable::AddRow(const CClientPlayer& Player)
 	ImGui::TableNextColumn();
 	ImGui::Text((Player.m_pHands) ? Player.m_pHands->m_HeldItem.GetUnfilteredName() : "N/A");
 	ImGui::TableNextColumn();
-	ImGui::Text((Player.m_pHands) ? Player.m_pHands->m_HeldItem.GetSanitizedName() : "N/A");
+	ImGui::Text((Player.m_pHands && Player.m_pHands->m_HeldItem.GetSanitizedName()) ? Player.m_pHands->m_HeldItem.GetSanitizedName() : "N/A");
 	ImGui::TableNextColumn();
 	std::string JOAAT = "JOAAT##" + std::to_string(Player.m_EntityAddress);
 	if (ImGui::Button(JOAAT.c_str())) ImGui::SetClipboardText(std::format("0x{0:X}", Player.m_pHands->m_HeldItem.m_ItemHash.GetHash()).c_str());

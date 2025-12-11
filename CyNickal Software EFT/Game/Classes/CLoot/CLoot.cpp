@@ -2,6 +2,7 @@
 #include "CLoot.h"
 #include "DMA/DMA.h"
 #include "Game/Offsets/Offsets.h"
+#include "GUI/Color Picker/Color Picker.h"
 
 CLoot::CLoot(uintptr_t LootAddress) : CBaseEntity(LootAddress)
 {
@@ -60,6 +61,8 @@ void CLoot::PrepareRead_5(VMMDLL_SCATTER_HANDLE vmsh)
 	if (m_BytesRead != m_Name.size())
 		SetInvalid();
 
+	m_ItemHash = CItemHash(std::string(m_Name.data()));
+
 	if (!m_TransformAddress)
 		SetInvalid();
 
@@ -106,7 +109,7 @@ void CLoot::Finalize()
 
 	m_Position = m_Transform.GetPosition();
 
-	std::println("[CLoot] Loot Name: {0:s} @ {1:.0f} {2:.0f} {3:.0f}", m_Name.data(), m_Position.x, m_Position.y, m_Position.z);
+	m_bIsValuable = m_ItemHash.IsValuable();
 }
 
 void CLoot::QuickFinalize()
@@ -117,4 +120,24 @@ void CLoot::QuickFinalize()
 
 	if (m_Transform.IsInvalid())
 		SetInvalid();
+}
+
+const char* CLoot::GetName() const
+{
+	if (m_ItemHash.GetName())
+		return m_ItemHash.GetName();
+
+	return m_Name.data();
+}
+
+const ImColor CLoot::GetColor() const
+{
+	if (IsValuable()) return ColorPicker::m_ValuableLootColor;
+
+	return ColorPicker::m_LootColor;
+}
+
+const bool CLoot::IsValuable() const
+{
+	return m_bIsValuable;
 }
