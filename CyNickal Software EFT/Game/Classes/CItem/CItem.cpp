@@ -26,7 +26,7 @@ void CItem::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
 
 	if (IsInvalid()) return;
 
-	VMMDLL_Scatter_PrepareEx(vmsh, m_ItemTemplateAddress + Offsets::CTemplate::pName, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_ItemTemplateNameAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
+	VMMDLL_Scatter_PrepareEx(vmsh, m_ItemTemplateAddress + Offsets::CItemTemplate::pName, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_ItemTemplateNameAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
 }
 
 void CItem::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)

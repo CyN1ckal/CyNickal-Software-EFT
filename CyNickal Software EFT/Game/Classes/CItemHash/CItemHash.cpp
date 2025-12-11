@@ -4,14 +4,15 @@
 
 std::unordered_map<uint32_t, std::string> gItemNames
 {
-	{0xA3CA4287, "Saiga-12k"},
+	{0xBFA7DBD, "Saiga-12k"},
 	{0x32142AA, "TOZ KS-23M"},
 	{0xAE4D2212, "TOZ-106"},
 	{0x68103A98, "MP-155"},
+	{0xED31C50B, "MP-153"},
 	{0x2E28AA9A, "MP-133"},
 	{0x3A9D66E8, "Vepr"},
+	{0xF89323EC, "Vepr-Hunter"},
 	{0x2CA90C36, "Camper Axe"},
-	{0xDEB6ACBF, "MP-133"},
 	{0xC3E4DC81, "AKS-74U"},
 	{0x61961C9F, "Saiga-9"},
 	{0xC95E7F32, "VPO-209"},
@@ -25,6 +26,8 @@ std::unordered_map<uint32_t, std::string> gItemNames
 	{0x2055395E, "OP-SKS"},
 	{0x73EE1B07, "AK-74M"},
 	{0xCF7C4C8F, "AK-105"},
+	{0xC7D1A827, "ADAR 2"},
+	{0xAC676528, "Salewa"},
 };
 
 uint32_t JOAAT(const std::string& String) {
@@ -44,8 +47,7 @@ uint32_t JOAAT(const std::string& String) {
 
 CItemHash::CItemHash(const std::string& WeaponName)
 {
-	auto Hash = JOAAT(WeaponName);
-	m_Hash = Hash;
+	m_Hash = JOAAT(WeaponName);
 
 	if (m_Hash)
 		std::println("[CItemHash] Generated hash {0:X} for weapon name {1}", m_Hash, std::string(WeaponName.begin(), WeaponName.end()).c_str());

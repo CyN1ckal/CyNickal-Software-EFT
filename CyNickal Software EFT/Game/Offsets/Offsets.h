@@ -22,6 +22,8 @@ namespace Offsets
 		inline constexpr std::ptrdiff_t pActiveNodes{ 0x20 };
 		inline constexpr std::ptrdiff_t pLastActiveNode{ 0x28 };
 	};
+
+	/* namespace: EFT, class: GameWorld : UnityEngine::MonoBehaviour */
 	namespace CLocalGameWorld
 	{
 		inline constexpr std::ptrdiff_t pMapName{ 0xC0 };
@@ -129,13 +131,18 @@ namespace Offsets
 	{
 		inline constexpr std::ptrdiff_t pSpawnProfileData{ 0x3C0 };
 	}
+
+	/* namespace: EFT.InventoryLogic, class: Item : System::Object */
 	namespace CItem
 	{
 		inline constexpr std::ptrdiff_t pTemplate{ 0x60 };
 	}
-	namespace CTemplate
+	/* EFT::InventoryLogic::ItemTemplate */
+	namespace CItemTemplate
 	{
-		inline constexpr std::ptrdiff_t pName{ 0x18 };
+		inline constexpr std::ptrdiff_t pShortName{ 0x18 };
+		inline constexpr std::ptrdiff_t pDescription{ 0x20 };
+		inline constexpr std::ptrdiff_t pName{ 0xF8 };
 	}
 	namespace CSpawnProfileData
 	{
