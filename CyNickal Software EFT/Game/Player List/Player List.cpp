@@ -127,9 +127,11 @@ void PlayerList::QuickUpdate(DMA_Connection* Conn)
 	VMMDLL_Scatter_CloseHandle(vmsh);
 }
 
-void PlayerList::FullUpdate(DMA_Connection* Conn, uintptr_t LocalGameWorld)
+void PlayerList::FullUpdate(DMA_Connection* Conn)
 {
 	std::println("[PlayerList] Full update requested.");
+
+	Conn->LightRefresh();
 
 	std::scoped_lock Lock(m_PlayerMutex);
 	ExecuteReadsOnPlayerVec(Conn, m_Players);

@@ -10,6 +10,7 @@
 #include "GUI/Player Table/Player Table.h"
 #include "GUI/Loot Table/Loot Table.h"
 #include "GUI/Color Picker/Color Picker.h"
+#include "GUI/Keybinds/Keybinds.h"
 
 void Render(ImGuiContext* ctx)
 {
@@ -30,6 +31,7 @@ void Render(ImGuiContext* ctx)
 	PlayerTable::Render();
 	LootTable::Render();
 	ColorPicker::Render();
+	Keybinds::Render();
 	MainMenu::Render();
 
 	ImGui::PopFont();

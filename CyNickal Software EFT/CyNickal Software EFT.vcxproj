@@ -257,6 +257,7 @@
     <ClCompile Include="Game\Player List\Player List.cpp" />
     <ClCompile Include="GUI\Aimbot\Aimbot.cpp" />
     <ClCompile Include="GUI\Color Picker\Color Picker.cpp" />
+    <ClCompile Include="GUI\Keybinds\Keybinds.cpp" />
     <ClCompile Include="GUI\Main Menu\Main Menu.cpp" />
     <ClCompile Include="GUI\Fonts\Fonts.cpp" />
     <ClCompile Include="GUI\Fuser\Draw\Loot.cpp" />
@@ -321,6 +322,7 @@
     <ClInclude Include="GUI\Fuser\Draw\Loot.h" />
     <ClInclude Include="GUI\Fuser\Draw\Players.h" />
     <ClInclude Include="GUI\Fuser\Fuser.h" />
+    <ClInclude Include="GUI\Keybinds\Keybinds.h" />
     <ClInclude Include="GUI\Loot Table\Loot Table.h" />
     <ClInclude Include="GUI\Main Menu\Main Menu.h" />
     <ClInclude Include="GUI\Main Window\Main Window.h" />

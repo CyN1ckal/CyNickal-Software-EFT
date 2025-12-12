@@ -4,8 +4,8 @@
 
 const std::unordered_map<uint32_t, std::string> gItemNames
 {
-	{0xBFA7DBD, "Saiga-12k"},
-	{0x32142AA, "TOZ KS-23M"},
+	{0x0BFA7DBD, "Saiga-12k"},
+	{0x032142AA, "TOZ KS-23M"},
 	{0xAE4D2212, "TOZ-106"},
 	{0x68103A98, "MP-155"},
 	{0xED31C50B, "MP-153"},
@@ -69,12 +69,14 @@ const std::unordered_map<uint32_t, std::string> gItemNames
 	{0xFB2CD802, "M4A1"},
 	{0x71A0A377, "M16A1"},
 	{0x529E1F4F, "VOG"},
+	{0xA0A73DBA, "AKS-74N"},
+	{0x955BAEC7, "KBP 9A-91"},
 
 	/* Other items */
 	{0x7107CDBF, "Power Cord"},
 	{0x690F712C, "Pliers"},
 	{0xD661A199, "Elite Pliers"},
-	{0x2BCECDE, "Propane"},
+	{0x02BCECDE, "Propane"},
 	{0x14698670, "RFID Reader"},
 	{0x1102B85B, "Tushonka"},
 	{0xE80284D2, "Salewa"},
@@ -86,6 +88,14 @@ const std::unordered_map<uint32_t, std::string> gItemNames
 	{0x772D13F3, "Toothpaste"},
 	{0x70469D50, "Chlorine"},
 	{0x3B7D8313, "Hemostatic"},
+	{0x797842E5, "Soap"},
+	{0xF009B83A, "WD-40"},
+	{0x1D0DA675, "Meds Pile"},
+	{0x05B8E4FF, "Iskra"},
+	{0xFFE332E5, "Wires"},
+	{0x6BFF0CB3, "Car Battery"},
+	{0x07CC0C28, "TNT Brick"},
+	{0x6B4F9B4C, "Hose"},
 
 	/* Containers */
 	{0x1D2E27D9, "PC Block"},
@@ -96,15 +106,19 @@ const std::unordered_map<uint32_t, std::string> gItemNames
 	{0x9082B9FB, "Jacket"},
 	{0xAC53E66B, "Jacket"},
 	{0x19BE107F, "Filing Cabinet"},
-	{0xF8CFC1D, "Filing Cabinet"},
-	{0x1365F70, "Filing Cabinet"},
+	{0x0F8CFC1D, "Filing Cabinet"},
+	{0x01365F70, "Filing Cabinet"},
 	{0x37154B39, "Filing Cabinet"},
-	{0x8F9E34D, "Static Corpse"},
+	{0x08F9E34D, "Static Corpse"},
 	{0xFE8849CF, "Static Corpse"},
 	{0x71DF944E, "Static Corpse"},
 	{0x3B201746, "Static Corpse"},
+	{0xBD7F0D0D, "Static Corpse"},
+	{0x70DE4832, "Static Corpse"},
+	{0xCF4CD897, "Static Corpse"},
 	{0xA9904ABD, "Ammo Crate"},
 	{0x84CAE97A, "Weapon Box"},
+	{0x3084DB15, "Medcase"},
 };
 
 const std::unordered_map<uint32_t, std::string> gValuables

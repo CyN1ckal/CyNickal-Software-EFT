@@ -12,7 +12,7 @@ public: /* Interface variables */
 
 public: /* Interface methods */
 	static void QuickUpdate(DMA_Connection* Conn);
-	static void FullUpdate(DMA_Connection* Conn, uintptr_t LocalGameWorld);
+	static void FullUpdate(DMA_Connection* Conn);
 	static void UpdateBaseAddresses(DMA_Connection* Conn, uintptr_t LocalGameWorld);
 	static void HandlePlayerAllocations(DMA_Connection* Conn);
 	static Vector3 GetLocalPlayerPosition();

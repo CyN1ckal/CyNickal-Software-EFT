@@ -10,10 +10,17 @@ DMA_Connection* DMA_Connection::GetInstance()
 	return m_Instance;
 }
 
-void DMA_Connection::LightRefreshWrapper()
+void DMA_Connection::LightRefresh()
 {
-	VMMDLL_ConfigSet(GetInstance()->GetHandle(), VMMDLL_OPT_REFRESH_FREQ_TLB, 1);
+	VMMDLL_ConfigSet(m_VMMHandle, VMMDLL_OPT_REFRESH_FREQ_TLB, 1);
 }
+
+void DMA_Connection::FullRefresh()
+{
+	std::println("[DMA] Full refresh requested.");
+
+	VMMDLL_ConfigSet(m_VMMHandle, VMMDLL_OPT_REFRESH_ALL, 1);
+}	
 
 VMM_HANDLE DMA_Connection::GetHandle()
 {
@@ -29,7 +36,7 @@ bool DMA_Connection::EndConnection()
 
 DMA_Connection::DMA_Connection()
 {
-	std::println("Connecting to DMA...");
+	std::println("[DMA] Connecting...");
 
 	LPCSTR args[] = { "", "-device", "FPGA", "-norefresh"};
 
@@ -38,7 +45,7 @@ DMA_Connection::DMA_Connection()
 	if (!m_VMMHandle)
 		throw std::runtime_error("Failed to initialize VMM DLL");
 
-	std::println("Connected to DMA!");
+	std::println("[DMA] Connected to DMA!");
 }
 
 DMA_Connection::~DMA_Connection()
@@ -47,5 +54,5 @@ DMA_Connection::~DMA_Connection()
 
 	m_VMMHandle = nullptr;
 
-	std::println("Disconnected from DMA!");
+	std::println("[DMA] Disconnected from DMA!");
 }
