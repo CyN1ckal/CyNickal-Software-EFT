@@ -177,6 +177,17 @@ void CKeybind::Render()
 	// Button to capture key press
 	if (m_bWaitingForKey)
 	{
+		// SAFETY CHECK: Don't scan keys if keyboard not initialized
+		if (!c_keys::IsInitialized())
+		{
+			ImGui::Button(("Initializing...##" + m_Name).c_str());
+			ImGui::SameLine();
+			ImGui::Checkbox(("##Target" + m_Name).c_str(), &m_bTargetPC);
+			ImGui::SameLine();
+			ImGui::Checkbox(("##Radar" + m_Name).c_str(), &m_bRadarPC);
+			return;  // Exit early - don't scan keys yet
+		}
+
 		if (ImGui::Button(("Press any key...##" + m_Name).c_str()))
 		{
 			m_bWaitingForKey = false;
