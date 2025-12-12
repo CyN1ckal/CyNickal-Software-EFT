@@ -7,6 +7,7 @@
 #include "GUI/Fuser/Fuser.h"
 #include "GUI/Radar/Radar.h"
 #include "GUI/Aimbot/Aimbot.h"
+#include "GUI/Keybinds/Keybinds.h"
 
 void MainMenu::Render()
 {
@@ -18,6 +19,7 @@ void MainMenu::Render()
 	ImGui::Checkbox("Color Picker", &ColorPicker::bMasterToggle);
 	ImGui::Checkbox("Player Table", &PlayerTable::bMasterToggle);
 	ImGui::Checkbox("Loot Table", &LootTable::bMasterToggle);
+	ImGui::Checkbox("Keybinds", &Keybinds::bSettings);
 
 	ImGui::End();
 }

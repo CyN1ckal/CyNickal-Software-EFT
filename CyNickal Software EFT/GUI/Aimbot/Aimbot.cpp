@@ -56,7 +56,7 @@ float Distance(ImVec2 a, ImVec2 b)
 }
 void Aimbot::OnDMAFrame(DMA_Connection* Conn)
 {
-	if (bMasterToggle) return;
+	if (!bMasterToggle) return;
 
 	if (c_keys::IsInitialized() == false || m_Device.isConnected() == false) return;
 
