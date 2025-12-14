@@ -85,8 +85,6 @@ void Aimbot::OnDMAFrame(DMA_Connection* Conn)
 
 }
 
-
-
 ImVec2 Aimbot::GetAimDeltaToTarget(uintptr_t TargetAddress)
 {
 	ImVec2 Return{};
@@ -95,7 +93,7 @@ ImVec2 Aimbot::GetAimDeltaToTarget(uintptr_t TargetAddress)
 
 	auto CenterScreen = Fuser::GetCenterScreen();
 
-	auto TargetWorldPos = PlayerList::GetPlayerPosition(TargetAddress, EBoneIndex::Head);
+	auto TargetWorldPos = PlayerList::GetPlayerBonePosition(TargetAddress, EBoneIndex::Head);
 
 	Vector2 ScreenPos{};
 	if (!Camera::WorldToScreen(TargetWorldPos, ScreenPos)) return Return;

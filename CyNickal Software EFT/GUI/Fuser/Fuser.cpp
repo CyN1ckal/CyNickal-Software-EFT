@@ -36,6 +36,7 @@ void Fuser::RenderSettings()
 	ImGui::Checkbox("Player Skeletons", &DrawESPPlayers::bSkeleton);
 	ImGui::Checkbox("Player Head Dots", &DrawESPPlayers::bHeadDot);
 	ImGui::Checkbox("Loot", &DrawESPLoot::bMasterToggle);
+	ImGui::Checkbox("Exfils", &DrawExfils::bMasterToggle);
 	ImGui::SliderFloat("Loot Max Distance", &DrawESPLoot::fMaxDistance, 1.0f, 100.0f, "%.1f m");
 	DrawESPLoot::m_LootFilter.Draw("Loot Filter");
 	ImGui::InputFloat("Screen Width", &Fuser::m_ScreenSize.x);

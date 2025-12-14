@@ -137,9 +137,12 @@ static void DeserializeKeybindObj(const json& Table, const std::string& Name, CK
 }
 
 void Config::DeserializeKeybinds(const json& Table) {
-		DeserializeKeybindObj(Table, "DMARefresh", Keybinds::DMARefresh);
-		DeserializeKeybindObj(Table, "PlayerRefresh", Keybinds::PlayerRefresh);
-		DeserializeKeybindObj(Table, "Aimbot", Keybinds::Aimbot);
+	if (Table.contains("bSettings")) {
+		Aimbot::bSettings = Table["bSettings"].get<bool>();
+	}
+	DeserializeKeybindObj(Table, "DMARefresh", Keybinds::DMARefresh);
+	DeserializeKeybindObj(Table, "PlayerRefresh", Keybinds::PlayerRefresh);
+	DeserializeKeybindObj(Table, "Aimbot", Keybinds::Aimbot);
 }
 
 static json SerializeKeybindEntryObj(const CKeybind& kb) {
@@ -152,6 +155,7 @@ static json SerializeKeybindEntryObj(const CKeybind& kb) {
 
 json Config::SerializeKeybinds(json& j) {
 	j["Keybinds"] = {
+		{ "bSettings", Keybinds::bSettings },
 		{ "DMARefresh", SerializeKeybindEntryObj(Keybinds::DMARefresh) },
 		{ "PlayerRefresh", SerializeKeybindEntryObj(Keybinds::PlayerRefresh) },
 		{ "Aimbot", SerializeKeybindEntryObj(Keybinds::Aimbot) }
@@ -163,6 +167,7 @@ json Config::SerializeConfig() {
 	json j;
 
 	j["Aimbot"] = {
+		{"bSettings", Aimbot::bSettings},
 		{"bMasterToggle", Aimbot::bMasterToggle},
 		{"bDrawFOV", Aimbot::bDrawFOV},
 		{"fDampen", Aimbot::fDampen},
@@ -170,7 +175,8 @@ json Config::SerializeConfig() {
 		{"fDeadzoneFov", Aimbot::fDeadzoneFov}
 	};
 
-	j["Fuser"] = {
+	j["Fuser"] = { 
+		{"bSettings", Fuser::bSettings},
 		{"bMasterToggle", Fuser::bMasterToggle},
 		{"ScreenSize", {Fuser::m_ScreenSize.x, Fuser::m_ScreenSize.y}},
 
@@ -195,7 +201,8 @@ json Config::SerializeConfig() {
 
 	};
 
-	j["Radar"] = {
+	j["Radar"] = { 
+		{"bSettings", Radar::bSettings},
 		{"bMasterToggle", Radar::bMasterToggle},
 		{"bLocalViewRay", Radar::bLocalViewRay},
 		{"bOtherPlayerViewRays", Radar::bOtherPlayerViewRays},
@@ -211,6 +218,7 @@ json Config::SerializeConfig() {
 	};
 
 	j["Colors"] = {
+		{"bSettings", Radar::bSettings},
 		{"m_PMCColor", static_cast<uint32_t>(ColorPicker::m_PMCColor)},
 		{"m_ScavColor", static_cast<uint32_t>(ColorPicker::m_ScavColor)},
 		{"m_PlayerScavColor", static_cast<uint32_t>(ColorPicker::m_PlayerScavColor)},
@@ -232,6 +240,9 @@ void Config::DeserializeConfig(const json& j) {
 	if (j.contains("Aimbot")) {
 		const auto& aimbotTable = j["Aimbot"];
 
+		if (aimbotTable.contains("bSettings")) {
+			Aimbot::bSettings = aimbotTable["bSettings"].get<bool>();
+		}
 		if (aimbotTable.contains("bMasterToggle")) {
 			Aimbot::bMasterToggle = aimbotTable["bMasterToggle"].get<bool>();
 		}
@@ -252,6 +263,9 @@ void Config::DeserializeConfig(const json& j) {
 	if (j.contains("Fuser")) {
 		const auto& fuserTable = j["Fuser"];
 
+		if (fuserTable.contains("bSettings")) {
+			Fuser::bSettings = fuserTable["bSettings"].get<bool>();
+		}
 		if (fuserTable.contains("bMasterToggle")) {
 			Fuser::bMasterToggle = fuserTable["bMasterToggle"].get<bool>();
 		}
@@ -307,6 +321,9 @@ void Config::DeserializeConfig(const json& j) {
 	if (j.contains("Radar")) {
 		const auto& radarTable = j["Radar"];
 
+		if (radarTable.contains("bSettings")) {
+			Radar::bSettings = radarTable["bSettings"].get<bool>();
+		}
 		if (radarTable.contains("bMasterToggle")) {
 			Radar::bMasterToggle = radarTable["bMasterToggle"].get<bool>();
 		}
@@ -341,6 +358,9 @@ void Config::DeserializeConfig(const json& j) {
 	if (j.contains("Colors")) {
 		const auto& colorsTable = j["Colors"];
 
+		if (colorsTable.contains("bMasterToggle")) {
+			ColorPicker::bMasterToggle = colorsTable["bMasterToggle"].get<bool>();
+		}
 		if (colorsTable.contains("m_PMCColor")) {
 			ColorPicker::m_PMCColor = colorsTable["m_PMCColor"].get<ImU32>();
 		}

@@ -98,7 +98,7 @@ void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos
 	m_ProjectedBoneCache.fill({});
 
 	for (int i = 0; i < SKELETON_NUMBONES; i++)
-		Camera::WorldToScreen(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i]);
+		if (Camera::WorldToScreen(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i])) return;
 
 	uint8_t LineNumber = 0;
 
@@ -128,7 +128,7 @@ void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, 
 	m_ProjectedBoneCache.fill({});
 
 	for (int i = 0; i < SKELETON_NUMBONES; i++)
-		Camera::WorldToScreen(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i]);
+		if (!Camera::WorldToScreen(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i])) return;
 
 	uint8_t LineNumber = 0;
 

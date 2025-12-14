@@ -24,9 +24,9 @@ void Render(ImGuiContext* ctx)
 
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
-	Radar::Render();
-	Radar::RenderSettings();
 	Fuser::Render();
+
+	Radar::RenderSettings();
 	Fuser::RenderSettings();
 	Aimbot::RenderSettings();
 	PlayerTable::Render();
@@ -35,6 +35,8 @@ void Render(ImGuiContext* ctx)
 	Keybinds::Render();
 	MainMenu::Render();
 	Config::Render();
+
+	Radar::Render();
 
 	ImGui::PopFont();
 }

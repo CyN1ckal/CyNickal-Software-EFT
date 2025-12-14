@@ -7,8 +7,8 @@ public:
 	static void RenderSettings();
 
 public:
-	static inline bool bMasterToggle{ true };
 	static inline bool bSettings{ true };
+	static inline bool bMasterToggle{ true };
 	static inline bool bLocalViewRay{ true };
 	static inline bool bOtherPlayerViewRays{ true };
 	static inline float fScale{ 0.5f };

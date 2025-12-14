@@ -285,15 +285,29 @@ Vector3 PlayerList::GetLocalPlayerPosition()
 {
 	std::scoped_lock Lock(m_PlayerMutex);
 
+	CClientPlayer* pLocal = GetLocalPlayer();
+	if (!pLocal)
+	{
+		return Vector3{};
+	}
+
+	return pLocal->GetBonePosition(EBoneIndex::Root);
+}
+
+Vector3 PlayerList::GetPlayerBonePosition(uintptr_t m_EntityAddress, EBoneIndex BoneIndex)
+{
+	std::scoped_lock Lock(m_PlayerMutex);
+
 	Vector3 ReturnPosition{};
 	bool bFound{ false };
 
 	for (auto& Player : m_Players)
 	{
 		std::visit([&](auto& p) {
-			if (p.IsLocalPlayer()) {
+			if (p.m_EntityAddress == m_EntityAddress)
+			{
 				bFound = true;
-				ReturnPosition = p.GetBonePosition(EBoneIndex::Root);
+				ReturnPosition = p.GetBonePosition(BoneIndex);
 			}
 			}, Player);
 
@@ -301,12 +315,6 @@ Vector3 PlayerList::GetLocalPlayerPosition()
 	}
 
 	return ReturnPosition;
-}
-
-Vector3 PlayerList::GetPlayerPosition(uintptr_t m_EntityAddress, EBoneIndex BoneIndex)
-{
-	std::scoped_lock Lock(m_PlayerMutex);	
-	return GetLocalPlayer()->GetBonePosition(BoneIndex);
 }
 
 CClientPlayer* PlayerList::GetLocalPlayer()

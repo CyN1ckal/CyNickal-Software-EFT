@@ -7,6 +7,8 @@
 
 void DrawExfils::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 {
+	if (!bMasterToggle) return;
+
 	std::scoped_lock lk(ExfilList::m_ExfilMutex);
 
 	Vector2 ScreenPos{};
