@@ -261,6 +261,7 @@
     <ClCompile Include="Game\Player List\Player List.cpp" />
     <ClCompile Include="GUI\Aimbot\Aimbot.cpp" />
     <ClCompile Include="GUI\Color Picker\Color Picker.cpp" />
+    <ClCompile Include="GUI\Config\Config.cpp" />
     <ClCompile Include="GUI\Fuser\Draw\Exfils.cpp" />
     <ClCompile Include="GUI\Fuser\Overlays\Ammo Count\Ammo Count.cpp" />
     <ClCompile Include="GUI\Keybinds\Keybinds.cpp" />
@@ -329,6 +330,7 @@
     <ClInclude Include="Game\Player List\Player List.h" />
     <ClInclude Include="GUI\Aimbot\Aimbot.h" />
     <ClInclude Include="GUI\Color Picker\Color Picker.h" />
+    <ClInclude Include="GUI\Config\Config.h" />
     <ClInclude Include="GUI\Fonts\Data\IBMPlexMono.h" />
     <ClInclude Include="GUI\Fonts\Fonts.h" />
     <ClInclude Include="GUI\Fuser\Draw\Exfils.h" />

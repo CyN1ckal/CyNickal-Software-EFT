@@ -1,12 +1,15 @@
 #include "pch.h"
 
 #include "GUI/Main Window/Main Window.h"
+#include "GUI/Config/Config.h"
 #include "DMA/DMA Thread.h"
 
 std::atomic<bool> bRunning{ true };
 int main()
 {
 	std::println("Hello, EFT_DMA!");
+
+	Config::LoadConfig("default");
 
 	std::thread DMAThread(DMA_Thread_Main);
 

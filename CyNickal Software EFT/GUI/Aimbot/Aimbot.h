@@ -11,6 +11,12 @@ public:
 
 public:
 	static inline bool bSettings{ false };
+	static inline bool bMasterToggle{ false };
+	static inline bool bDrawFOV{ true };
+	static inline float fDampen{ 0.95f };
+	static inline float fPixelFOV{ 75.0f };
+	static inline float fDeadzoneFov{ 2.0f };
+	static inline uint32_t m_Keybind{ VK_XBUTTON2 };
 
 private:
 	static ImVec2 GetAimDeltaToTarget(uintptr_t TargetAddress);
@@ -18,10 +24,4 @@ private:
 
 private:
 	static inline makcu::Device m_Device{};
-	static inline bool bMasterToggle{ false };
-	static inline bool bDrawFOV{ true };
-	static inline float fDampen{ 0.95f };
-	static inline float fPixelFOV{ 75.0f };
-	static inline float fDeadzoneFov{ 2.0f };
-	static inline uint32_t m_Keybind{ VK_XBUTTON2 };
 };

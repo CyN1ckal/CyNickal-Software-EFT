@@ -24,8 +24,6 @@ public:
 
 public:
 	static inline bool bSettings{ true };
-
-private:
 	static inline CKeybind DMARefresh = { "DMA Refresh", VK_INSERT, true, true };
 	static inline CKeybind PlayerRefresh = { "Player Refresh", VK_HOME, true, true };
 	static inline CKeybind Aimbot = { "Aimbot", VK_XBUTTON2, true, false };

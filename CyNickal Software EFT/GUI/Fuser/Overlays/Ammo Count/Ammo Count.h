@@ -5,4 +5,7 @@ class AmmoCountOverlay
 {
 public:
 	static void Render();
+
+public:
+	static inline bool bMasterToggle{ true };
 };

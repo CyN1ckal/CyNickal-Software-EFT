@@ -171,6 +171,9 @@
     <ClCompile Include="Game\Classes\CItemTemplate\CItemTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\Config\Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -363,6 +366,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Classes\CItemTemplate\CItemTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Config\Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

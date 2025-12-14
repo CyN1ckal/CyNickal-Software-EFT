@@ -10,16 +10,17 @@ void Fuser::Render()
 {
 	if (!bMasterToggle) return;
 
+	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(Fuser::m_ScreenSize);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 255.0f));
 	ImGui::Begin("Fuser", nullptr, ImGuiWindowFlags_NoDecoration);
 	auto WindowPos = ImGui::GetWindowPos();
 	auto DrawList = ImGui::GetWindowDrawList();
 
-	DrawESPPlayers::DrawAll(WindowPos, DrawList);
+	Aimbot::RenderFOVCircle(WindowPos, DrawList);
 	DrawESPLoot::DrawAll(WindowPos, DrawList);
 	DrawExfils::DrawAll(WindowPos, DrawList);
-	Aimbot::RenderFOVCircle(WindowPos, DrawList);
+	DrawESPPlayers::DrawAll(WindowPos, DrawList);
 	AmmoCountOverlay::Render();
 
 	ImGui::End();
