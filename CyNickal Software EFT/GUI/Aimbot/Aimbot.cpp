@@ -64,24 +64,20 @@ void Aimbot::OnDMAFrame(DMA_Connection* Conn)
 
 	auto BestTarget = Aimbot::FindBestTarget();
 
-	do
-	{
-		PlayerList::QuickUpdate(Conn);
-		Camera::QuickUpdateViewMatrix(Conn);
+	PlayerList::QuickUpdate(Conn);
+	Camera::QuickUpdateViewMatrix(Conn);
 
-		auto Delta = GetAimDeltaToTarget(BestTarget);
-		static ImVec2 PreviousDelta{};
+	auto Delta = GetAimDeltaToTarget(BestTarget);
+	static ImVec2 PreviousDelta{};
 
-		if (Distance(Delta, PreviousDelta) < 0.5f)
-			continue;
+	if (Distance(Delta, PreviousDelta) < 0.5f)
+		return;
 
-		PreviousDelta = Delta;
-		Delta.x *= fDampen;
-		Delta.y *= fDampen;
+	PreviousDelta = Delta;
+	Delta.x *= fDampen;
+	Delta.y *= fDampen;
 
-		m_Device.mouseMove(Delta.x, Delta.y);
-
-	} while (c_keys::IsKeyDown(Conn, m_Keybind));
+	m_Device.mouseMove(Delta.x, Delta.y);
 
 }
 
