@@ -98,7 +98,7 @@ void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos
 	m_ProjectedBoneCache.fill({});
 
 	for (int i = 0; i < SKELETON_NUMBONES; i++)
-		if (Camera::WorldToScreen(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i])) return;
+		if (!Camera::WorldToScreen(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i])) return;
 
 	uint8_t LineNumber = 0;
 
