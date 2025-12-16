@@ -25,7 +25,7 @@ void DrawExfils::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 		auto TextSize = ImGui::CalcTextSize(Text.c_str());
 		DrawList->AddText(
 			ImVec2(WindowPos.x + ScreenPos.x - (TextSize.x / 2.0f), WindowPos.y + ScreenPos.y),
-			ColorPicker::m_ExfilColor,
+			Exfil.GetFuserColor(),
 			Text.c_str()
 		);
 	}

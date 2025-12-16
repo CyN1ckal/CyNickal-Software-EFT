@@ -31,7 +31,7 @@ void  DrawESPPlayers::DrawGenericPlayerText(const CBaseEFTPlayer& Player, const 
 {
 	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.GetBonePosition(EBoneIndex::Root).DistanceTo(m_LatestLocalPlayerPos));
 	auto& ProjectedRootPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]];
-	DrawTextAtPosition(DrawList, ImVec2(WindowPos.x + ProjectedRootPos.ScreenPos.x, WindowPos.y + ProjectedRootPos.ScreenPos.y + (ImGui::GetTextLineHeight() * LineNumber)), Player.GetSideColor(), Text);
+	DrawTextAtPosition(DrawList, ImVec2(WindowPos.x + ProjectedRootPos.ScreenPos.x, WindowPos.y + ProjectedRootPos.ScreenPos.y + (ImGui::GetTextLineHeight() * LineNumber)), Player.GetFuserColor(), Text);
 	LineNumber++;
 }
 
@@ -52,7 +52,7 @@ void DrawESPPlayers::DrawObservedPlayerHealthText(const CObservedPlayer& Player,
 	if (DataPtr == nullptr) return;
 
 	auto& ProjectedRootPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]];
-	DrawTextAtPosition(DrawList, ImVec2(WindowPos.x + ProjectedRootPos.ScreenPos.x, WindowPos.y + ProjectedRootPos.ScreenPos.y + (ImGui::GetTextLineHeight() * LineNumber)), Player.GetSideColor(), DataPtr);
+	DrawTextAtPosition(DrawList, ImVec2(WindowPos.x + ProjectedRootPos.ScreenPos.x, WindowPos.y + ProjectedRootPos.ScreenPos.y + (ImGui::GetTextLineHeight() * LineNumber)), Player.GetFuserColor(), DataPtr);
 	LineNumber++;
 }
 
@@ -71,7 +71,7 @@ void DrawESPPlayers::DrawPlayerWeapon(const CHeldItem* pHands, const ImVec2& Win
 	auto TextSize = ImGui::CalcTextSize(ItemName.c_str());
 	DrawList->AddText(
 		ImVec2(RootScreenPos.x - (TextSize.x / 2.0f), RootScreenPos.y + (ImGui::GetTextLineHeight() * LineNumber)),
-		ColorPicker::m_WeaponTextColor,
+		ColorPicker::Fuser::m_WeaponTextColor,
 		ItemName.c_str()
 	);
 	LineNumber++;
@@ -83,7 +83,7 @@ void DrawESPPlayers::DrawPlayerWeapon(const CHeldItem* pHands, const ImVec2& Win
 	TextSize = ImGui::CalcTextSize(MagText.c_str());
 	DrawList->AddText(
 		ImVec2(RootScreenPos.x - (TextSize.x / 2.0f), RootScreenPos.y + (ImGui::GetTextLineHeight() * LineNumber)),
-		ColorPicker::m_WeaponTextColor,
+		ColorPicker::Fuser::m_WeaponTextColor,
 		MagText.c_str()
 	);
 	LineNumber++;
@@ -103,14 +103,14 @@ void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos
 	uint8_t LineNumber = 0;
 
 	if (bNameText) {
-		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetSideColor(), LineNumber);
+		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetFuserColor(), LineNumber);
 		DrawPlayerWeapon(Player.m_pHands.get(), WindowPos, DrawList, LineNumber);
 		DrawObservedPlayerHealthText(Player, WindowPos, DrawList, LineNumber);
 	}
 
 	if (bHeadDot) {
 		auto& ProjectedHeadPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Head]];
-		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.ScreenPos.x, WindowPos.y + ProjectedHeadPos.ScreenPos.y), 4.0f, Player.GetSideColor(), 12, 1.0f);
+		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.ScreenPos.x, WindowPos.y + ProjectedHeadPos.ScreenPos.y), 4.0f, Player.GetFuserColor(), 12, 1.0f);
 	}
 
 	if (bSkeleton)
@@ -136,13 +136,13 @@ void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, 
 	uint8_t LineNumber = 0;
 
 	if (bNameText) {
-		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetSideColor(), LineNumber);
+		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetFuserColor(), LineNumber);
 		DrawPlayerWeapon(Player.m_pHands.get(), WindowPos, DrawList, LineNumber);
 	}
 
 	if (bHeadDot) {
 		auto& ProjectedHeadPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Head]];
-		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.ScreenPos.x, WindowPos.y + ProjectedHeadPos.ScreenPos.y), 4.0f, Player.GetSideColor(), 12, 1.0f);
+		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.ScreenPos.x, WindowPos.y + ProjectedHeadPos.ScreenPos.y), 4.0f, Player.GetFuserColor(), 12, 1.0f);
 	}
 
 	if (bSkeleton)

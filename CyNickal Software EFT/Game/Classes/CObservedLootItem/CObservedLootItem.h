@@ -10,6 +10,8 @@ public:
 	void Finalize();
 	int32_t GetItemPrice() const { return m_ItemPrice; }
 	const std::string& GetName() const { return m_Name; }
+	const ImColor& GetRadarColor() const;
+	const ImColor& GetFuserColor() const;
 
 private:
 	std::string m_Name{""};

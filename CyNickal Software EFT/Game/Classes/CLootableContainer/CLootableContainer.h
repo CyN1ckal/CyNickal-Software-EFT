@@ -9,6 +9,8 @@ public:
 	void PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh);
 	void Finalize();
 	const std::string& GetName() const { return m_Name; }
+	const ImColor& GetRadarColor() const;
+	const ImColor& GetFuserColor() const;
 
 private:
 	std::string m_Name{};

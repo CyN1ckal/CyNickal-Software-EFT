@@ -54,7 +54,7 @@ void DrawESPLoot::DrawLoot(CObservedLootItem& Item, ImDrawList* DrawList, ImVec2
 
 	DrawList->AddText(
 		ImVec2(WindowPos.x + ScreenPos.x - (TextSize.x / 2.0f), WindowPos.y + ScreenPos.y - 10.0f - TextSize.y),
-		ColorPicker::m_LootColor,
+		Item.GetFuserColor(),
 		DisplayString.c_str()
 	);
 }
@@ -79,7 +79,7 @@ void DrawESPLoot::DrawLoot(CLootableContainer& Container, ImDrawList* DrawList, 
 
 	DrawList->AddText(
 		ImVec2(WindowPos.x + ScreenPos.x - (TextSize.x / 2.0f), WindowPos.y + ScreenPos.y - 10.0f - TextSize.y),
-		ColorPicker::m_ContainerColor,
+		Container.GetFuserColor(),
 		DisplayString.c_str()
 	);
 }

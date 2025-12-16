@@ -40,7 +40,7 @@ void DrawRadarPlayers::Draw(const CClientPlayer& Player, const ImVec2& CenterScr
 	Delta3D.x *= Radar::fScale;
 	Delta3D.z *= Radar::fScale;
 
-	auto Color = Player.GetSideColor();
+	auto Color = Player.GetRadarColor();
 
 	ImVec2 DotPosition = ImVec2(CenterScreen.x + Delta3D.z, CenterScreen.y + Delta3D.x);
 	DrawList->AddCircleFilled(DotPosition, Radar::fEntityRadius, Color);
@@ -60,7 +60,7 @@ void DrawRadarPlayers::Draw(const CObservedPlayer& Player, const ImVec2& CenterS
 	Delta3D.x *= Radar::fScale;
 	Delta3D.z *= Radar::fScale;
 
-	auto Color = Player.GetSideColor();
+	auto Color = Player.GetRadarColor();
 
 	ImVec2 DotPosition = ImVec2(CenterScreen.x + Delta3D.z, CenterScreen.y + Delta3D.x);
 	DrawList->AddCircleFilled(DotPosition, Radar::fEntityRadius, Color);
@@ -92,7 +92,7 @@ void DrawRadarPlayers::DrawCharacterViewRay(const CClientPlayer& Player, const I
 
 void DrawRadarPlayers::DrawLocalPlayer(const CClientPlayer& Player, const ImVec2& CenterScreen, ImDrawList* DrawList)
 {
-	DrawList->AddCircleFilled(CenterScreen, 5, ColorPicker::m_LocalPlayerColor);
+	DrawList->AddCircleFilled(CenterScreen, 5, ColorPicker::Radar::m_LocalPlayerColor);
 
-	DrawCharacterViewRay(Player, CenterScreen, DrawList, ColorPicker::m_LocalPlayerColor, true);
+	DrawCharacterViewRay(Player, CenterScreen, DrawList, ColorPicker::Radar::m_LocalPlayerColor, true);
 }

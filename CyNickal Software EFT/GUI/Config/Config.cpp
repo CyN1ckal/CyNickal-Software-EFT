@@ -232,17 +232,29 @@ json Config::SerializeConfig() {
 	};
 
 	j["Colors"] = {
-		{"bSettings", Radar::bSettings},
-		{"m_PMCColor", static_cast<uint32_t>(ColorPicker::m_PMCColor)},
-		{"m_ScavColor", static_cast<uint32_t>(ColorPicker::m_ScavColor)},
-		{"m_PlayerScavColor", static_cast<uint32_t>(ColorPicker::m_PlayerScavColor)},
-		{"m_LocalPlayerColor", static_cast<uint32_t>(ColorPicker::m_LocalPlayerColor)},
-		{"m_BossColor", static_cast<uint32_t>(ColorPicker::m_BossColor)},
-		{"m_LootColor", static_cast<uint32_t>(ColorPicker::m_LootColor)},
-		{"m_ContainerColor", static_cast<uint32_t>(ColorPicker::m_ContainerColor)},
-		{"m_ValuableLootColor", static_cast<uint32_t>(ColorPicker::m_ValuableLootColor)},
-		{"m_ExfilColor", static_cast<uint32_t>(ColorPicker::m_ExfilColor)},
-
+		{"bMasterToggle", ColorPicker::bMasterToggle},
+		{"Radar",{
+			{"m_PMCColor", static_cast<uint32_t>(ColorPicker::Radar::m_PMCColor)},
+			{"m_ScavColor", static_cast<uint32_t>(ColorPicker::Radar::m_ScavColor)},
+			{"m_PlayerScavColor", static_cast<uint32_t>(ColorPicker::Radar::m_PlayerScavColor)},
+			{"m_LocalPlayerColor", static_cast<uint32_t>(ColorPicker::Radar::m_LocalPlayerColor)},
+			{"m_BossColor", static_cast<uint32_t>(ColorPicker::Radar::m_BossColor)},
+			{"m_LootColor", static_cast<uint32_t>(ColorPicker::Radar::m_LootColor)},
+			{"m_ContainerColor", static_cast<uint32_t>(ColorPicker::Radar::m_ContainerColor)},
+			{"m_ValuableLootColor", static_cast<uint32_t>(ColorPicker::Radar::m_ValuableLootColor)},
+			{"m_ExfilColor", static_cast<uint32_t>(ColorPicker::Radar::m_ExfilColor)},
+		}},
+		{"Fuser",{
+			{"m_PMCColor", static_cast<uint32_t>(ColorPicker::Fuser::m_PMCColor)},
+			{"m_ScavColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ScavColor)},
+			{"m_PlayerScavColor", static_cast<uint32_t>(ColorPicker::Fuser::m_PlayerScavColor)},
+			{"m_BossColor", static_cast<uint32_t>(ColorPicker::Fuser::m_BossColor)},
+			{"m_LootColor", static_cast<uint32_t>(ColorPicker::Fuser::m_LootColor)},
+			{"m_ContainerColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ContainerColor)},
+			{"m_ValuableLootColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ValuableLootColor)},
+			{"m_ExfilColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ExfilColor)},
+			{"m_WeaponTextColor", static_cast<uint32_t>(ColorPicker::Fuser::m_WeaponTextColor)},
+		}},
 	};
 
 	SerializeKeybinds(j);
@@ -378,7 +390,7 @@ void Config::DeserializeConfig(const json& j) {
 			}
 		}
 
-		if(radarTable.contains("Loot")) {
+		if (radarTable.contains("Loot")) {
 			const auto& LootTable = radarTable["Loot"];
 			if (LootTable.contains("bMasterToggle")) {
 				DrawRadarLoot::bMasterToggle = LootTable["bMasterToggle"].get<bool>();
@@ -409,32 +421,71 @@ void Config::DeserializeConfig(const json& j) {
 		if (colorsTable.contains("bMasterToggle")) {
 			ColorPicker::bMasterToggle = colorsTable["bMasterToggle"].get<bool>();
 		}
-		if (colorsTable.contains("m_PMCColor")) {
-			ColorPicker::m_PMCColor = colorsTable["m_PMCColor"].get<ImU32>();
+
+		if (colorsTable.contains("Radar"))
+		{
+			using namespace ColorPicker::Radar;
+			const auto& RadarTable = colorsTable["Radar"];
+			if (RadarTable.contains("m_PMCColor")) {
+				m_PMCColor = RadarTable["m_PMCColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ScavColor")) {
+				m_ScavColor = RadarTable["m_ScavColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_PlayerScavColor")) {
+				m_PlayerScavColor = RadarTable["m_PlayerScavColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_LocalPlayerColor")) {
+				m_LocalPlayerColor = RadarTable["m_LocalPlayerColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_BossColor")) {
+				m_BossColor = RadarTable["m_BossColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_LootColor")) {
+				m_LootColor = RadarTable["m_LootColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ContainerColor")) {
+				m_ContainerColor = RadarTable["m_ContainerColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ValuableLootColor")) {
+				m_ValuableLootColor = RadarTable["m_ValuableLootColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ExfilColor")) {
+				m_ExfilColor = RadarTable["m_ExfilColor"].get<ImU32>();
+			}
 		}
-		if (colorsTable.contains("m_ScavColor")) {
-			ColorPicker::m_ScavColor = colorsTable["m_ScavColor"].get<ImU32>();
-		}
-		if (colorsTable.contains("m_PlayerScavColor")) {
-			ColorPicker::m_PlayerScavColor = colorsTable["m_PlayerScavColor"].get<ImU32>();
-		}
-		if (colorsTable.contains("m_LocalPlayerColor")) {
-			ColorPicker::m_LocalPlayerColor = colorsTable["m_LocalPlayerColor"].get<ImU32>();
-		}
-		if (colorsTable.contains("m_BossColor")) {
-			ColorPicker::m_BossColor = colorsTable["m_BossColor"].get<ImU32>();
-		}
-		if (colorsTable.contains("m_LootColor")) {
-			ColorPicker::m_LootColor = colorsTable["m_LootColor"].get<ImU32>();
-		}
-		if (colorsTable.contains("m_ContainerColor")) {
-			ColorPicker::m_ContainerColor = colorsTable["m_ContainerColor"].get<ImU32>();
-		}
-		if (colorsTable.contains("m_ValuableLootColor")) {
-			ColorPicker::m_ValuableLootColor = colorsTable["m_ValuableLootColor"].get<ImU32>();
-		}
-		if (colorsTable.contains("m_ExfilColor")) {
-			ColorPicker::m_ExfilColor = colorsTable["m_ExfilColor"].get<ImU32>();
+
+		if (colorsTable.contains("Fuser"))
+		{
+			using namespace ColorPicker::Fuser;
+			const auto& RadarTable = colorsTable["Radar"];
+			if (RadarTable.contains("m_PMCColor")) {
+				m_PMCColor = RadarTable["m_PMCColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ScavColor")) {
+				m_ScavColor = RadarTable["m_ScavColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_PlayerScavColor")) {
+				m_PlayerScavColor = RadarTable["m_PlayerScavColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_BossColor")) {
+				m_BossColor = RadarTable["m_BossColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_LootColor")) {
+				m_LootColor = RadarTable["m_LootColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ContainerColor")) {
+				m_ContainerColor = RadarTable["m_ContainerColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ValuableLootColor")) {
+				m_ValuableLootColor = RadarTable["m_ValuableLootColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ExfilColor")) {
+				m_ExfilColor = RadarTable["m_ExfilColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_WeaponTextColor")) {
+				m_WeaponTextColor = RadarTable["m_WeaponTextColor"].get<ImU32>();
+			}
 		}
 	}
 

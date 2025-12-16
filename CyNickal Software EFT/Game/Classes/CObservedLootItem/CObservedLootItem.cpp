@@ -6,6 +6,8 @@
 
 #include "Database/Database.h"
 
+#include "GUI/Color Picker/Color Picker.h"
+
 CObservedLootItem::CObservedLootItem(uintptr_t EntityAddress) : CBaseLootItem(EntityAddress)
 {
 	std::println("[CObservedLootItem] Constructed with {0:X}", m_EntityAddress);
@@ -32,4 +34,14 @@ void CObservedLootItem::Finalize()
 	std::string TarkovIDStr = std::string(m_TarkovID.begin(), m_TarkovID.end());
 	m_ItemPrice = TarkovItemData::GetPriceOfItem(TarkovIDStr);
 	m_Name = TarkovItemData::GetShortNameOfItem(TarkovIDStr);
+}
+
+const ImColor& CObservedLootItem::GetRadarColor() const
+{
+	return ColorPicker::Radar::m_LootColor;	
+}
+
+const ImColor& CObservedLootItem::GetFuserColor() const
+{
+	return ColorPicker::Fuser::m_LootColor;
 }

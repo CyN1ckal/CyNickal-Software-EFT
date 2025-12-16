@@ -46,7 +46,8 @@ public:
 	const bool IsPMC() const;
 	const bool IsPlayerScav() const;
 	const std::string& GetBaseName() const;
-	const ImColor GetSideColor() const;
+	const ImColor GetFuserColor() const;
+	const ImColor GetRadarColor() const;
 	const bool IsBoss() const;
 	const bool IsInvalid() const;
 	const Vector3& GetBonePosition(EBoneIndex boneIndex) const;

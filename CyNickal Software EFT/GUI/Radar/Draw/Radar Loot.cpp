@@ -51,7 +51,7 @@ void DrawRadarLoot::Draw(const CLootableContainer& Container, const ImVec2& Cent
 
 	auto DotPos = ImVec2(CenterPos.x + Delta.z, CenterPos.y + Delta.x);
 
-	DrawDotAtPosition(DotPos, DrawList, ColorPicker::m_ContainerColor);
+	DrawDotAtPosition(DotPos, DrawList, Container.GetRadarColor());
 }
 
 void DrawRadarLoot::Draw(const CObservedLootItem& Loot, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
@@ -69,5 +69,5 @@ void DrawRadarLoot::Draw(const CObservedLootItem& Loot, const ImVec2& CenterPos,
 
 	auto DotPos = ImVec2(CenterPos.x + Delta.z, CenterPos.y + Delta.x);
 
-	DrawDotAtPosition(DotPos, DrawList, ColorPicker::m_LootColor);
+	DrawDotAtPosition(DotPos, DrawList, Loot.GetRadarColor());
 }

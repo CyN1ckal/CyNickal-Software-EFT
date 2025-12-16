@@ -20,7 +20,7 @@ void DrawRadarExfils::DrawAll(const ImVec2& WindowPos, const ImVec2& WindowSize,
 		Delta3D.z *= Radar::fScale;
 		ImVec2 DotPosition = ImVec2(CenterScreen.x + Delta3D.z, CenterScreen.y + Delta3D.x);
 
-		DrawList->AddCircleFilled(DotPosition, Radar::fEntityRadius, ColorPicker::m_ExfilColor);
+		DrawList->AddCircleFilled(DotPosition, Radar::fEntityRadius, Exfil.GetRadarColor());
 	}
 }
 

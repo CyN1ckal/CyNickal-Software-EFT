@@ -16,6 +16,8 @@ public:
 	void PrepareRead_7(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_8(VMMDLL_SCATTER_HANDLE vmsh);
 	void Finalize();
+	const ImColor& GetRadarColor() const;
+	const ImColor& GetFuserColor() const;
 
 public:
 	Vector3 m_Position{};

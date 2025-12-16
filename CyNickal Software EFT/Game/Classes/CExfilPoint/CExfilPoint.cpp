@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CExfilPoint.h"
 #include "Game/Offsets/Offsets.h"
+#include "GUI/Color Picker/Color Picker.h"
 
 CExfilPoint::CExfilPoint(uintptr_t ExfilPointAddress) : CBaseEntity(ExfilPointAddress)
 {
@@ -95,4 +96,14 @@ void CExfilPoint::Finalize()
 	m_Position = m_Transform.GetPosition();
 
 	std::println("[CExfilPoint] Exfil {0:s} @ {1:.0f},{2:.0f},{3:.0f}", m_Name.c_str(), m_Position.x, m_Position.y, m_Position.z);
+}
+
+const ImColor& CExfilPoint::GetRadarColor() const
+{
+	return ColorPicker::Radar::m_ExfilColor;
+}
+
+const ImColor& CExfilPoint::GetFuserColor() const
+{
+	return ColorPicker::Fuser::m_ExfilColor;
 }

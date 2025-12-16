@@ -2,6 +2,7 @@
 #include "CLootableContainer.h"
 #include "Game/Offsets/Offsets.h"
 #include "Database/Database.h"
+#include "GUI/Color Picker/Color Picker.h"
 
 CLootableContainer::CLootableContainer(uintptr_t EntityAddress) : CBaseLootItem(EntityAddress)
 {
@@ -38,4 +39,14 @@ void CLootableContainer::Finalize()
 	m_Name = TarkovContainerData::GetNameOfContainer(BSGID);
 
 	std::println("[CLootableContainer] Finalized with TarkovID: {0} and name {1}", BSGID.c_str(), m_Name.c_str());
+}
+
+const ImColor& CLootableContainer::GetRadarColor() const
+{
+	return ColorPicker::Radar::m_ContainerColor;
+}
+
+const ImColor& CLootableContainer::GetFuserColor() const
+{
+	return ColorPicker::Fuser::m_ContainerColor;
 }

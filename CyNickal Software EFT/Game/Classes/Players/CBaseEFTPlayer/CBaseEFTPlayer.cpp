@@ -177,18 +177,32 @@ const std::string& CBaseEFTPlayer::GetBossName() const
 }
 
 #include "GUI/Color Picker/Color Picker.h"
-const ImColor CBaseEFTPlayer::GetSideColor() const
+const ImColor CBaseEFTPlayer::GetFuserColor() const
 {
 	if (IsBoss())
-		return ColorPicker::m_BossColor;
+		return ColorPicker::Fuser::m_BossColor;
 
 	if (IsPlayerScav())
-		return ColorPicker::m_PlayerScavColor;
+		return ColorPicker::Fuser::m_PlayerScavColor;
 
 	if (IsAi())
-		return ColorPicker::m_ScavColor;
+		return ColorPicker::Fuser::m_ScavColor;
 
-	return ColorPicker::m_PMCColor;
+	return ColorPicker::Fuser::m_PMCColor;
+}
+
+const ImColor CBaseEFTPlayer::GetRadarColor() const
+{
+	if (IsBoss())
+		return ColorPicker::Radar::m_BossColor;
+
+	if (IsPlayerScav())
+		return ColorPicker::Radar::m_PlayerScavColor;
+
+	if (IsAi())
+		return ColorPicker::Radar::m_ScavColor;
+
+	return ColorPicker::Radar::m_PMCColor;
 }
 
 const bool CBaseEFTPlayer::IsBoss() const
