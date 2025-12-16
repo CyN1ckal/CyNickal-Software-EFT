@@ -5,54 +5,79 @@
 
 void LootTable::Render()
 {
-	//if (!bMasterToggle)	return;
+	if (!bMasterToggle)	return;
 
-	//ImGui::Begin("Loot Table", &bMasterToggle);
+	ImGui::Begin("Loot Table", &bMasterToggle);
 
-	//m_LootFilter.Draw("##LootTableFilter", -FLT_MIN);
-	//ImGui::Checkbox("Valuable Items Only", &bValuableOnly);
+	m_LootFilter.Draw("##LootTableFilter", -FLT_MIN);
+	ImGui::Checkbox("Items", &bItems); ImGui::SameLine();
+	ImGui::Checkbox("Containers", &bContainers);
 
-	//ImGuiTableFlags TableFlags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoBordersInBody;
-	//if (ImGui::BeginTable("#LootTable", 5, TableFlags))
-	//{
-	//	ImGui::TableSetupColumn("Raw Name");
-	//	ImGui::TableSetupColumn("Position");
-	//	ImGui::TableSetupColumn("Distance");
-	//	ImGui::TableSetupColumn("Sanitized Name");
-	//	ImGui::TableSetupColumn("JOAAT");
-	//	ImGui::TableSetupScrollFreeze(1, 1);
-	//	ImGui::TableHeadersRow();
+	ImGuiTableFlags TableFlags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoBordersInBody;
+	if (ImGui::BeginTable("#LootTable", 6, TableFlags))
+	{
+		ImGui::TableSetupColumn("Name");
+		ImGui::TableSetupColumn("Distance");
+		ImGui::TableSetupColumn("Price");
+		ImGui::TableSetupColumn("Total Slots");
+		ImGui::TableSetupColumn("Price Per Slot");
+		ImGui::TableSetupColumn("Stack Count");
+		ImGui::TableHeadersRow();
 
-	//	auto LocalPlayerPos = PlayerList::GetLocalPlayerPosition();
+		auto LocalPlayerPos = PlayerList::GetLocalPlayerPosition();
 
-	//	std::scoped_lock lk(LootList::m_LootMutex);
-	//	for (auto& Loot : LootList::m_LootList)
-	//	{
-	//		if (Loot.IsInvalid()) continue;
+		std::scoped_lock lk(LootList::m_LootMutex);
+		for (auto& Loot : LootList::m_LootList)
+			std::visit([&](auto& item) { AddRow(item, LocalPlayerPos); }, Loot);
 
-	//		if (bValuableOnly && !Loot.IsValuable())
-	//			continue;
+		ImGui::EndTable();
+	}
 
-	//		if (m_LootFilter.IsActive() && !m_LootFilter.PassFilter(Loot.m_Name.data()))
-	//			continue;
+	ImGui::End();
+}
 
-	//		ImGui::TableNextRow();
-	//		ImGui::TableNextColumn();
-	//		ImGui::Text(Loot.m_Name.data());
-	//		ImGui::TableNextColumn();
-	//		ImGui::Text("%.0f %.0f %.0f", Loot.m_Position.x, Loot.m_Position.y, Loot.m_Position.z);
-	//		ImGui::TableNextColumn();
-	//		ImGui::Text("%.0fm", LocalPlayerPos.DistanceTo(Loot.m_Position));
-	//		ImGui::TableNextColumn();
-	//		ImGui::Text(Loot.GetLootName().c_str());
-	//		ImGui::TableNextColumn();
-	//		std::string Joaat = "Copy##" + std::to_string(Loot.m_EntityAddress);
-	//		if (ImGui::Button(Joaat.c_str()))
-	//			ImGui::SetClipboardText(std::format("0x{0:X}", Loot.m_ItemHash.GetHash()).c_str());
-	//	}
+void LootTable::AddRow(const CLootableContainer& Container, const Vector3& LocalPlayerPos)
+{
+	if (!bContainers)
+		return;
 
-	//	ImGui::EndTable();
-	//}
+	if (Container.IsInvalid())
+		return;
 
-	//ImGui::End();
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text(Container.GetName().c_str());
+	ImGui::TableNextColumn();
+	ImGui::Text("%.2f m", Container.m_Position.DistanceTo(LocalPlayerPos));
+	ImGui::TableNextColumn();
+	ImGui::Text("N/A");
+	ImGui::TableNextColumn();
+	ImGui::Text("N/A");
+	ImGui::TableNextColumn();
+	ImGui::Text("N/A");
+	ImGui::TableNextColumn();
+	ImGui::Text("N/A");
+}
+
+void LootTable::AddRow(const CObservedLootItem& Loot, const Vector3& LocalPlayerPos)
+{
+	if (!bItems)
+		return;
+
+	if (Loot.IsInvalid())
+		return;
+
+	ImGui::TableNextRow();
+	ImGui::TableNextColumn();
+	ImGui::Text(Loot.GetName().c_str());
+	ImGui::TableNextColumn();
+	ImGui::Text("%.2f m", Loot.m_Position.DistanceTo(LocalPlayerPos));
+	ImGui::TableNextColumn();
+	ImGui::Text("%d", Loot.GetItemPrice());
+	ImGui::TableNextColumn();
+	ImGui::Text("%d", Loot.GetSizeInSlots());
+	ImGui::TableNextColumn();
+	ImGui::Text("%.2f", Loot.GetPricePerSlot());
+	ImGui::TableNextColumn();
+	ImGui::Text("%d", Loot.GetStackCount());
 }

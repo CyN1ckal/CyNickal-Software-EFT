@@ -7,7 +7,7 @@
 
 CItem::CItem(uintptr_t EntityAddress) : CBaseEntity(EntityAddress)
 {
-	std::println("[CItem] constructed {0:X}", m_EntityAddress);
+	//std::println("[CItem] constructed {0:X}", m_EntityAddress);
 }
 
 void CItem::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)

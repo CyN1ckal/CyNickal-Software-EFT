@@ -6,7 +6,7 @@
 
 CLootableContainer::CLootableContainer(uintptr_t EntityAddress) : CBaseLootItem(EntityAddress)
 {
-	std::println("[CLootableContainer] Constructed with {0:X}", m_EntityAddress);
+	//std::println("[CLootableContainer] Constructed with {0:X}", m_EntityAddress);
 }
 
 void CLootableContainer::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
@@ -37,8 +37,6 @@ void CLootableContainer::Finalize()
 	std::string BSGID = std::string(m_TarkovID.begin(), m_TarkovID.end());
 
 	m_Name = TarkovContainerData::GetNameOfContainer(BSGID);
-
-	std::println("[CLootableContainer] Finalized with TarkovID: {0} and name {1}", BSGID.c_str(), m_Name.c_str());
 }
 
 const ImColor& CLootableContainer::GetRadarColor() const

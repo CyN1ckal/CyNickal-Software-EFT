@@ -16,7 +16,6 @@ namespace ColorPicker
 		inline ImColor m_BossColor{ ImColor(225,0,225) };
 		inline ImColor m_LootColor{ ImColor(0,150,150) };
 		inline ImColor m_ContainerColor{ ImColor(108,150,150) };
-		inline ImColor m_ValuableLootColor{ ImColor(0,252,198) };
 		inline ImColor m_ExfilColor{ ImColor(25,225,25) };
 		inline ImColor m_WeaponTextColor{ ImColor(255,255,255) };
 	}
@@ -31,7 +30,6 @@ namespace ColorPicker
 		inline ImColor m_BossColor{ ImColor(225,0,225) };
 		inline ImColor m_LootColor{ ImColor(0,150,150) };
 		inline ImColor m_ContainerColor{ ImColor(108,150,150) };
-		inline ImColor m_ValuableLootColor{ ImColor(0,252,198) };
 		inline ImColor m_ExfilColor{ ImColor(25,225,25) };
 	}
 };

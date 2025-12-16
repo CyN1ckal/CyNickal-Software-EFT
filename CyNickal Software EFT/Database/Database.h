@@ -76,7 +76,6 @@ class TarkovAmmoData
 public:
 	static std::string GetNameOfAmmo(const std::string& ammo_id)
 	{
-		std::println("[TarkovAmmoData] Getting name of ammo with ID: {0}", ammo_id.c_str());
 		auto db = Database::GetTarkovDB();
 		const char* QueryStatement = "SELECT short_name FROM ammo_data WHERE bsg_id = ?;";
 		sqlite3_stmt* stmt{ nullptr };

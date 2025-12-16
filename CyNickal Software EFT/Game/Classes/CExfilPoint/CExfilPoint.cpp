@@ -5,7 +5,7 @@
 
 CExfilPoint::CExfilPoint(uintptr_t ExfilPointAddress) : CBaseEntity(ExfilPointAddress)
 {
-	std::println("[CExfilPoint] Constructed with {0:X}", m_EntityAddress);
+	//std::println("[CExfilPoint] Constructed with {0:X}", m_EntityAddress);
 }
 
 void CExfilPoint::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
@@ -57,8 +57,6 @@ void CExfilPoint::PrepareRead_5(VMMDLL_SCATTER_HANDLE vmsh)
 	if (IsInvalid())
 		return;
 
-	std::println("[CExfilPoint] Preparing CUnityTransform at {0:X}", m_TransformAddress);
-
 	m_Transform = CUnityTransform(m_TransformAddress);
 	m_Transform.PrepareRead_1(vmsh);
 }
@@ -94,8 +92,6 @@ void CExfilPoint::Finalize()
 
 	m_Name = std::string(m_NameBuffer.data());
 	m_Position = m_Transform.GetPosition();
-
-	std::println("[CExfilPoint] Exfil {0:s} @ {1:.0f},{2:.0f},{3:.0f}", m_Name.c_str(), m_Position.x, m_Position.y, m_Position.z);
 }
 
 const ImColor& CExfilPoint::GetRadarColor() const

@@ -184,6 +184,8 @@ namespace Offsets
 		inline constexpr std::ptrdiff_t pDescription{ 0x20 };
 		inline constexpr std::ptrdiff_t pTarkovID{ 0xF0 };
 		inline constexpr std::ptrdiff_t pName{ 0xF8 };
+		inline constexpr std::ptrdiff_t Width{ 0x3C };
+		inline constexpr std::ptrdiff_t Height{ 0x40 };
 	}
 	namespace CSpawnProfileData
 	{
@@ -232,9 +234,10 @@ namespace Offsets
 	namespace CLootItem
 	{
 		inline constexpr std::ptrdiff_t pTemplateID{ 0x80 };
+		inline constexpr std::ptrdiff_t pItem{ 0xF0 };
 	}
 
-	/* EFT.Interactive::LootItem */
+	/* EFT.Interactive::LootableContainer */
 	namespace CLootableContainer
 	{
 		inline constexpr std::ptrdiff_t pBSGID{ 0x170 };

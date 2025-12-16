@@ -84,13 +84,13 @@ void LootList::QuickUpdate(DMA_Connection* Conn)
 		std::visit([](auto& Loot) { Loot.QuickFinalize(); }, Loot);
 }
 
-std::vector<uintptr_t> GetListOfDereferenceLootAddresses(DMA_Connection* Conn, std::vector<uintptr_t>& LootAddresses)
+std::vector<uintptr_t> DerefPointerVec(DMA_Connection* Conn, std::vector<uintptr_t>& Pointers)
 {
 	std::vector<uintptr_t> Return{};
-	Return.resize(LootAddresses.size());
+	Return.resize(Pointers.size());
 
 	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), EFT::GetProcess().GetPID(), VMMDLL_FLAG_NOCACHE);
-	for (auto&& [Index, Addr] : std::views::enumerate(LootAddresses))
+	for (auto&& [Index, Addr] : std::views::enumerate(Pointers))
 	{
 		if (Addr == 0)
 			continue;
@@ -121,7 +121,7 @@ void LootList::GetAndSortEntityAddresses(DMA_Connection* Conn)
 	uintptr_t ObservedLootTypeAddress = ObjectTypeAddressCache["ObservedLootItem"];
 	uintptr_t LootableContainerTypeAddress = ObjectTypeAddressCache["LootableContainer"];
 
-	auto DerefLootAddresses = GetListOfDereferenceLootAddresses(Conn, m_UnsortedAddresses);
+	auto DerefLootAddresses = DerefPointerVec(Conn, m_UnsortedAddresses);
 
 	m_ObservedItemAddresses.clear();
 	m_LootableContainerAddresses.clear();
@@ -145,7 +145,7 @@ void LootList::PopulateTypeAddressCache(DMA_Connection* Conn)
 
 	auto& Proc = EFT::GetProcess();
 
-	auto DerefLootAddresses = GetListOfDereferenceLootAddresses(Conn, m_UnsortedAddresses);
+	auto DerefLootAddresses = DerefPointerVec(Conn, m_UnsortedAddresses);
 
 	std::ranges::sort(DerefLootAddresses);
 	auto ret = std::unique(DerefLootAddresses.begin(), DerefLootAddresses.end());

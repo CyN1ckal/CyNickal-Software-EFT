@@ -23,15 +23,14 @@ void ColorPicker::Fuser::Render()
 	if (ImGui::CollapsingHeader("Fuser"))
 	{
 		ImGui::Indent();
-		MyColorPicker("PMC Color", m_PMCColor);
-		MyColorPicker("Scav Color", m_ScavColor);
-		MyColorPicker("Boss Color", m_BossColor);
-		MyColorPicker("Player Scav Color", m_PlayerScavColor);
-		MyColorPicker("Loot Color", m_LootColor);
-		MyColorPicker("Container Color", m_ContainerColor);
-		MyColorPicker("Valuable Loot Color", m_ValuableLootColor);
-		MyColorPicker("Exfil Color", m_ExfilColor);
-		MyColorPicker("Weapon Text Color", m_WeaponTextColor);
+		MyColorPicker("PMC Color##Fuser", m_PMCColor);
+		MyColorPicker("Scav Color##Fuser", m_ScavColor);
+		MyColorPicker("Boss Color##Fuser", m_BossColor);
+		MyColorPicker("Player Scav Color##Fuser", m_PlayerScavColor);
+		MyColorPicker("Loot Color##Fuser", m_LootColor);
+		MyColorPicker("Container Color##Fuser", m_ContainerColor);
+		MyColorPicker("Exfil Color##Fuser", m_ExfilColor);
+		MyColorPicker("Weapon Text Color##Fuser", m_WeaponTextColor);
 		ImGui::Unindent();
 	}
 }
@@ -41,15 +40,14 @@ void ColorPicker::Radar::Render()
 	if (ImGui::CollapsingHeader("Radar"))
 	{
 		ImGui::Indent();
-		MyColorPicker("PMC Color", m_PMCColor);
-		MyColorPicker("Scav Color", m_ScavColor);
-		MyColorPicker("Boss Color", m_BossColor);
-		MyColorPicker("Player Scav Color", m_PlayerScavColor);
-		MyColorPicker("Local Player Color", m_LocalPlayerColor);
-		MyColorPicker("Loot Color", m_LootColor);
-		MyColorPicker("Container Color", m_ContainerColor);
-		MyColorPicker("Valuable Loot Color", m_ValuableLootColor);
-		MyColorPicker("Exfil Color", m_ExfilColor);
+		MyColorPicker("PMC Color##Radar", m_PMCColor);
+		MyColorPicker("Scav Color##Radar", m_ScavColor);
+		MyColorPicker("Boss Color##Radar", m_BossColor);
+		MyColorPicker("Player Scav Color##Radar", m_PlayerScavColor);
+		MyColorPicker("Local Player Color##Radar", m_LocalPlayerColor);
+		MyColorPicker("Loot Color##Radar", m_LootColor);
+		MyColorPicker("Container Color##Radar", m_ContainerColor);
+		MyColorPicker("Exfil Color##Radar", m_ExfilColor);
 		ImGui::Unindent();
 	}
 }

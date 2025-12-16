@@ -241,7 +241,6 @@ json Config::SerializeConfig() {
 			{"m_BossColor", static_cast<uint32_t>(ColorPicker::Radar::m_BossColor)},
 			{"m_LootColor", static_cast<uint32_t>(ColorPicker::Radar::m_LootColor)},
 			{"m_ContainerColor", static_cast<uint32_t>(ColorPicker::Radar::m_ContainerColor)},
-			{"m_ValuableLootColor", static_cast<uint32_t>(ColorPicker::Radar::m_ValuableLootColor)},
 			{"m_ExfilColor", static_cast<uint32_t>(ColorPicker::Radar::m_ExfilColor)},
 		}},
 		{"Fuser",{
@@ -251,7 +250,6 @@ json Config::SerializeConfig() {
 			{"m_BossColor", static_cast<uint32_t>(ColorPicker::Fuser::m_BossColor)},
 			{"m_LootColor", static_cast<uint32_t>(ColorPicker::Fuser::m_LootColor)},
 			{"m_ContainerColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ContainerColor)},
-			{"m_ValuableLootColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ValuableLootColor)},
 			{"m_ExfilColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ExfilColor)},
 			{"m_WeaponTextColor", static_cast<uint32_t>(ColorPicker::Fuser::m_WeaponTextColor)},
 		}},
@@ -447,9 +445,6 @@ void Config::DeserializeConfig(const json& j) {
 			if (RadarTable.contains("m_ContainerColor")) {
 				m_ContainerColor = RadarTable["m_ContainerColor"].get<ImU32>();
 			}
-			if (RadarTable.contains("m_ValuableLootColor")) {
-				m_ValuableLootColor = RadarTable["m_ValuableLootColor"].get<ImU32>();
-			}
 			if (RadarTable.contains("m_ExfilColor")) {
 				m_ExfilColor = RadarTable["m_ExfilColor"].get<ImU32>();
 			}
@@ -476,9 +471,6 @@ void Config::DeserializeConfig(const json& j) {
 			}
 			if (FuserTable.contains("m_ContainerColor")) {
 				m_ContainerColor = FuserTable["m_ContainerColor"].get<ImU32>();
-			}
-			if (FuserTable.contains("m_ValuableLootColor")) {
-				m_ValuableLootColor = FuserTable["m_ValuableLootColor"].get<ImU32>();
 			}
 			if (FuserTable.contains("m_ExfilColor")) {
 				m_ExfilColor = FuserTable["m_ExfilColor"].get<ImU32>();

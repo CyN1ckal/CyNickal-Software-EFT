@@ -5,13 +5,15 @@
 CItemTemplate::CItemTemplate(uintptr_t TemplateAddress)
 	: CBaseEntity(TemplateAddress)
 {
-	std::println("[CItemTemplate] Constructed at {:X}", TemplateAddress);
+	//std::println("[CItemTemplate] Constructed at {:X}", TemplateAddress);
 }
 
 void CItemTemplate::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
 {
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CItemTemplate::pName, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_NameAddress), reinterpret_cast<DWORD*>(&m_BytesRead));
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CItemTemplate::pTarkovID, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_TarkovIDAddress), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CItemTemplate::Width, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_Width), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CItemTemplate::Height, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_Height), nullptr);
 }
 
 void CItemTemplate::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
@@ -40,6 +42,4 @@ void CItemTemplate::Finalize()
 
 	m_sName = std::string(m_wNameBuffer.begin(), m_wNameBuffer.end());
 	m_sTarkovID = std::string(m_wTarkovIDBuffer.begin(), m_wTarkovIDBuffer.end());
-
-	std::println("[CItemTemplate] Finalized Template at {0:X} with Name: {1:s} and EFTID {2:s}", m_EntityAddress, m_sName.c_str(), m_sTarkovID.c_str());
 }

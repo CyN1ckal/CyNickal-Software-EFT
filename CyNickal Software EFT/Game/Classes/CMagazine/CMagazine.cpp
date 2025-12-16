@@ -5,7 +5,7 @@
 
 CMagazine::CMagazine(uintptr_t MagazineSlotAddress) : CBaseEntity(MagazineSlotAddress)
 {
-	std::println("[CMagazine] Constructed at {0:X}", m_EntityAddress);
+	//std::println("[CMagazine] Constructed at {0:X}", m_EntityAddress);
 }
 
 void CMagazine::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
@@ -123,7 +123,7 @@ void CMagazine::Finalize()
 	m_pAmmoItemTemplate->Finalize();
 	m_AmmoName = TarkovAmmoData::GetNameOfAmmo(m_pAmmoItemTemplate->m_sTarkovID);
 
-	std::println("[CMagazine] Finalized Magazine: {0:s} x {1:d}", m_AmmoName.c_str(), m_CurrentCartridges);
+	//std::println("[CMagazine] Finalized Magazine: {0:s} x {1:d}", m_AmmoName.c_str(), m_CurrentCartridges);
 }
 
 void CMagazine::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
