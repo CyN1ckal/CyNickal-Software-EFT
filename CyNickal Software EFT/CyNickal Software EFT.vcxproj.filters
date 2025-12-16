@@ -114,7 +114,7 @@
     <ClCompile Include="GUI\Fuser\Draw\Loot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Radar\Draw\RadarLoot.cpp">
+    <ClCompile Include="GUI\Radar\Draw\Radar Loot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Loot Table\Loot Table.cpp">

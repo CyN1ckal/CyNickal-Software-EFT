@@ -45,13 +45,22 @@ void Radar::RenderSettings()
 	ImGui::Begin("Radar Settings", &bSettings);
 
 	ImGui::Checkbox("Master Toggle", &bMasterToggle);
-	ImGui::Checkbox("Exfils", &DrawRadarExfils::bMasterToggle);
-	ImGui::Checkbox("Loot", &DrawRadarLoot::bMasterToggle);
-	ImGui::SliderFloat("Scale", &Radar::fScale, 0.1f, 5.0f, "%.1f");
-	ImGui::SliderFloat("Local View Ray Length", &Radar::fLocalViewRayLength, 10.0f, 500.0f, "%.1f");
-	ImGui::SliderFloat("Other View Ray Length", &Radar::fOtherViewRayLength, 10.0f, 500.0f, "%.1f");
-	ImGui::Checkbox("Local Player View Ray", &Radar::bLocalViewRay);
-	ImGui::Checkbox("Players View Rays", &Radar::bOtherPlayerViewRays);
+	if (ImGui::CollapsingHeader("General"))
+	{
+		ImGui::Indent();
+		ImGui::SetNextItemWidth(150.0f);
+		ImGui::SliderFloat("Scale", &Radar::fScale, 0.1f, 5.0f, "%.1f");
+		ImGui::PushItemWidth(75.0f);
+		ImGui::SliderFloat("Local View Ray Length", &Radar::fLocalViewRayLength, 10.0f, 500.0f, "%.1f");
+		ImGui::SliderFloat("Other View Ray Length", &Radar::fOtherViewRayLength, 10.0f, 500.0f, "%.1f");
+		ImGui::SliderFloat("Entity Radius", &Radar::fEntityRadius, 1.0f, 20.0f, "%.1f");
+		ImGui::PopItemWidth();
+		ImGui::Checkbox("Local Player View Ray", &Radar::bLocalViewRay);
+		ImGui::Checkbox("Players View Rays", &Radar::bOtherPlayerViewRays);
+		ImGui::Unindent();
+	}
+	DrawRadarExfils::RenderSettings();
+	DrawRadarLoot::RenderSettings();
 
 	ImGui::End();
 }

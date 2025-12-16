@@ -7,6 +7,7 @@
 #include "GUI/Color Picker/Color Picker.h"
 #include "GUI/Radar/Radar.h"
 #include "GUI/Radar/Draw/Radar Exfils.h"
+#include "GUI/Radar/Draw/Radar Loot.h"
 #include "GUI/Fuser/Draw/Loot.h"
 #include "GUI/Fuser/Draw/Players.h"
 #include "GUI/Fuser/Draw/Exfils.h"
@@ -175,7 +176,7 @@ json Config::SerializeConfig() {
 		{"fDeadzoneFov", Aimbot::fDeadzoneFov}
 	};
 
-	j["Fuser"] = { 
+	j["Fuser"] = {
 		{"bSettings", Fuser::bSettings},
 		{"bMasterToggle", Fuser::bMasterToggle},
 		{"ScreenSize", {Fuser::m_ScreenSize.x, Fuser::m_ScreenSize.y}},
@@ -205,16 +206,25 @@ json Config::SerializeConfig() {
 
 	};
 
-	j["Radar"] = { 
-		{"bSettings", Radar::bSettings},
-		{"bMasterToggle", Radar::bMasterToggle},
-		{"bLocalViewRay", Radar::bLocalViewRay},
-		{"bOtherPlayerViewRays", Radar::bOtherPlayerViewRays},
-		{"fScale", Radar::fScale},
-		{"fLocalViewRayLength", Radar::fLocalViewRayLength},
-		{"fOtherViewRayLength", Radar::fOtherViewRayLength},
-		{"fEntityRadius", Radar::fEntityRadius},
+	j["Radar"] = {
 
+		{"General", {
+			{"bSettings", Radar::bSettings},
+			{"bMasterToggle", Radar::bMasterToggle},
+			{"bLocalViewRay", Radar::bLocalViewRay},
+			{"bOtherPlayerViewRays", Radar::bOtherPlayerViewRays},
+			{"fScale", Radar::fScale},
+			{"fLocalViewRayLength", Radar::fLocalViewRayLength},
+			{"fOtherViewRayLength", Radar::fOtherViewRayLength},
+			{"fEntityRadius", Radar::fEntityRadius},
+		}},
+		{"Loot", {
+			{"bMasterToggle", DrawRadarLoot::bMasterToggle},
+			{"bLoot", DrawRadarLoot::bLoot},
+			{"bContainers", DrawRadarLoot::bContainers},
+			{"MinLootPrice", DrawRadarLoot::MinLootPrice}
+
+		}},
 		{"Exfils", {
 			{"bMasterToggle", DrawRadarExfils::bMasterToggle}
 		}},
@@ -338,29 +348,50 @@ void Config::DeserializeConfig(const json& j) {
 	if (j.contains("Radar")) {
 		const auto& radarTable = j["Radar"];
 
-		if (radarTable.contains("bSettings")) {
-			Radar::bSettings = radarTable["bSettings"].get<bool>();
+		if (radarTable.contains("General"))
+		{
+			const auto& GeneralTable = radarTable["General"];
+
+			if (GeneralTable.contains("bSettings")) {
+				Radar::bSettings = GeneralTable["bSettings"].get<bool>();
+			}
+			if (GeneralTable.contains("bMasterToggle")) {
+				Radar::bMasterToggle = GeneralTable["bMasterToggle"].get<bool>();
+			}
+			if (GeneralTable.contains("bLocalViewRay")) {
+				Radar::bLocalViewRay = GeneralTable["bLocalViewRay"].get<bool>();
+			}
+			if (GeneralTable.contains("bOtherPlayerViewRays")) {
+				Radar::bOtherPlayerViewRays = GeneralTable["bOtherPlayerViewRays"].get<bool>();
+			}
+			if (GeneralTable.contains("fScale")) {
+				Radar::fScale = GeneralTable["fScale"].get<float>();
+			}
+			if (GeneralTable.contains("fLocalViewRayLength")) {
+				Radar::fLocalViewRayLength = GeneralTable["fLocalViewRayLength"].get<float>();
+			}
+			if (GeneralTable.contains("fOtherViewRayLength")) {
+				Radar::fOtherViewRayLength = GeneralTable["fOtherViewRayLength"].get<float>();
+			}
+			if (GeneralTable.contains("fEntityRadius")) {
+				Radar::fEntityRadius = GeneralTable["fEntityRadius"].get<float>();
+			}
 		}
-		if (radarTable.contains("bMasterToggle")) {
-			Radar::bMasterToggle = radarTable["bMasterToggle"].get<bool>();
-		}
-		if (radarTable.contains("bLocalViewRay")) {
-			Radar::bLocalViewRay = radarTable["bLocalViewRay"].get<bool>();
-		}
-		if (radarTable.contains("bOtherPlayerViewRays")) {
-			Radar::bOtherPlayerViewRays = radarTable["bOtherPlayerViewRays"].get<bool>();
-		}
-		if (radarTable.contains("fScale")) {
-			Radar::fScale = radarTable["fScale"].get<float>();
-		}
-		if (radarTable.contains("fLocalViewRayLength")) {
-			Radar::fLocalViewRayLength = radarTable["fLocalViewRayLength"].get<float>();
-		}
-		if (radarTable.contains("fOtherViewRayLength")) {
-			Radar::fOtherViewRayLength = radarTable["fOtherViewRayLength"].get<float>();
-		}
-		if (radarTable.contains("fEntityRadius")) {
-			Radar::fEntityRadius = radarTable["fEntityRadius"].get<float>();
+
+		if(radarTable.contains("Loot")) {
+			const auto& LootTable = radarTable["Loot"];
+			if (LootTable.contains("bMasterToggle")) {
+				DrawRadarLoot::bMasterToggle = LootTable["bMasterToggle"].get<bool>();
+			}
+			if (LootTable.contains("bLoot")) {
+				DrawRadarLoot::bLoot = LootTable["bLoot"].get<bool>();
+			}
+			if (LootTable.contains("bContainers")) {
+				DrawRadarLoot::bContainers = LootTable["bContainers"].get<bool>();
+			}
+			if (LootTable.contains("MinLootPrice")) {
+				DrawRadarLoot::MinLootPrice = LootTable["MinLootPrice"].get<int32_t>();
+			}
 		}
 
 		if (radarTable.contains("Exfils")) {

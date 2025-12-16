@@ -23,3 +23,8 @@ void DrawRadarExfils::DrawAll(const ImVec2& WindowPos, const ImVec2& WindowSize,
 		DrawList->AddCircleFilled(DotPosition, Radar::fEntityRadius, ColorPicker::m_ExfilColor);
 	}
 }
+
+void DrawRadarExfils::RenderSettings()
+{
+	ImGui::Checkbox("Master Exfil Toggle", &DrawRadarExfils::bMasterToggle);
+}
