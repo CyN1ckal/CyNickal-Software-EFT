@@ -117,7 +117,7 @@
     <ClCompile Include="GUI\Radar\Draw\Radar Loot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Loot Table\Loot Table.cpp">
+    <ClCompile Include="GUI\Item Table\Item Table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Main Menu\Main Menu.cpp">
@@ -314,7 +314,7 @@
     <ClInclude Include="GUI\Radar\Draw\Radar Players.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Loot Table\Loot Table.h">
+    <ClInclude Include="GUI\Item Table\Item Table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Main Menu\Main Menu.h">

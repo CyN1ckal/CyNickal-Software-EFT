@@ -271,7 +271,7 @@
     <ClCompile Include="GUI\Fuser\Draw\Loot.cpp" />
     <ClCompile Include="GUI\Fuser\Draw\Players.cpp" />
     <ClCompile Include="GUI\Fuser\Fuser.cpp" />
-    <ClCompile Include="GUI\Loot Table\Loot Table.cpp" />
+    <ClCompile Include="GUI\Item Table\Item Table.cpp" />
     <ClCompile Include="GUI\Main Window\Main Window.cpp" />
     <ClCompile Include="GUI\Player Table\Player Table.cpp" />
     <ClCompile Include="GUI\Radar\Draw\Radar Exfils.cpp" />
@@ -341,7 +341,7 @@
     <ClInclude Include="GUI\Fuser\Fuser.h" />
     <ClInclude Include="GUI\Fuser\Overlays\Ammo Count\Ammo Count.h" />
     <ClInclude Include="GUI\Keybinds\Keybinds.h" />
-    <ClInclude Include="GUI\Loot Table\Loot Table.h" />
+    <ClInclude Include="GUI\Item Table\Item Table.h" />
     <ClInclude Include="GUI\Main Menu\Main Menu.h" />
     <ClInclude Include="GUI\Main Window\Main Window.h" />
     <ClInclude Include="GUI\Player Table\Player Table.h" />

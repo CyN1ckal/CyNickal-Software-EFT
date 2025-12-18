@@ -45,7 +45,7 @@ void AmmoCountOverlay::Render()
 	ImGui::PushFont(nullptr, 32.0f);
 	auto TextSize = (AmmoString.size() > Magazine.AmmoTypeName.size()) ? ImGui::CalcTextSize(AmmoString.c_str()) : ImGui::CalcTextSize(Magazine.AmmoTypeName.c_str());
 
-	ImGui::SetNextWindowPos({ WindowPos.x + (WindowSize.x * 0.5f), WindowPos.y + WindowSize.y - 80.0f });
+	ImGui::SetNextWindowPos({ WindowPos.x + (WindowSize.x * 0.5f) - (TextSize.x * 0.5f), WindowPos.y + WindowSize.y - 80.0f});
 	ImGui::SetNextWindowSize({ TextSize.x + 8.0f, TextSize.y * 2.0f + 8.0f });
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 4.0f,4.0f });
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);

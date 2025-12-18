@@ -9,12 +9,10 @@ void DrawESPLoot::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 {
 	if (!bMasterToggle) return;
 
-	std::scoped_lock lk(LootList::m_LootMutex);
-
 	auto LocalPlayerPos = PlayerList::GetLocalPlayerPosition();
 
-	for (auto& Loot : LootList::m_LootList)
-		std::visit([&](auto& Loot) { DrawLoot(Loot, DrawList, WindowPos, LocalPlayerPos);  }, Loot);
+	DrawAllContainers(WindowPos, DrawList, LocalPlayerPos);
+	DrawAllItems(WindowPos, DrawList, LocalPlayerPos);
 }
 
 void DrawESPLoot::DrawSettings()
@@ -31,10 +29,27 @@ void DrawESPLoot::DrawSettings()
 	ImGui::InputScalar("Min Item Price", ImGuiDataType_S32, &m_MinItemPrice);
 }
 
-void DrawESPLoot::DrawLoot(CObservedLootItem& Item, ImDrawList* DrawList, ImVec2 WindowPos, Vector3 LocalPlayerPos)
+void DrawESPLoot::DrawAllItems(const ImVec2& WindowPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
 {
 	if (!bItemToggle) return;
+	auto& ObservedItems = LootList::m_ObservedItems;
+	std::scoped_lock lk(ObservedItems.m_Mut);
+	for (auto& Loot : ObservedItems.m_Entities)
+		DrawItem(Loot, DrawList, WindowPos, LocalPlayerPos);
+}
 
+void DrawESPLoot::DrawAllContainers(const ImVec2& WindowPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
+{
+	if (!bContainerToggle) return;
+
+	auto& LootableContainers = LootList::m_LootableContainers;
+	std::scoped_lock lk(LootableContainers.m_Mut);
+	for (auto& Container : LootableContainers.m_Entities)
+		DrawContainer(Container, DrawList, WindowPos, LocalPlayerPos);
+}
+
+void DrawESPLoot::DrawItem(CObservedLootItem& Item, ImDrawList* DrawList, ImVec2 WindowPos, const Vector3& LocalPlayerPos)
+{
 	if (Item.IsInvalid()) return;
 
 	if (m_MinItemPrice > 0 && Item.GetItemPrice() < m_MinItemPrice)
@@ -59,10 +74,8 @@ void DrawESPLoot::DrawLoot(CObservedLootItem& Item, ImDrawList* DrawList, ImVec2
 	);
 }
 
-void DrawESPLoot::DrawLoot(CLootableContainer& Container, ImDrawList* DrawList, ImVec2 WindowPos, Vector3 LocalPlayerPos)
+void DrawESPLoot::DrawContainer(CLootableContainer& Container, ImDrawList* DrawList, ImVec2 WindowPos, const Vector3& LocalPlayerPos)
 {
-	if (!bContainerToggle) return;
-
 	if (Container.IsInvalid()) return;
 
 	Vector2 ScreenPos{};

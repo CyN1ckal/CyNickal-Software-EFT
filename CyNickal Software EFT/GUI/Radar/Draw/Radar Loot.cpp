@@ -14,10 +14,8 @@ void DrawRadarLoot::DrawAll(const ImVec2& WindowPos, const ImVec2& WindowSize, I
 	auto LocalPlayerPos = PlayerList::GetLocalPlayerPosition();
 	auto CenterPos = ImVec2(WindowPos.x + (WindowSize.x / 2.0f), WindowPos.y + (WindowSize.y / 2.0f));
 
-	std::scoped_lock lk(LootList::m_LootMutex);
-
-	for (auto& Loot : LootList::m_LootList)
-		std::visit([&](auto& Loot) { Draw(Loot, CenterPos, DrawList, LocalPlayerPos); }, Loot);
+	DrawAllContainers(CenterPos, DrawList, LocalPlayerPos);
+	DrawAllItems(CenterPos, DrawList, LocalPlayerPos);
 }
 
 void DrawRadarLoot::RenderSettings()
@@ -38,7 +36,21 @@ void DrawDotAtPosition(const ImVec2& DotPos, ImDrawList* DrawList, const ImU32& 
 	DrawList->AddCircleFilled(DotPos, Radar::fEntityRadius, Color);
 }
 
-void DrawRadarLoot::Draw(const CLootableContainer& Container, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
+void DrawRadarLoot::DrawAllContainers(const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
+{
+	std::scoped_lock lk(LootList::m_LootableContainers.m_Mut);
+	for (auto& Container : LootList::m_LootableContainers.m_Entities)
+		DrawContainer(Container, CenterPos, DrawList, LocalPlayerPos);
+}
+
+void DrawRadarLoot::DrawAllItems(const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
+{
+	std::scoped_lock lk(LootList::m_ObservedItems.m_Mut);
+	for (auto& Loot : LootList::m_ObservedItems.m_Entities)
+		DrawItem(Loot, CenterPos, DrawList, LocalPlayerPos);
+}
+
+void DrawRadarLoot::DrawContainer(const CLootableContainer& Container, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
 {
 	if (!bContainers) return;
 
@@ -54,7 +66,7 @@ void DrawRadarLoot::Draw(const CLootableContainer& Container, const ImVec2& Cent
 	DrawDotAtPosition(DotPos, DrawList, Container.GetRadarColor());
 }
 
-void DrawRadarLoot::Draw(const CObservedLootItem& Loot, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
+void DrawRadarLoot::DrawItem(const CObservedLootItem& Loot, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos)
 {
 	if (!bLoot) return;
 

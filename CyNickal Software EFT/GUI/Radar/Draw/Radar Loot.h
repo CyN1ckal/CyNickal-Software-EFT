@@ -9,8 +9,10 @@ public:
 	static void RenderSettings();
 
 private:
-	static void Draw(const CLootableContainer& Container, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos);
-	static void Draw(const CObservedLootItem& Container, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos);
+	static void DrawAllContainers(const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos);
+	static void DrawAllItems(const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos);
+	static void DrawContainer(const CLootableContainer& Container, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos);
+	static void DrawItem(const CObservedLootItem& Container, const ImVec2& CenterPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos);
 
 public:
 	static inline bool bMasterToggle{ true };

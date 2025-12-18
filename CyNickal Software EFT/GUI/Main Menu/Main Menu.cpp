@@ -3,7 +3,7 @@
 
 #include "GUI/Color Picker/Color Picker.h"
 #include "GUI/Player Table/Player Table.h"
-#include "GUI/Loot Table/Loot Table.h"
+#include "GUI/Item Table/Item Table.h"
 #include "GUI/Fuser/Fuser.h"
 #include "GUI/Radar/Radar.h"
 #include "GUI/Aimbot/Aimbot.h"
@@ -18,7 +18,7 @@ void MainMenu::Render()
 	ImGui::Checkbox("Aimbot Settings", &Aimbot::bSettings);
 	ImGui::Checkbox("Color Picker", &ColorPicker::bMasterToggle);
 	ImGui::Checkbox("Player Table", &PlayerTable::bMasterToggle);
-	ImGui::Checkbox("Loot Table", &LootTable::bMasterToggle);
+	ImGui::Checkbox("Item Table", &ItemTable::bMasterToggle);
 	ImGui::Checkbox("Keybinds", &Keybinds::bSettings);
 
 	ImGui::End();

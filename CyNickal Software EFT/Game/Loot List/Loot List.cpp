@@ -7,81 +7,8 @@ void LootList::CompleteUpdate(DMA_Connection* Conn)
 {
 	GetAndSortEntityAddresses(Conn);
 
-	FullUpdate(Conn);
-}
-
-void LootList::FullUpdate(DMA_Connection* Conn)
-{
-	auto& Proc = EFT::GetProcess();
-
-	std::scoped_lock lk(m_LootMutex);
-
-	m_LootList.clear();
-	for (auto& Addr : m_ObservedItemAddresses)
-		m_LootList.emplace_back(CObservedLootItem(Addr));
-
-	for (auto& Addr : m_LootableContainerAddresses)
-		m_LootList.emplace_back(CLootableContainer(Addr));
-
-	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.PrepareRead_1(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.PrepareRead_2(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.PrepareRead_3(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.PrepareRead_4(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.PrepareRead_5(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.PrepareRead_6(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.PrepareRead_7(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.PrepareRead_8(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	VMMDLL_Scatter_CloseHandle(vmsh);
-
-	for (auto& Loot : m_LootList)
-		std::visit([](auto& Loot) { Loot.Finalize(); }, Loot);
-}
-
-void LootList::QuickUpdate(DMA_Connection* Conn)
-{
-	std::scoped_lock lk(m_LootMutex);
-
-	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), EFT::GetProcess().GetPID(), VMMDLL_FLAG_NOCACHE);
-	for (auto& Loot : m_LootList)
-		std::visit([&vmsh](auto& Loot) { Loot.QuickRead(vmsh); }, Loot);
-	VMMDLL_Scatter_Execute(vmsh);
-	VMMDLL_Scatter_CloseHandle(vmsh);
-
-	for (auto& Loot : m_LootList)
-		std::visit([](auto& Loot) { Loot.QuickFinalize(); }, Loot);
+	m_LootableContainers.CompleteUpdate(Conn);
+	m_ObservedItems.CompleteUpdate(Conn);
 }
 
 std::vector<uintptr_t> DerefPointerVec(DMA_Connection* Conn, std::vector<uintptr_t>& Pointers)
@@ -123,20 +50,20 @@ void LootList::GetAndSortEntityAddresses(DMA_Connection* Conn)
 
 	auto DerefLootAddresses = DerefPointerVec(Conn, m_UnsortedAddresses);
 
-	m_ObservedItemAddresses.clear();
-	m_LootableContainerAddresses.clear();
+	m_ObservedItems.m_EntityAddresses.clear();
+	m_LootableContainers.m_EntityAddresses.clear();
 	for (auto&& [Index, Addr] : std::views::enumerate(DerefLootAddresses))
 	{
 		if (Addr == 0)
 			continue;
 
 		if (Addr == ObservedLootTypeAddress)
-			m_ObservedItemAddresses.push_back(m_UnsortedAddresses[Index]);
+			m_ObservedItems.m_EntityAddresses.push_back(m_UnsortedAddresses[Index]);
 		else if (Addr == LootableContainerTypeAddress)
-			m_LootableContainerAddresses.push_back(m_UnsortedAddresses[Index]);
+			m_LootableContainers.m_EntityAddresses.push_back(m_UnsortedAddresses[Index]);
 	}
 
-	std::println("[Loot List] Found {} ObservedLootItems and {} LootableContainers", m_ObservedItemAddresses.size(), m_LootableContainerAddresses.size());
+	std::println("[Loot List] Found {} ObservedLootItems and {} LootableContainers", m_ObservedItems.m_EntityAddresses.size(), m_LootableContainers.m_EntityAddresses.size());
 }
 
 void LootList::PopulateTypeAddressCache(DMA_Connection* Conn)

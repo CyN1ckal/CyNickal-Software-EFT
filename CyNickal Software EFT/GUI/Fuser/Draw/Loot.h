@@ -8,8 +8,10 @@ public:
 	static void DrawSettings();
 
 private:
-	static void DrawLoot(CObservedLootItem& Item, ImDrawList* DrawList, ImVec2 WindowPos, Vector3 LocalPlayerPos);
-	static void DrawLoot(CLootableContainer& Container, ImDrawList* DrawList, ImVec2 WindowPos, Vector3 LocalPlayerPos);
+	static void DrawAllItems(const ImVec2& WindowPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos);
+	static void DrawAllContainers(const ImVec2& WindowPos, ImDrawList* DrawList, const Vector3& LocalPlayerPos);
+	static void DrawItem(CObservedLootItem& Item, ImDrawList* DrawList, ImVec2 WindowPos, const Vector3& LocalPlayerPos);
+	static void DrawContainer(CLootableContainer& Container, ImDrawList* DrawList, ImVec2 WindowPos, const Vector3& LocalPlayerPos);
 
 public:
 	static inline bool bMasterToggle{ true };

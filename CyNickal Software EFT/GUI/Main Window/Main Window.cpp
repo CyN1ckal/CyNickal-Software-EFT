@@ -8,7 +8,7 @@
 #include "GUI/Fuser/Fuser.h"
 #include "GUI/Aimbot/Aimbot.h"
 #include "GUI/Player Table/Player Table.h"
-#include "GUI/Loot Table/Loot Table.h"
+#include "GUI/Item Table/Item Table.h"
 #include "GUI/Color Picker/Color Picker.h"
 #include "GUI/Keybinds/Keybinds.h"
 #include "GUI/Config/Config.h"
@@ -30,7 +30,7 @@ void Render(ImGuiContext* ctx)
 	Fuser::RenderSettings();
 	Aimbot::RenderSettings();
 	PlayerTable::Render();
-	LootTable::Render();
+	ItemTable::Render();
 	ColorPicker::Render();
 	Keybinds::Render();
 	MainMenu::Render();
