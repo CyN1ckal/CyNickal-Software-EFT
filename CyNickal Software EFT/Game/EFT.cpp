@@ -2,6 +2,7 @@
 #include "EFT.h"
 #include "Game/GOM/GOM.h"
 #include "Game/Camera/Camera.h"
+#include "Game/Response Data/Response Data.h"
 
 bool EFT::Initialize(DMA_Connection* Conn)
 {
@@ -10,6 +11,8 @@ bool EFT::Initialize(DMA_Connection* Conn)
 	Proc.GetProcessInfo(Conn);
 
 	MakeNewGameWorld(Conn);
+
+	ResponseData::Initialize(Conn);
 
 	return true;
 }

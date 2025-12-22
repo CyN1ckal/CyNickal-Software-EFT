@@ -17,6 +17,13 @@ namespace Offsets
 	//48 8B 05 ? ? ? ? 49 C7 C6 ? ? ? ? 8B 48 ? 85 C9 0F 84 ? ? ? ? 48 89 9C 24
 	inline constexpr std::ptrdiff_t pCameras{ 0x19F3040 };
 
+	// 48 8B 0D ? ? ? ? 8B F0 48 8B 91 ? ? ? ? 48 8B 4A
+	// 48 8B 05 ? ? ? ? BA ? ? ? ? 4C 8B 0D ? ? ? ? 41 B8
+	// 48 8B 05 ? ? ? ? 48 8B 80 ? ? ? ? 48 89 6C 24 ? 4C 8B 30
+	// 48 8B 0D ? ? ? ? 48 8B 89 ? ? ? ? 48 89 6C 24 ? 4C 8B 31
+	// 48 8B 0D ? ? ? ? 48 8B F8 48 8B 91 ? ? ? ? 48 8B 0A 48 85 C9 74
+	inline constexpr std::ptrdiff_t ZLibObject{ 0x57F68A8 };
+
 	namespace CGameObjectManager
 	{
 		inline constexpr std::ptrdiff_t pActiveNodes{ 0x20 };

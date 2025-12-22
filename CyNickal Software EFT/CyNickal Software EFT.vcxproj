@@ -261,9 +261,11 @@
     <ClCompile Include="Game\Classes\Players\CObservedPlayer\CObservedPlayer.cpp" />
     <ClCompile Include="Game\EFT.cpp" />
     <ClCompile Include="Game\GOM\GOM.cpp" />
+    <ClCompile Include="Game\Response Data\Response Data.cpp" />
     <ClCompile Include="GUI\Aimbot\Aimbot.cpp" />
     <ClCompile Include="GUI\Color Picker\Color Picker.cpp" />
     <ClCompile Include="GUI\Config\Config.cpp" />
+    <ClCompile Include="GUI\Flea Bot\Flea Bot.cpp" />
     <ClCompile Include="GUI\Fuser\Draw\Exfils.cpp" />
     <ClCompile Include="GUI\Fuser\Overlays\Ammo Count\Ammo Count.cpp" />
     <ClCompile Include="GUI\Keybinds\Keybinds.cpp" />
@@ -280,6 +282,7 @@
     <ClCompile Include="GUI\Radar\Draw\Radar Loot.cpp" />
     <ClCompile Include="GUI\Radar\Radar.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Makcu\MyMakcu.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DLL|x64'">Create</PrecompiledHeader>
@@ -333,9 +336,11 @@
     <ClInclude Include="Game\Enums\ESpawnType.h" />
     <ClInclude Include="Game\GOM\GOM.h" />
     <ClInclude Include="Game\Offsets\Offsets.h" />
+    <ClInclude Include="Game\Response Data\Response Data.h" />
     <ClInclude Include="GUI\Aimbot\Aimbot.h" />
     <ClInclude Include="GUI\Color Picker\Color Picker.h" />
     <ClInclude Include="GUI\Config\Config.h" />
+    <ClInclude Include="GUI\Flea Bot\Flea Bot.h" />
     <ClInclude Include="GUI\Fonts\Data\IBMPlexMono.h" />
     <ClInclude Include="GUI\Fonts\Fonts.h" />
     <ClInclude Include="GUI\Fuser\Draw\Exfils.h" />
@@ -352,6 +357,7 @@
     <ClInclude Include="GUI\Radar\Draw\Radar Players.h" />
     <ClInclude Include="GUI\Radar\Draw\Radar Loot.h" />
     <ClInclude Include="GUI\Radar\Radar.h" />
+    <ClInclude Include="Makcu\MyMakcu.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

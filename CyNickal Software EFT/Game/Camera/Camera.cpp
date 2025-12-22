@@ -75,6 +75,13 @@ bool Camera::Initialize(DMA_Connection* Conn)
 	InitializeCameraCache(Conn);
 
 	auto FPSCamAddress = SearchCameraCacheByName("FPS Camera");
+
+	if (!FPSCamAddress)
+	{
+		std::println("[Camera] Failed to find FPS Camera in cache.");
+		return false;
+	}
+
 	std::println("[Camera] FPS Camera Address: 0x{:X}", FPSCamAddress);
 
 	auto ObjectAddress = Proc.ReadMem<uintptr_t>(Conn, FPSCamAddress + Offsets::CComponent::pGameObject);
@@ -130,7 +137,7 @@ uintptr_t Camera::SearchCameraCacheByName(const std::string& Name)
 			return Entry.Address;
 	}
 
-	throw std::runtime_error("Camera not found in cache: " + Name);
+	return 0;
 }
 
 Matrix44 Camera::GetViewMatrix()

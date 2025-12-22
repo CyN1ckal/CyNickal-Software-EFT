@@ -39,6 +39,12 @@ const uintptr_t Process::GetUnityAddress() const
 	return m_Modules.at(Unity);
 }
 
+const uintptr_t Process::GetAssemblyBase() const
+{
+	using namespace ConstStrings;
+	return m_Modules.at(GameAssembly);
+}
+
 const DWORD Process::GetPID() const
 {
 	return m_PID;
@@ -55,13 +61,16 @@ bool Process::PopulateModules(DMA_Connection* Conn)
 
 	auto Handle = Conn->GetHandle();
 
-	while (!m_Modules[Game] || !m_Modules[Unity])
+	while (!m_Modules[Game] || !m_Modules[Unity] || !m_Modules[GameAssembly])
 	{
 		if (!m_Modules[Game])
 			m_Modules[Game] = VMMDLL_ProcessGetModuleBaseU(Handle, this->m_PID, Game.c_str());
 
 		if (!m_Modules[Unity])
 			m_Modules[Unity] = VMMDLL_ProcessGetModuleBaseU(Handle, this->m_PID, Unity.c_str());
+
+		if(!m_Modules[GameAssembly])
+			m_Modules[GameAssembly] = VMMDLL_ProcessGetModuleBaseU(Handle, this->m_PID, GameAssembly.c_str());
 
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}

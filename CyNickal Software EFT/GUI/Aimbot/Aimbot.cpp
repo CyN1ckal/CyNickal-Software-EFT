@@ -5,20 +5,13 @@
 #include "GUI/Fuser/Fuser.h"
 #include "GUI/Keybinds/Keybinds.h"	
 #include "Game/EFT.h"
+#include "Makcu/MyMakcu.h"
 
 void Aimbot::RenderSettings()
 {
 	if (!bSettings) return;
 
 	ImGui::Begin("Aimbot Settings", &bSettings);
-
-	if (m_Device.isConnected() == false)
-	{
-		if (ImGui::Button("Connect Makcu Device")) m_Device.connect();
-	}
-	else
-		ImGui::Text("Makcu Device Connected: %s", m_Device.getDeviceInfo().port.c_str());
-
 	ImGui::Checkbox("Master Toggle", &bMasterToggle);
 	ImGui::Checkbox("Draw FOV Circle", &bDrawFOV);
 	ImGui::SliderFloat("Dampen", &fDampen, 0.01f, 1.0f);
@@ -58,9 +51,9 @@ void Aimbot::OnDMAFrame(DMA_Connection* Conn)
 {
 	if (!bMasterToggle) return;
 
-	if (c_keys::IsInitialized() == false || m_Device.isConnected() == false) return;
+	if (c_keys::IsInitialized() == false || MyMakcu::m_Device.isConnected() == false) return;
 
-	if (c_keys::IsKeyDown(Conn, m_Keybind) == false) return;
+	if (Keybinds::Aimbot.IsActive(Conn) == false) return;
 
 	auto BestTarget = Aimbot::FindBestTarget();
 	auto& RegisteredPlayers = EFT::GetRegisteredPlayers();
@@ -80,9 +73,9 @@ void Aimbot::OnDMAFrame(DMA_Connection* Conn)
 		Delta.x *= fDampen;
 		Delta.y *= fDampen;
 
-		m_Device.mouseMove(Delta.x, Delta.y);
+		MyMakcu::m_Device.mouseMove(Delta.x, Delta.y);
 
-	} while (c_keys::IsKeyDown(Conn, m_Keybind));
+	} while (Keybinds::Aimbot.IsActive(Conn));
 
 }
 

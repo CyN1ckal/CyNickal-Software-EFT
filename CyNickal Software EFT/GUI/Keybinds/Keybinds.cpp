@@ -4,6 +4,7 @@
 #include "GUI/Aimbot/Aimbot.h"
 #include "Game/EFT.h"
 #include "Game/GOM/GOM.h"
+#include "GUI/Flea Bot/Flea Bot.h"
 
 const char* CKeybind::GetKeyName(uint32_t vkCode)
 {
@@ -152,6 +153,7 @@ void Keybinds::Render()
 	DMARefresh.Render();
 	PlayerRefresh.Render();
 	Aimbot.Render();
+	FleaBot.Render();
 
 	ImGui::End();
 }
@@ -166,6 +168,9 @@ void Keybinds::OnDMAFrame(DMA_Connection* Conn)
 
 	if (Aimbot.IsActive(Conn))
 		Aimbot::OnDMAFrame(Conn);
+
+	if (FleaBot.IsActive(Conn))
+		FleaBot::bMasterToggle = !FleaBot::bMasterToggle;
 }
 
 void CKeybind::Render()

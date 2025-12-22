@@ -18,15 +18,24 @@ void CExfilController::Initialize(DMA_Connection* Conn)
 	uintptr_t ExfilList = Proc.ReadMem<uintptr_t>(Conn, m_EntityAddress + Offsets::CExfiltrationController::pExfiltrationPoints);
 
 	if (!ExfilList)
-		throw std::runtime_error("Failed to get Exfiltration Points List");
+	{
+		std::println("[CExfilController] ExfilList is null");
+		return;
+	}
 
 	uint32_t ExfilCount = Proc.ReadMem<uint32_t>(Conn, ExfilList + Offsets::CGenericList::Num);
 
 	if (ExfilCount > 64)
-		throw std::runtime_error("Exfil Count is unreasonably high");
+	{
+		std::println("[CExfilController] Number of exfils is unreasonably high: {}", ExfilCount);
+		return;
+	}
 
 	if (ExfilCount == 0)
-		throw std::runtime_error("Exfil Count is zero");
+	{
+		std::println("[CExfilController] Exfil Count is zero");
+		return;
+	}
 
 	uintptr_t ExfilDataStart = ExfilList + Offsets::CGenericList::StartData;
 

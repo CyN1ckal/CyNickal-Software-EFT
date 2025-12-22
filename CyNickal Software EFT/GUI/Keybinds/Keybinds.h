@@ -27,4 +27,5 @@ public:
 	static inline CKeybind DMARefresh = { "DMA Refresh", VK_INSERT, true, true };
 	static inline CKeybind PlayerRefresh = { "Player Refresh", VK_HOME, true, true };
 	static inline CKeybind Aimbot = { "Aimbot", VK_XBUTTON2, true, false };
+	static inline CKeybind FleaBot = { "Flea Bot", VK_PRIOR, true, true };
 };
