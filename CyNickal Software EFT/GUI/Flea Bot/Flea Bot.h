@@ -18,7 +18,7 @@ struct CMousePos
 	int32_t x{ 0 };
 	int32_t y{ 0 };
 
-	const CMousePos operator-(CMousePos& rhs) const
+	const CMousePos operator-(const CMousePos& rhs) const
 	{
 		return CMousePos{ x - rhs.x, y - rhs.y };
 	}
