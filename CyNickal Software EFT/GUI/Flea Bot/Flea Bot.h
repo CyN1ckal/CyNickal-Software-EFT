@@ -42,36 +42,29 @@ public:
 private:
 	static EResponseType IdentifyResponse(const nlohmann::json& ResponseJson);
 	static void PrintOffers(const nlohmann::json& ResponseJson);
-	static bool DoesOfferMeetCriteria(const nlohmann::json& OfferJson);
-	static void ClickInFiveSeconds();
 	static void BuyFirstItemStack(CMousePos StartingPos);
 
 public:
 	static inline bool bMasterToggle{ false };
 	static inline bool bLimitBuy{ false };
-	static inline bool bCycleBuildingMaterials{ true };
+	static inline bool bCycleBuy{ true };
 	static inline bool bRequestedBuy{ false };
 	static inline std::unique_ptr<std::thread> pInputThread{ nullptr };
 	static inline std::atomic<bool>bInputThreadDone{ false };
+	static inline std::chrono::milliseconds TimeoutDuration{ 1500 };
+	static inline std::chrono::milliseconds CycleDelay{ 200 };
+	static inline std::chrono::milliseconds SuperCycleDelay{ 500 };
 
 private:
 	static void LimitBuyOneLogic(CMousePos StartingPos);
-	static void CycleBuildingMaterials(CMousePos StartingPos);
+	static void CycleBuy(CMousePos StartingPos);
 
 private:
 	static inline std::atomic<bool> bHasNewOfferData{ false };
 	static nlohmann::json AwaitNewOfferData(std::chrono::milliseconds Timeout);
 
 private:
-	static uint32_t GetMaxPrice(const std::string& ItemID)
-	{
-		auto It = m_ItemPriceLimits.find(ItemID);
-		if (It != m_ItemPriceLimits.end())
-			return It->second;
-
-		return 0;
-	}
-	static inline std::unordered_map<std::string, uint32_t> m_ItemPriceLimits{
+	static inline std::unordered_map<std::string, uint32_t> m_DefaultPrices{
 		{"5d1b32c186f774252167a530",22000},	// Analog thermometer
 		{"57347c5b245977448d35f6e1",14000},	// Bolts
 		{"59e35cbb86f7741778269d83",35000},	// Corrugated hose
@@ -90,4 +83,15 @@ private:
 		{"5e2af22086f7746d3f3c33fa",11000}, // Cold welding
 		{"590c346786f77423e50ed342",25000}, // Xenomorph Foam
 	};
+	struct CPriceListEntry
+	{
+		std::string ItemName{};
+		uint32_t MaxPrice{ 0 };
+	};
+	static inline std::unordered_map<std::string, CPriceListEntry> m_PriceList{};
+	static void ConstructPriceList();
+	static void LoadPriceList();
+	static void SavePriceList();
+	static bool DoesOfferPassPriceListCheck(const nlohmann::json& OfferJson);
+	static nlohmann::json PriceListToJson();
 };

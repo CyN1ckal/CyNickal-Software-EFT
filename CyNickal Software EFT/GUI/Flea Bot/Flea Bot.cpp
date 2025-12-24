@@ -2,11 +2,30 @@
 #include "Flea Bot.h"
 #include "Game/Response Data/Response Data.h"
 #include "Makcu/MyMakcu.h"
+#include "Database/Database.h"
 
 using namespace std::chrono_literals;
 
+void ImGuiChronoEdit(const char* label, std::chrono::milliseconds& value)
+{
+	int TotalMs = static_cast<int>(value.count());
+	ImGui::SetNextItemWidth(125.0f);
+	if (ImGui::InputInt(label, &TotalMs))
+	{
+		if (TotalMs < 0)
+			TotalMs = 0;
+		value = std::chrono::milliseconds(TotalMs);
+	}
+}
+
 void FleaBot::Render()
 {
+	if (m_PriceList.empty())
+	{
+		LoadPriceList();
+		ConstructPriceList();
+	}
+
 	if (pInputThread && !bMasterToggle && bInputThreadDone)
 	{
 		std::println("[{0:%T}] [Flea Bot] Stopping input thread.", std::chrono::system_clock::now());
@@ -21,10 +40,71 @@ void FleaBot::Render()
 	}
 
 	ImGui::Begin("Flea Bot");
-	ImGui::Checkbox("Enable Flea Bot", &bMasterToggle);
+	auto ContentRegion = ImGui::GetContentRegionAvail();
+	if (ImGui::BeginChild("ChildL", { ContentRegion.x * 0.35f, ContentRegion.y }))
+	{
+		ImGui::Checkbox("Enable Flea Bot", &bMasterToggle);
 
-	ImGui::Checkbox("Cycle Building Materials", &bCycleBuildingMaterials);
-	ImGui::Checkbox("Limit Buying", &bLimitBuy);
+		if (ImGui::BeginTabBar("MyTabBar"))
+		{
+			if (ImGui::BeginTabItem("Cycle"))
+			{
+				ImGui::Checkbox("Enable##Cycle", &bCycleBuy);
+				ImGuiChronoEdit("Cycle Delay", CycleDelay);
+				ImGuiChronoEdit("Super Cycley", SuperCycleDelay);
+				ImGuiChronoEdit("Timeout", TimeoutDuration);
+				ImGui::EndTabItem();
+			}
+
+			if (ImGui::BeginTabItem("Single"))
+			{
+				ImGui::Checkbox("Enable##Single", &bLimitBuy);
+				ImGui::EndTabItem();
+			}
+
+			ImGui::EndTabBar();
+		}
+	}
+	ImGui::EndChild();
+	ImGui::SameLine();
+	if (ImGui::BeginChild("ChildR", { ContentRegion.x * 0.65f, ContentRegion.y }))
+	{
+
+		if (ImGui::Button("Save Price List"))
+			SavePriceList();
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Reload Price List"))
+		{
+			m_PriceList.clear();
+			LoadPriceList();
+			ConstructPriceList();
+		}
+
+		if (ImGui::BeginTable("Price Limits", 3))
+		{
+			ImGui::TableSetupColumn("Item ID");
+			ImGui::TableSetupColumn("Name");
+			ImGui::TableSetupColumn("Max Price");
+			ImGui::TableHeadersRow();
+
+			for (auto& [ItemID, PriceListEntry] : m_PriceList)
+			{
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);
+				ImGui::TextUnformatted(ItemID.c_str());
+				ImGui::TableSetColumnIndex(1);
+				ImGui::TextUnformatted(PriceListEntry.ItemName.c_str());
+				ImGui::TableSetColumnIndex(2);
+				ImGui::InputScalar(("##MaxPriceInput" + ItemID).c_str(), ImGuiDataType_U32, &PriceListEntry.MaxPrice);
+			}
+
+			ImGui::EndTable();
+		}
+	}
+	ImGui::EndChild();
+
 	ImGui::End();
 }
 
@@ -51,8 +131,8 @@ void FleaBot::InputThread()
 		if (bLimitBuy)
 			LimitBuyOneLogic({ 1840,120 });
 
-		if (bCycleBuildingMaterials)
-			CycleBuildingMaterials({ 1840,120 });
+		if (bCycleBuy)
+			CycleBuy({ 1840,120 });
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(25));
 	}
@@ -85,35 +165,6 @@ void FleaBot::PrintOffers(const nlohmann::json& ResponseJson)
 		auto Price = Offer["requirements"][0]["count"].get<int>();
 		std::println("   {} offering {} {} for {} each", Username.c_str(), ItemID, Quantity, Price);
 	}
-}
-
-bool FleaBot::DoesOfferMeetCriteria(const nlohmann::json& OfferJson)
-{
-	auto Price = OfferJson["requirements"][0]["count"].get<int>();
-	auto ItemId = OfferJson["items"][0]["_tpl"].get<std::string>();
-	auto CurrencyType = OfferJson["requirements"][0]["_tpl"].get<std::string>();
-	auto Quantity = OfferJson["quantity"].get<int>();
-
-	if (Quantity < 1)
-		return false;
-
-	if (CurrencyType != RoubleBSGID)
-		return false;
-
-	uint32_t MaxPriceForItem = GetMaxPrice(ItemId);
-
-	if (Price > MaxPriceForItem)
-		return false;
-
-	std::println("[{0:%T}] [Flea Bot] Buying item {1:s} x {2:d} for {3:d}", std::chrono::system_clock::now(), ItemId, Quantity, Price);
-
-	return true;
-}
-
-void FleaBot::ClickInFiveSeconds()
-{
-	std::this_thread::sleep_for(std::chrono::seconds(5));
-	MyMakcu::m_Device.click(makcu::MouseButton::LEFT);
 }
 
 const auto ShortDelay = 50ms;
@@ -161,12 +212,12 @@ void FleaBot::BuyFirstItemStack(CMousePos StartingPos)
 	MyMakcu::m_Device.mouseMove(Delta.x, Delta.y);
 }
 
-void FleaBot::CycleBuildingMaterials(CMousePos StartingPos)
+void FleaBot::CycleBuy(CMousePos StartingPos)
 {
 	const auto ConstructionListStart = CMousePos{ 559,240 };
 	const auto Delta = ConstructionListStart - StartingPos;
 
-	auto CurPos = MoveThenWait(StartingPos, Delta, 300ms);
+	auto CurPos = MoveThenWait(StartingPos, Delta, CycleDelay);
 	bool bFailed{ false };
 
 	constexpr size_t ItemRows = 17;
@@ -174,8 +225,8 @@ void FleaBot::CycleBuildingMaterials(CMousePos StartingPos)
 	for (int i = 0; i < ItemRows && !bFailed && bMasterToggle; i++)
 	{
 		bHasNewOfferData = false;
-		CurPos = MoveThenClick(CurPos, { 0,25 }, 300ms);
-		auto OfferJson = AwaitNewOfferData(1500ms);
+		CurPos = MoveThenClick(CurPos, { 0,25 }, CycleDelay);
+		auto OfferJson = AwaitNewOfferData(TimeoutDuration);
 
 		if (OfferJson.is_null())
 		{
@@ -189,7 +240,7 @@ void FleaBot::CycleBuildingMaterials(CMousePos StartingPos)
 		}
 
 		auto& FirstOffer = OfferJson["data"]["offers"][0];
-		if (DoesOfferMeetCriteria(FirstOffer))
+		if (DoesOfferPassPriceListCheck(FirstOffer))
 		{
 			/* Waiting for response to populate UI */
 			std::this_thread::sleep_for(20ms);
@@ -208,7 +259,7 @@ void FleaBot::CycleBuildingMaterials(CMousePos StartingPos)
 		return;
 
 	/* click on the category following the last item */
-	CurPos = MoveThenClick(CurPos, { 0,25 }, 500ms);
+	CurPos = MoveThenClick(CurPos, { 0,25 }, SuperCycleDelay);
 
 	/* click refresh and wait for response */
 	MoveThenClick(CurPos, StartingPos - CurPos, ShortDelay);
@@ -247,6 +298,82 @@ nlohmann::json FleaBot::AwaitNewOfferData(std::chrono::milliseconds Timeout)
 	return Return;
 }
 
+void FleaBot::ConstructPriceList()
+{
+	m_PriceList.clear();
+	for (const auto& [ItemID, MaxPrice] : m_DefaultPrices)
+	{
+		CPriceListEntry NewEntry;
+		NewEntry.MaxPrice = MaxPrice;
+		NewEntry.ItemName = TarkovItemData::GetShortNameOfItem(ItemID);
+		m_PriceList[ItemID] = NewEntry;
+	}
+}
+
+void FleaBot::LoadPriceList()
+{
+	std::ifstream PriceListFile("FleaBot_PriceList.json", std::ios::in);
+	if (PriceListFile.is_open())
+	{
+		nlohmann::json JsonData;
+		PriceListFile >> JsonData;
+		PriceListFile.close();
+		for (auto& Entry : JsonData)
+		{
+			auto ItemID = Entry[0].get<std::string>();
+			auto MaxPrice = Entry[1].get<uint32_t>();
+			m_DefaultPrices[ItemID] = MaxPrice;
+		}
+	}
+}
+
+void FleaBot::SavePriceList()
+{
+	std::ofstream PriceListFile("FleaBot_PriceList.json", std::ios::out | std::ios::trunc);
+
+	if (PriceListFile.is_open())
+	{
+		auto JsonData = PriceListToJson();
+		PriceListFile << JsonData.dump(4);
+		PriceListFile.close();
+	}
+}
+
+bool FleaBot::DoesOfferPassPriceListCheck(const nlohmann::json& OfferJson)
+{
+	auto Price = OfferJson["requirements"][0]["count"].get<int>();
+	auto ItemId = OfferJson["items"][0]["_tpl"].get<std::string>();
+	auto CurrencyType = OfferJson["requirements"][0]["_tpl"].get<std::string>();
+	auto Quantity = OfferJson["quantity"].get<int>();
+
+	if (Quantity < 1)
+		return false;
+
+	if (CurrencyType != RoubleBSGID)
+		return false;
+
+	auto It = m_PriceList.find(ItemId);
+	if (It == m_PriceList.end())
+		return false;
+
+	if (Price > It->second.MaxPrice)
+		return false;
+
+	std::println("[{0:%T}] [Flea Bot] Buying {1:d} {2:s} for {3:d} each", std::chrono::system_clock::now(), Quantity, It->second.ItemName, Price);
+
+	return true;
+}
+
+nlohmann::json FleaBot::PriceListToJson()
+{
+	auto Return = nlohmann::json();
+
+	for (auto& [ItemID, PriceEntry] : m_PriceList)
+		Return.push_back({ ItemID,PriceEntry.MaxPrice });
+
+	return Return;
+}
+
 void FleaBot::LimitBuyOneLogic(CMousePos StartingPos)
 {
 	std::scoped_lock Lock(LastOfferMut);
@@ -257,7 +384,7 @@ void FleaBot::LimitBuyOneLogic(CMousePos StartingPos)
 	auto& BestOffer = LatestOfferJson["data"]["offers"][0];
 	auto OfferId = BestOffer["_id"].get<std::string>();
 	static std::string LastOfferId{ "" };
-	if (OfferId != LastOfferId && DoesOfferMeetCriteria(LatestOfferJson["data"]["offers"][0]))
+	if (OfferId != LastOfferId && DoesOfferPassPriceListCheck(LatestOfferJson["data"]["offers"][0]))
 	{
 		BuyFirstItemStack(StartingPos);
 		LastOfferId = OfferId;
