@@ -37,3 +37,8 @@ struct Vector4
 	float z{ 0.0f };
 	float w{ 0.0f };
 };
+
+struct Matrix44
+{
+	float M[4][4]{};
+};

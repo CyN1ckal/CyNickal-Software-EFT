@@ -5,7 +5,7 @@
 #include "Game/Response Data/Response Data.h"
 
 #include "Game/GOM/GOM.h"
-#include "Game/Camera/Camera.h"
+#include "Game/Camera List/Camera List.h"
 #include "GUI/Aimbot/Aimbot.h"
 #include "GUI/Keybinds/Keybinds.h"
 
@@ -30,7 +30,7 @@ void DMA_Thread_Main()
 	CTimer ResponseData(std::chrono::milliseconds(25), [&Conn]() { ResponseData::OnDMAFrame(Conn); });
 	CTimer Player_Quick(std::chrono::milliseconds(25), [&Conn]() { EFT::QuickUpdatePlayers(Conn); });
 	CTimer Player_Allocations(std::chrono::seconds(5), [&Conn]() { EFT::HandlePlayerAllocations(Conn); });
-	CTimer Camera_UpdateViewMatrix(std::chrono::milliseconds(2), [&Conn]() { Camera::QuickUpdateViewMatrix(Conn); });
+	CTimer Camera_UpdateViewMatrix(std::chrono::milliseconds(2), [&Conn]() { CameraList::QuickUpdateNecessaryCameras(Conn); });
 	CTimer Keybinds(std::chrono::milliseconds(50), [&Conn]() { Keybinds::OnDMAFrame(Conn); });
 
 	while (bRunning)

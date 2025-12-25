@@ -236,6 +236,7 @@
     </ClCompile>
     <ClCompile Include="Database\Database.cpp" />
     <ClCompile Include="Game\Classes\CBaseLootItem\CBaseLootItem.cpp" />
+    <ClCompile Include="Game\Classes\CCamera\CCamera.cpp" />
     <ClCompile Include="Game\Classes\CExfilPoint\CExfilPoint.cpp" />
     <ClCompile Include="Game\Classes\CItemTemplate\CItemTemplate.cpp" />
     <ClCompile Include="Game\Classes\CLocalGameWorld\CLocalGameWorld.cpp" />
@@ -247,7 +248,7 @@
     <ClCompile Include="DMA\DMA.cpp" />
     <ClCompile Include="DMA\Input Manager.cpp" />
     <ClCompile Include="DMA\Process.cpp" />
-    <ClCompile Include="Game\Camera\Camera.cpp" />
+    <ClCompile Include="Game\Camera List\Camera List.cpp" />
     <ClCompile Include="Game\Classes\CBaseEntity\CBaseEntity.cpp" />
     <ClCompile Include="Game\Classes\CHeldItem\CHeldItem.cpp" />
     <ClCompile Include="Game\Classes\CItem\CItem.cpp" />
@@ -299,6 +300,7 @@
     <ClInclude Include="..\Dependencies\ImGui\imstb_truetype.h" />
     <ClInclude Include="Database\Database.h" />
     <ClInclude Include="Game\Classes\CBaseLootItem\CBaseLootItem.h" />
+    <ClInclude Include="Game\Classes\CCamera\CCamera.h" />
     <ClInclude Include="Game\Classes\CExfilPoint\CExfilPoint.h" />
     <ClInclude Include="Game\Classes\CItemTemplate\CItemTemplate.h" />
     <ClInclude Include="Game\Classes\CLocalGameWorld\CLocalGameWorld.h" />
@@ -311,7 +313,7 @@
     <ClInclude Include="DMA\DMA.h" />
     <ClInclude Include="DMA\Input Manager.h" />
     <ClInclude Include="DMA\Process.h" />
-    <ClInclude Include="Game\Camera\Camera.h" />
+    <ClInclude Include="Game\Camera List\Camera List.h" />
     <ClInclude Include="Game\Classes\CBaseEntity\CBaseEntity.h" />
     <ClInclude Include="Game\Classes\CGameObjectManager.h" />
     <ClInclude Include="Game\Classes\CHeldItem\CHeldItem.h" />

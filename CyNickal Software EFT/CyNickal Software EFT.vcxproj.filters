@@ -72,7 +72,7 @@
     <ClCompile Include="GUI\Player Table\Player Table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Camera\Camera.cpp">
+    <ClCompile Include="Game\Camera List\Camera List.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Fuser\Draw\Players.cpp">
@@ -189,6 +189,9 @@
     <ClCompile Include="Makcu\MyMakcu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Classes\CCamera\CCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -266,7 +269,7 @@
     <ClInclude Include="GUI\Player Table\Player Table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Camera\Camera.h">
+    <ClInclude Include="Game\Camera List\Camera List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Fuser\Draw\Players.h">
@@ -402,6 +405,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Makcu\MyMakcu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CCamera\CCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

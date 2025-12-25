@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Players.h"
-#include "Game/Camera/Camera.h"
+#include "Game/Camera List/Camera List.h"
 #include "Game/Enums/EBoneIndex.h"
 #include "GUI/Color Picker/Color Picker.h"
 #include "Game/EFT.h"
@@ -100,7 +100,7 @@ void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos
 	m_ProjectedBoneCache.fill({});
 
 	for (int i = 0; i < SKELETON_NUMBONES; i++)
-		m_ProjectedBoneCache[i].bIsOnScreen = Camera::WorldToScreen(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i].ScreenPos);
+		m_ProjectedBoneCache[i].bIsOnScreen = CameraList::FPSCamera_W2S(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i].ScreenPos);
 
 	uint8_t LineNumber = 0;
 
@@ -130,7 +130,7 @@ void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, 
 	m_ProjectedBoneCache.fill({});
 
 	for (int i = 0; i < SKELETON_NUMBONES; i++)
-		m_ProjectedBoneCache[i].bIsOnScreen = Camera::WorldToScreen(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i].ScreenPos);
+		m_ProjectedBoneCache[i].bIsOnScreen = CameraList::FPSCamera_W2S(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i].ScreenPos);
 
 	if (m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]].bIsOnScreen == false)
 		return;

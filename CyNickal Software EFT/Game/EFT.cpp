@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EFT.h"
 #include "Game/GOM/GOM.h"
-#include "Game/Camera/Camera.h"
+#include "Game/Camera List/Camera List.h"
 #include "Game/Response Data/Response Data.h"
 
 bool EFT::Initialize(DMA_Connection* Conn)
@@ -28,7 +28,7 @@ void EFT::MakeNewGameWorld(DMA_Connection* Conn)
 	{
 		GOM::Initialize(Conn);
 		pGameWorld = std::make_unique<CLocalGameWorld>(GOM::FindGameWorldAddressFromCache(Conn));
-		Camera::Initialize(Conn);
+		CameraList::Initialize(Conn);
 	}
 	catch (const std::exception& e)
 	{

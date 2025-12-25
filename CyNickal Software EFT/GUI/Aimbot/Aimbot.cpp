@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Aimbot.h"
 #include "DMA/Input Manager.h"
-#include "Game/Camera/Camera.h"
+#include "Game/Camera List/Camera List.h"
 #include "GUI/Fuser/Fuser.h"
 #include "GUI/Keybinds/Keybinds.h"	
 #include "Game/EFT.h"
@@ -61,7 +61,7 @@ void Aimbot::OnDMAFrame(DMA_Connection* Conn)
 	do
 	{
 		RegisteredPlayers.QuickUpdate(Conn);
-		Camera::QuickUpdateViewMatrix(Conn);
+		CameraList::QuickUpdateNecessaryCameras(Conn);
 
 		auto Delta = GetAimDeltaToTarget(BestTarget);
 		static ImVec2 PreviousDelta{};
@@ -90,7 +90,7 @@ ImVec2 Aimbot::GetAimDeltaToTarget(uintptr_t TargetAddress)
 	auto TargetWorldPos = EFT::GetRegisteredPlayers().GetPlayerBonePosition(TargetAddress, EBoneIndex::Head);
 
 	Vector2 ScreenPos{};
-	if (!Camera::WorldToScreen(TargetWorldPos, ScreenPos)) return Return;
+	if (!CameraList::FPSCamera_W2S(TargetWorldPos, ScreenPos)) return Return;
 
 	float DistanceFromCenter = Distance(ScreenPos, CenterScreen);
 
@@ -118,7 +118,7 @@ uintptr_t Aimbot::FindBestTarget()
 		std::visit([&](auto& Player) {
 
 			Vector2 ScreenPos{};
-			if (!Camera::WorldToScreen(Player.GetBonePosition(EBoneIndex::Head), ScreenPos)) return;
+			if (!CameraList::FPSCamera_W2S(Player.GetBonePosition(EBoneIndex::Head), ScreenPos)) return;
 
 			float DistanceFromCenter = sqrt(pow(ScreenPos.x - Center.x, 2) + pow(ScreenPos.y - Center.y, 2));
 
