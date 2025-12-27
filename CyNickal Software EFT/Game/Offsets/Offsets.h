@@ -75,9 +75,15 @@ namespace Offsets
 	{
 		inline constexpr std::ptrdiff_t pMovementContext{ 0x60 };
 		inline constexpr std::ptrdiff_t pPlayerBody{ 0x190 };
+		inline constexpr std::ptrdiff_t pProceduralWeaponAnimation{ 0x338 };
 		inline constexpr std::ptrdiff_t pProfile{ 0x900 };
 		inline constexpr std::ptrdiff_t pAiData{ 0x940 };
 		inline constexpr std::ptrdiff_t pHandsController{ 0x980 };
+	}
+	namespace CProceduralWeaponAnimation
+	{
+		inline constexpr std::ptrdiff_t pOptics{ 0x180 };
+		inline constexpr std::ptrdiff_t bAiming{ 0x145 };
 	}
 	namespace CObservedPlayer
 	{
@@ -126,7 +132,10 @@ namespace Offsets
 	}
 	namespace CCameraInfo
 	{
+		inline constexpr std::ptrdiff_t Zoom{ 0xE8 };
 		inline constexpr std::ptrdiff_t Matrix{ 0x128 };
+		inline constexpr std::ptrdiff_t FOV{ 0x1A8 };
+		inline constexpr std::ptrdiff_t AspectRatio{ 0x518 };
 	}
 	namespace CSkeleton
 	{

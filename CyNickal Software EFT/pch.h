@@ -12,6 +12,7 @@
 #include <ranges>
 #include <algorithm>
 #include <fstream>
+#include <numbers>
 
 #include <d3d11.h>
 #pragma comment(lib, "d3d11.lib")

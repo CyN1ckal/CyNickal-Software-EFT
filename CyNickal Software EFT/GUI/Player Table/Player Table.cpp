@@ -13,7 +13,7 @@ void PlayerTable::Render()
 	ImGui::Begin("Player Table", &bMasterToggle);
 
 	ImGuiTableFlags TableFlags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoBordersInBody;
-	if (ImGui::BeginTable("##Players", 12, TableFlags))
+	if (ImGui::BeginTable("##Players", 13, TableFlags))
 	{
 		ImGui::TableSetupColumn("Address");
 		ImGui::TableSetupColumn("Copy Addr");
@@ -24,6 +24,7 @@ void PlayerTable::Render()
 		ImGui::TableSetupColumn("Voice");
 		ImGui::TableSetupColumn("Local Player?");
 		ImGui::TableSetupColumn("Tag Status");
+		ImGui::TableSetupColumn("Aiming");
 		ImGui::TableSetupColumn("Weapon");
 		ImGui::TableSetupColumn("Sanitized Weapon");
 		ImGui::TableSetupColumn("Ammo");
@@ -94,6 +95,8 @@ void PlayerTable::AddRow(const CClientPlayer& Player)
 	ImGui::Text("%d", (Player.IsLocalPlayer()) ? 1 : 0);
 	ImGui::TableNextColumn();
 	ImGui::Text("N/A");
+	ImGui::TableNextColumn();
+	ImGui::Text("%s", Player.IsAiming() ? "Yes" : "No");
 	HandRows(Player);
 }
 
@@ -123,5 +126,7 @@ void PlayerTable::AddRow(const CObservedPlayer& Player)
 	ImGui::Text("N/A");
 	ImGui::TableNextColumn();
 	ImGui::Text("%X", Player.m_TagStatus);
+	ImGui::TableNextColumn();
+	ImGui::Text("N/A");
 	HandRows(Player);
 }

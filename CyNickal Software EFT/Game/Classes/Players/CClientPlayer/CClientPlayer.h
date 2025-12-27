@@ -9,6 +9,9 @@ private:
 	uintptr_t m_ProfileInfoAddress{ 0 };
 	uintptr_t m_HandsControllerAddress{ 0 };
 	uintptr_t m_PreviousHandsControllerAddress{ 0 };
+	uintptr_t m_ProceduralWeaponAnimationAddress{ 0 };
+	uintptr_t m_OpticsAddress{ 0 };
+	std::byte m_AimingByte{ 0 };
 
 public:
 	CClientPlayer(uintptr_t EntityAddress) : CBaseEFTPlayer(EntityAddress) {}
@@ -29,4 +32,5 @@ public:
 	void QuickRead(VMMDLL_SCATTER_HANDLE vmsh);
 	void Finalize();
 	void QuickFinalize();
+	bool IsAiming() const { return m_AimingByte != std::byte{ 0 }; }
 };

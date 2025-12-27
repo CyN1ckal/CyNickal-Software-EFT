@@ -6,6 +6,7 @@
 #include "GUI/Aimbot/Aimbot.h"
 #include "Overlays/Ammo Count/Ammo Count.h"
 #include "Game/EFT.h"
+#include "Game/Camera List/Camera List.h"
 
 void Fuser::Render()
 {
@@ -42,6 +43,19 @@ void Fuser::RenderSettings()
 	if (!bSettings) return;
 
 	ImGui::Begin("Fuser Settings", &bSettings);
+
+	ImGui::Checkbox("Optic ESP", &DrawESPPlayers::bOpticESP);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(75.0f);
+	ImGui::InputScalarN("Optic Index", ImGuiDataType_U32, &CameraList::m_OpticIndex, 1);
+
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(150.0f);
+	static float fNewRadius{ 300.0f };
+	if (ImGui::InputFloat("Optic Radius", &fNewRadius, 1, 5)) {
+		CameraList::SetOpticRadius(fNewRadius);
+	}
+
 	ImGui::Checkbox("Player Names", &DrawESPPlayers::bNameText);
 	ImGui::Checkbox("Player Skeletons", &DrawESPPlayers::bSkeleton);
 	ImGui::Checkbox("Player Head Dots", &DrawESPPlayers::bHeadDot);

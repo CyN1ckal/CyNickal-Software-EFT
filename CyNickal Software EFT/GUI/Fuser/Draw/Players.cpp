@@ -5,6 +5,73 @@
 #include "GUI/Color Picker/Color Picker.h"
 #include "Game/EFT.h"
 
+void DrawESPPlayers::DrawObservedPlayer(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList, std::array<ProjectedBoneInfo, SKELETON_NUMBONES>& ProjectedBones, bool bForOptic)
+{
+	if (Player.IsInvalid())	return;
+
+	if (Player.m_pSkeleton == nullptr) return;
+
+	ProjectedBones.fill({});
+
+	for (int i = 0; i < SKELETON_NUMBONES; i++)
+		ProjectedBones[i].bIsOnScreen = bForOptic ? CameraList::OpticW2S(Player.m_pSkeleton->m_BonePositions[i], ProjectedBones[i].ScreenPos) : CameraList::W2S(Player.m_pSkeleton->m_BonePositions[i], ProjectedBones[i].ScreenPos);
+
+	if (bForOptic
+		&& ProjectedBones[Sketon_MyIndicies[EBoneIndex::Root]].ScreenPos.DistanceTo(CameraList::GetOpticCenter()) > CameraList::GetOpticRadius()
+		&& ProjectedBones[Sketon_MyIndicies[EBoneIndex::Head]].ScreenPos.DistanceTo(CameraList::GetOpticCenter()) > CameraList::GetOpticRadius())
+		return;
+
+	uint8_t LineNumber = 0;
+
+	if (bNameText) {
+		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetFuserColor(), LineNumber, ProjectedBones);
+		DrawPlayerWeapon(Player.m_pHands.get(), WindowPos, DrawList, LineNumber, ProjectedBones);
+		DrawObservedPlayerHealthText(Player, WindowPos, DrawList, LineNumber, ProjectedBones);
+	}
+
+	if (bHeadDot) {
+		auto& ProjectedHeadPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Head]];
+		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.ScreenPos.x, WindowPos.y + ProjectedHeadPos.ScreenPos.y), 4.0f, Player.GetFuserColor(), 12, 1.0f);
+	}
+
+	if (bSkeleton)
+		DrawSkeleton(WindowPos, DrawList, ProjectedBones);
+}
+
+void DrawESPPlayers::DrawClientPlayer(const CClientPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList, std::array<ProjectedBoneInfo, SKELETON_NUMBONES>& ProjectedBones, bool bForOptic)
+{
+	if (Player.IsInvalid())	return;
+
+	if (Player.IsLocalPlayer())	return;
+
+	if (Player.m_pSkeleton == nullptr) return;
+
+	ProjectedBones.fill({});
+
+	for (int i = 0; i < SKELETON_NUMBONES; i++)
+		ProjectedBones[i].bIsOnScreen = (bForOptic) ? CameraList::OpticW2S(Player.m_pSkeleton->m_BonePositions[i], ProjectedBones[i].ScreenPos) : CameraList::W2S(Player.m_pSkeleton->m_BonePositions[i], ProjectedBones[i].ScreenPos);
+
+	if (bForOptic
+		&& ProjectedBones[Sketon_MyIndicies[EBoneIndex::Root]].ScreenPos.DistanceTo(CameraList::GetOpticCenter()) > CameraList::GetOpticRadius()
+		&& ProjectedBones[Sketon_MyIndicies[EBoneIndex::Head]].ScreenPos.DistanceTo(CameraList::GetOpticCenter()) > CameraList::GetOpticRadius())
+		return;
+
+	uint8_t LineNumber = 0;
+
+	if (bNameText) {
+		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetFuserColor(), LineNumber, ProjectedBones);
+		DrawPlayerWeapon(Player.m_pHands.get(), WindowPos, DrawList, LineNumber, ProjectedBones);
+	}
+
+	if (bHeadDot) {
+		auto& ProjectedHeadPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Head]];
+		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.ScreenPos.x, WindowPos.y + ProjectedHeadPos.ScreenPos.y), 4.0f, Player.GetFuserColor(), 12, 1.0f);
+	}
+
+	if (bSkeleton)
+		DrawSkeleton(WindowPos, DrawList, ProjectedBones);
+}
+
 void DrawESPPlayers::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 {
 	auto& PlayerList = EFT::GetRegisteredPlayers();
@@ -13,10 +80,26 @@ void DrawESPPlayers::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 
 	std::scoped_lock lk(PlayerList.m_Mut);
 
+	auto LocalPlayer = PlayerList.GetLocalPlayer();
+	if (LocalPlayer == nullptr || LocalPlayer->IsInvalid()) return;
+
+	auto bDrawOpticESP = LocalPlayer->IsAiming() && bOpticESP;
+	auto WindowSize = ImGui::GetWindowSize();
+	auto OpticFOV = CameraList::GetOpticRadius();
+
 	if (PlayerList.m_Players.empty()) return;
 
 	for (auto& Player : PlayerList.m_Players)
 		std::visit([WindowPos, DrawList](auto& Player) { DrawESPPlayers::Draw(Player, WindowPos, DrawList); }, Player);
+
+	if (bDrawOpticESP)
+	{
+		ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(WindowPos.x + (WindowSize.x * 0.5f), WindowPos.y + (WindowSize.y * 0.5f)), OpticFOV, ImColor(0, 0, 0), 33);
+		ImGui::GetWindowDrawList()->AddCircle(ImVec2(WindowPos.x + (WindowSize.x * 0.5f), WindowPos.y + (WindowSize.y * 0.5f)), OpticFOV + 2.0f, ImColor(255, 255, 255), 33, 2.f);
+
+		for (auto& Player : PlayerList.m_Players)
+			std::visit([WindowPos, DrawList](auto& Player) { DrawESPPlayers::DrawForOptic(Player, WindowPos, DrawList); }, Player);
+	}
 }
 
 void DrawTextAtPosition(ImDrawList* DrawList, const ImVec2& Position, const ImColor& Color, const std::string& Text)
@@ -29,10 +112,10 @@ void DrawTextAtPosition(ImDrawList* DrawList, const ImVec2& Position, const ImCo
 	);
 }
 
-void  DrawESPPlayers::DrawGenericPlayerText(const CBaseEFTPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList, const ImColor& Color, uint8_t& LineNumber)
+void DrawESPPlayers::DrawGenericPlayerText(const CBaseEFTPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList, const ImColor& Color, uint8_t& LineNumber, std::array<ProjectedBoneInfo, SKELETON_NUMBONES>& ProjectedBones)
 {
 	std::string Text = std::format("{0:s} [{1:.0f}m]", Player.GetBaseName(), Player.GetBonePosition(EBoneIndex::Root).DistanceTo(m_LatestLocalPlayerPos));
-	auto& ProjectedRootPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]];
+	auto& ProjectedRootPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Root]];
 	DrawTextAtPosition(DrawList, ImVec2(WindowPos.x + ProjectedRootPos.ScreenPos.x, WindowPos.y + ProjectedRootPos.ScreenPos.y + (ImGui::GetTextLineHeight() * LineNumber)), Player.GetFuserColor(), Text);
 	LineNumber++;
 }
@@ -41,7 +124,7 @@ const std::string InjuredString = "(Injured)";
 const std::string BadlyInjuredString = "(Badly Injured)";
 const std::string DyingString = "(Dying)";
 
-void DrawESPPlayers::DrawObservedPlayerHealthText(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList, uint8_t& LineNumber)
+void DrawESPPlayers::DrawObservedPlayerHealthText(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList, uint8_t& LineNumber, std::array<ProjectedBoneInfo, SKELETON_NUMBONES>& ProjectedBones)
 {
 	const char* DataPtr = nullptr;
 	if (Player.IsInCondition(ETagStatus::Injured))
@@ -53,19 +136,19 @@ void DrawESPPlayers::DrawObservedPlayerHealthText(const CObservedPlayer& Player,
 
 	if (DataPtr == nullptr) return;
 
-	auto& ProjectedRootPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]];
+	auto& ProjectedRootPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Root]];
 	DrawTextAtPosition(DrawList, ImVec2(WindowPos.x + ProjectedRootPos.ScreenPos.x, WindowPos.y + ProjectedRootPos.ScreenPos.y + (ImGui::GetTextLineHeight() * LineNumber)), Player.GetFuserColor(), DataPtr);
 	LineNumber++;
 }
 
-void DrawESPPlayers::DrawPlayerWeapon(const CHeldItem* pHands, const ImVec2& WindowPos, ImDrawList* DrawList, uint8_t& LineNumber)
+void DrawESPPlayers::DrawPlayerWeapon(const CHeldItem* pHands, const ImVec2& WindowPos, ImDrawList* DrawList, uint8_t& LineNumber, const std::array<ProjectedBoneInfo, SKELETON_NUMBONES>& ProjectedBones)
 {
 	if (!pHands) return;
 	if (pHands->IsInvalid()) return;
 
 	auto& HeldItem = pHands->m_pHeldItem;
 
-	auto& ProjectedRootPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]];
+	auto& ProjectedRootPos = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Root]];
 	ImVec2 RootScreenPos = { WindowPos.x + ProjectedRootPos.ScreenPos.x, WindowPos.y + ProjectedRootPos.ScreenPos.y };
 
 	auto ItemName = pHands->m_pHeldItem->GetItemName();
@@ -93,62 +176,22 @@ void DrawESPPlayers::DrawPlayerWeapon(const CHeldItem* pHands, const ImVec2& Win
 
 void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
-	if (Player.IsInvalid())	return;
-
-	if (Player.m_pSkeleton == nullptr) return;
-
-	m_ProjectedBoneCache.fill({});
-
-	for (int i = 0; i < SKELETON_NUMBONES; i++)
-		m_ProjectedBoneCache[i].bIsOnScreen = CameraList::FPSCamera_W2S(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i].ScreenPos);
-
-	uint8_t LineNumber = 0;
-
-	if (bNameText) {
-		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetFuserColor(), LineNumber);
-		DrawPlayerWeapon(Player.m_pHands.get(), WindowPos, DrawList, LineNumber);
-		DrawObservedPlayerHealthText(Player, WindowPos, DrawList, LineNumber);
-	}
-
-	if (bHeadDot) {
-		auto& ProjectedHeadPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Head]];
-		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.ScreenPos.x, WindowPos.y + ProjectedHeadPos.ScreenPos.y), 4.0f, Player.GetFuserColor(), 12, 1.0f);
-	}
-
-	if (bSkeleton)
-		DrawSkeleton(*Player.m_pSkeleton, WindowPos, DrawList);
+	DrawObservedPlayer(Player, WindowPos, DrawList, m_FPSCamProjectedBones, false);
 }
 
 void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
-	if (Player.IsInvalid())	return;
+	DrawClientPlayer(Player, WindowPos, DrawList, m_FPSCamProjectedBones, false);
+}
 
-	if (Player.IsLocalPlayer())	return;
+void DrawESPPlayers::DrawForOptic(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
+{
+	DrawObservedPlayer(Player, WindowPos, DrawList, m_OpticCamProjectedBones, true);
+}
 
-	if (Player.m_pSkeleton == nullptr) return;
-
-	m_ProjectedBoneCache.fill({});
-
-	for (int i = 0; i < SKELETON_NUMBONES; i++)
-		m_ProjectedBoneCache[i].bIsOnScreen = CameraList::FPSCamera_W2S(Player.m_pSkeleton->m_BonePositions[i], m_ProjectedBoneCache[i].ScreenPos);
-
-	if (m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Root]].bIsOnScreen == false)
-		return;
-
-	uint8_t LineNumber = 0;
-
-	if (bNameText) {
-		DrawGenericPlayerText(Player, WindowPos, DrawList, Player.GetFuserColor(), LineNumber);
-		DrawPlayerWeapon(Player.m_pHands.get(), WindowPos, DrawList, LineNumber);
-	}
-
-	if (bHeadDot) {
-		auto& ProjectedHeadPos = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Head]];
-		DrawList->AddCircle(ImVec2(WindowPos.x + ProjectedHeadPos.ScreenPos.x, WindowPos.y + ProjectedHeadPos.ScreenPos.y), 4.0f, Player.GetFuserColor(), 12, 1.0f);
-	}
-
-	if (bSkeleton)
-		DrawSkeleton(*Player.m_pSkeleton, WindowPos, DrawList);
+void DrawESPPlayers::DrawForOptic(const CClientPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
+{
+	DrawClientPlayer(Player, WindowPos, DrawList, m_OpticCamProjectedBones, true);
 }
 
 void ConnectBones(const ProjectedBoneInfo& BoneA, const ProjectedBoneInfo& BoneB, const ImVec2& WindowPos, ImDrawList* DrawList, const ImColor& Color, float Thickness)
@@ -164,28 +207,28 @@ void ConnectBones(const ProjectedBoneInfo& BoneA, const ProjectedBoneInfo& BoneB
 	);
 }
 
-void DrawESPPlayers::DrawSkeleton(const CPlayerSkeleton& Skeleton, const ImVec2& WindowPos, ImDrawList* DrawList)
+void DrawESPPlayers::DrawSkeleton(const ImVec2& WindowPos, ImDrawList* DrawList, const std::array<ProjectedBoneInfo, SKELETON_NUMBONES>& ProjectedBones)
 {
-	auto& ProjectedHead = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Head]];
-	auto& ProjectedNeck = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Neck]];
-	auto& ProjectedSpine = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Spine3]];
-	auto& ProjectedPelvis = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::Pelvis]];
-	auto& ProjectedLThigh1 = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::LThigh1]];
-	auto& ProjectedLThigh2 = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::LThigh2]];
-	auto& ProjectedLCalf = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::LCalf]];
-	auto& ProjectedLFoot = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::LFoot]];
-	auto& ProjectedRThigh1 = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::RThigh1]];
-	auto& ProjectedRThigh2 = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::RThigh2]];
-	auto& ProjectedRCalf = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::RCalf]];
-	auto& ProjectedRFoot = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::RFoot]];
-	auto& ProjectedRUpperArm = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::RUpperArm]];
-	auto& ProjectedRForeArm1 = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::RForeArm1]];
-	auto& ProjectedRForeArm2 = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::RForeArm2]];
-	auto& ProjectedRPalm = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::RPalm]];
-	auto& ProjectedLUpperArm = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::LUpperArm]];
-	auto& ProjectedLForeArm1 = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::LForeArm1]];
-	auto& ProjectedLForeArm2 = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::LForeArm2]];
-	auto& ProjectedLPalm = m_ProjectedBoneCache[Sketon_MyIndicies[EBoneIndex::LPalm]];
+	auto& ProjectedHead = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Head]];
+	auto& ProjectedNeck = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Neck]];
+	auto& ProjectedSpine = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Spine3]];
+	auto& ProjectedPelvis = ProjectedBones[Sketon_MyIndicies[EBoneIndex::Pelvis]];
+	auto& ProjectedLThigh1 = ProjectedBones[Sketon_MyIndicies[EBoneIndex::LThigh1]];
+	auto& ProjectedLThigh2 = ProjectedBones[Sketon_MyIndicies[EBoneIndex::LThigh2]];
+	auto& ProjectedLCalf = ProjectedBones[Sketon_MyIndicies[EBoneIndex::LCalf]];
+	auto& ProjectedLFoot = ProjectedBones[Sketon_MyIndicies[EBoneIndex::LFoot]];
+	auto& ProjectedRThigh1 = ProjectedBones[Sketon_MyIndicies[EBoneIndex::RThigh1]];
+	auto& ProjectedRThigh2 = ProjectedBones[Sketon_MyIndicies[EBoneIndex::RThigh2]];
+	auto& ProjectedRCalf = ProjectedBones[Sketon_MyIndicies[EBoneIndex::RCalf]];
+	auto& ProjectedRFoot = ProjectedBones[Sketon_MyIndicies[EBoneIndex::RFoot]];
+	auto& ProjectedRUpperArm = ProjectedBones[Sketon_MyIndicies[EBoneIndex::RUpperArm]];
+	auto& ProjectedRForeArm1 = ProjectedBones[Sketon_MyIndicies[EBoneIndex::RForeArm1]];
+	auto& ProjectedRForeArm2 = ProjectedBones[Sketon_MyIndicies[EBoneIndex::RForeArm2]];
+	auto& ProjectedRPalm = ProjectedBones[Sketon_MyIndicies[EBoneIndex::RPalm]];
+	auto& ProjectedLUpperArm = ProjectedBones[Sketon_MyIndicies[EBoneIndex::LUpperArm]];
+	auto& ProjectedLForeArm1 = ProjectedBones[Sketon_MyIndicies[EBoneIndex::LForeArm1]];
+	auto& ProjectedLForeArm2 = ProjectedBones[Sketon_MyIndicies[EBoneIndex::LForeArm2]];
+	auto& ProjectedLPalm = ProjectedBones[Sketon_MyIndicies[EBoneIndex::LPalm]];
 
 	constexpr float Width = 2.0f;
 

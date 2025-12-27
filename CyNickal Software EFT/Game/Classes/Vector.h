@@ -28,6 +28,12 @@ struct Vector2
 	{
 		return Vector2(x - rhs.x, y - rhs.y);
 	}
+	float DistanceTo(const Vector2& other) const
+	{
+		float dx = x - other.x;
+		float dy = y - other.y;
+		return sqrtf(dx * dx + dy * dy);
+	}
 };
 
 struct Vector4

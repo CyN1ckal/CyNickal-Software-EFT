@@ -90,7 +90,7 @@ ImVec2 Aimbot::GetAimDeltaToTarget(uintptr_t TargetAddress)
 	auto TargetWorldPos = EFT::GetRegisteredPlayers().GetPlayerBonePosition(TargetAddress, EBoneIndex::Head);
 
 	Vector2 ScreenPos{};
-	if (!CameraList::FPSCamera_W2S(TargetWorldPos, ScreenPos)) return Return;
+	if (!CameraList::W2S(TargetWorldPos, ScreenPos)) return Return;
 
 	float DistanceFromCenter = Distance(ScreenPos, CenterScreen);
 
@@ -118,7 +118,7 @@ uintptr_t Aimbot::FindBestTarget()
 		std::visit([&](auto& Player) {
 
 			Vector2 ScreenPos{};
-			if (!CameraList::FPSCamera_W2S(Player.GetBonePosition(EBoneIndex::Head), ScreenPos)) return;
+			if (!CameraList::W2S(Player.GetBonePosition(EBoneIndex::Head), ScreenPos)) return;
 
 			float DistanceFromCenter = sqrt(pow(ScreenPos.x - Center.x, 2) + pow(ScreenPos.y - Center.y, 2));
 

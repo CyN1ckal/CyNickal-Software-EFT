@@ -58,7 +58,7 @@ void DrawESPLoot::DrawItem(CObservedLootItem& Item, ImDrawList* DrawList, ImVec2
 		return;
 
 	Vector2 ScreenPos{};
-	if (!CameraList::FPSCamera_W2S(Item.m_Position, ScreenPos))	return;
+	if (!CameraList::W2S(Item.m_Position, ScreenPos))	return;
 
 	auto Distance = LocalPlayerPos.DistanceTo(Item.m_Position);
 
@@ -81,7 +81,7 @@ void DrawESPLoot::DrawContainer(CLootableContainer& Container, ImDrawList* DrawL
 	if (Container.IsInvalid()) return;
 
 	Vector2 ScreenPos{};
-	if (!CameraList::FPSCamera_W2S(Container.m_Position, ScreenPos))	return;
+	if (!CameraList::W2S(Container.m_Position, ScreenPos))	return;
 
 	auto Distance = LocalPlayerPos.DistanceTo(Container.m_Position);
 

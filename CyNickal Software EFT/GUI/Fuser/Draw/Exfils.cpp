@@ -20,7 +20,7 @@ void DrawExfils::DrawAll(const ImVec2& WindowPos, ImDrawList* DrawList)
 
 	for (auto& Exfil : ExfilController.m_Exfils)
 	{
-		if (!CameraList::FPSCamera_W2S(Exfil.m_Position, ScreenPos)) continue;
+		if (!CameraList::W2S(Exfil.m_Position, ScreenPos)) continue;
 
 		float Distance = LocalPlayerPos.DistanceTo(Exfil.m_Position);
 
