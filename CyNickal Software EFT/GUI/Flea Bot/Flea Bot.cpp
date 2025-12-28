@@ -52,7 +52,9 @@ void FleaBot::Render()
 				ImGui::Checkbox("Enable##Cycle", &bCycleBuy);
 				ImGuiChronoEdit("Cycle Delay", CycleDelay);
 				ImGuiChronoEdit("Super Cycley", SuperCycleDelay);
-				ImGuiChronoEdit("Timeout", TimeoutDuration);
+				ImGuiChronoEdit("Timeout", TimeoutDuration); 
+				ImGui::SetNextItemWidth(125.0f);
+				ImGui::InputScalar("# Items", ImGuiDataType_U32, &m_ItemCount);
 				ImGui::EndTabItem();
 			}
 
@@ -69,6 +71,7 @@ void FleaBot::Render()
 	ImGui::SameLine();
 	if (ImGui::BeginChild("ChildR", { ContentRegion.x * 0.65f, ContentRegion.y }))
 	{
+		ItemFilter.Draw("Filter Items");
 
 		if (ImGui::Button("Save Price List"))
 			SavePriceList();
@@ -91,6 +94,9 @@ void FleaBot::Render()
 
 			for (auto& [ItemID, PriceListEntry] : m_PriceList)
 			{
+				if (ItemFilter.IsActive() && !ItemFilter.PassFilter(PriceListEntry.ItemName.c_str()))
+					continue;
+
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);
 				ImGui::TextUnformatted(ItemID.c_str());
@@ -171,6 +177,8 @@ namespace SimpleInput
 {
 	namespace Positions
 	{
+		const CMousePos BrowseButton{ 105,85 };
+		const CMousePos WishlistButton{ 245,85 };
 		const CMousePos RefreshButton{ 1840,120 };
 		const CMousePos PurchaseButton{ 1775,180 };
 		const CMousePos AllButton{ 1150,490 };
@@ -184,6 +192,7 @@ namespace SimpleInput
 	namespace Sizes
 	{
 		const CMousePos FleaMarketCategory{ 0,34 };
+		const CMousePos WishlistItem{ 0,32 };
 		const CMousePos FleaMarketItemEntry{ 0,25 };
 	}
 
@@ -247,56 +256,63 @@ void FleaBot::ReturnToMainMenuAndWait(CMousePos StartingPos, std::chrono::second
 
 	std::println("[{0:%T}] [Flea Bot] Resuming...", std::chrono::system_clock::now());
 	CurPos = SimpleInput::MoveToThenClick(CurPos, SimpleInput::Positions::FleaMarketButton, 100ms);
+
+	/* wait for UI to load */
+	std::this_thread::sleep_for(1s);
+	CurPos = SimpleInput::MoveToThenClick(CurPos, SimpleInput::Positions::WishlistButton, 100ms);
+
 	SimpleInput::MoveTo(CurPos, StartingPos);
 }
 
 void FleaBot::CycleBuy(CMousePos StartingPos)
 {
-	auto CurPos = SimpleInput::MoveToThenClick(StartingPos, SimpleInput::Positions::FleaMarketTopCategory, CycleDelay);
-	CurPos = SimpleInput::MoveToThenClick(CurPos, SimpleInput::Positions::RefreshButton, CycleDelay);
 	bHasNewOfferData = false;
-	auto Response = AwaitNewOfferData(5000ms);
-	if (Response.is_null())
-	{
-		std::println("[{0:%T}] [Flea Bot] Failed super cycle refresh", std::chrono::system_clock::now());
-		ReturnToMainMenuAndWait(CurPos, 30s);
-		SimpleInput::MoveTo(CurPos, StartingPos);
-		return;
-	}
 
-	CurPos = SimpleInput::MoveToThenWait(CurPos, SimpleInput::Positions::BuildingMaterialFirstEntry - SimpleInput::Sizes::FleaMarketItemEntry, CycleDelay);
-	bool bFailed{ false };
+	auto CurPos = SimpleInput::MoveToThenClick(StartingPos, SimpleInput::Positions::FleaMarketTopCategory, CycleDelay);
 
-	constexpr size_t ItemRows = 17;
-	uint32_t FailedAttempts{ 0 };
-	for (int i = 0; i < ItemRows && !bFailed && bMasterToggle; i++)
+	CurPos = SimpleInput::MoveToThenClick(CurPos, SimpleInput::Positions::RefreshButton, CycleDelay);
+
+	size_t Iterations{ 0 };
+	size_t FailedAttempts{ 0 };
+	do
 	{
-		bHasNewOfferData = false;
-		CurPos = SimpleInput::MoveToThenClick(CurPos, CurPos + SimpleInput::Sizes::FleaMarketItemEntry, CycleDelay);
+		if (Iterations == 0)
+			CurPos = SimpleInput::MoveTo(CurPos, SimpleInput::Positions::FleaMarketTopCategory);
+		else
+		{
+			CurPos = SimpleInput::MoveToThenClick(CurPos, CurPos + SimpleInput::Sizes::WishlistItem, CycleDelay);
+			bHasNewOfferData = false;
+		}
+
 		auto OfferJson = AwaitNewOfferData(TimeoutDuration);
 
 		if (OfferJson.is_null())
 		{
 			FailedAttempts++;
-			std::println("[{0:%T}] [Flea Bot] No new data received for item index {1:d}; failed attempts: {2:d}", std::chrono::system_clock::now(), i + 1, FailedAttempts);
+			std::println("[{0:%T}] [Flea Bot] No new data received for item {1:d}; failed attempts: {2:d}", std::chrono::system_clock::now(), Iterations, FailedAttempts);
 
 			if (FailedAttempts >= 3)
 			{
 				std::println("[{0:%T}] [Flea Bot] Too many failed attempts; stopping flea bot.", std::chrono::system_clock::now());
-				CurPos = SimpleInput::MoveTo(CurPos, StartingPos);
 				ReturnToMainMenuAndWait(CurPos, 30s);
+				SimpleInput::MoveTo(CurPos, StartingPos);
 				return;
 			}
 		}
-
-		auto& FirstOffer = OfferJson["data"]["offers"][0];
-		if (DoesOfferPassPriceListCheck(FirstOffer))
+		else
 		{
-			/* Waiting for response to populate UI */
-			std::this_thread::sleep_for(20ms);
-			BuyFirstItemStack(CurPos);
+			auto& FirstOffer = OfferJson["data"]["offers"][0];
+			if (DoesOfferPassPriceListCheck(FirstOffer))
+			{
+				/* Waiting for response to populate UI */
+				std::this_thread::sleep_for(20ms);
+				BuyFirstItemStack(CurPos);
+			}
 		}
-	}
+
+		Iterations++;
+
+	} while (Iterations < m_ItemCount && bMasterToggle);
 
 	SimpleInput::MoveTo(CurPos, StartingPos);
 }

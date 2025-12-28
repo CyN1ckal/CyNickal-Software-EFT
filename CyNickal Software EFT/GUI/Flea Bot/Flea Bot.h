@@ -54,6 +54,8 @@ public:
 	static inline bool bLimitBuy{ false };
 	static inline bool bCycleBuy{ true };
 	static inline bool bRequestedBuy{ false };
+	static inline uint32_t m_ItemCount{ 10 };
+	static inline ImGuiTextFilter ItemFilter{};
 	static inline std::unique_ptr<std::thread> pInputThread{ nullptr };
 	static inline std::atomic<bool>bInputThreadDone{ false };
 	static inline std::chrono::milliseconds TimeoutDuration{ 1500 };

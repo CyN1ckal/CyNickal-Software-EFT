@@ -176,22 +176,22 @@ void DrawESPPlayers::DrawPlayerWeapon(const CHeldItem* pHands, const ImVec2& Win
 
 void DrawESPPlayers::Draw(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
-	DrawObservedPlayer(Player, WindowPos, DrawList, m_FPSCamProjectedBones, false);
+	DrawObservedPlayer(Player, WindowPos, DrawList, m_ProjectedBoneCache, false);
 }
 
 void DrawESPPlayers::Draw(const CClientPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
-	DrawClientPlayer(Player, WindowPos, DrawList, m_FPSCamProjectedBones, false);
+	DrawClientPlayer(Player, WindowPos, DrawList, m_ProjectedBoneCache, false);
 }
 
 void DrawESPPlayers::DrawForOptic(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
-	DrawObservedPlayer(Player, WindowPos, DrawList, m_OpticCamProjectedBones, true);
+	DrawObservedPlayer(Player, WindowPos, DrawList, m_ProjectedBoneCache, true);
 }
 
 void DrawESPPlayers::DrawForOptic(const CClientPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList)
 {
-	DrawClientPlayer(Player, WindowPos, DrawList, m_OpticCamProjectedBones, true);
+	DrawClientPlayer(Player, WindowPos, DrawList, m_ProjectedBoneCache, true);
 }
 
 void ConnectBones(const ProjectedBoneInfo& BoneA, const ProjectedBoneInfo& BoneB, const ImVec2& WindowPos, ImDrawList* DrawList, const ImColor& Color, float Thickness)

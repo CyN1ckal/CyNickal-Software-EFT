@@ -33,8 +33,7 @@ private:
 
 private:
 	static inline Vector3 m_LatestLocalPlayerPos{};
-	static inline std::array<ProjectedBoneInfo, SKELETON_NUMBONES> m_FPSCamProjectedBones{};
-	static inline std::array<ProjectedBoneInfo, SKELETON_NUMBONES> m_OpticCamProjectedBones{};
+	static inline std::array<ProjectedBoneInfo, SKELETON_NUMBONES> m_ProjectedBoneCache{};
 
 private:
 	static void DrawObservedPlayer(const CObservedPlayer& Player, const ImVec2& WindowPos, ImDrawList* DrawList, std::array<ProjectedBoneInfo, SKELETON_NUMBONES>& ProjectedBones, bool bForOptic = false);
