@@ -5,9 +5,12 @@
 class Database
 {
 public:
-	static sqlite3* GetTarkovDB();
+	static void Initialize();
+	[[nodiscard]] static sqlite3* GetTarkovDB();
+	static bool IsDBOnFile();
 
 private:
+	static void DownloadLatestDB();
 	static inline sqlite3* m_TarkovDB{ nullptr };
 };
 

@@ -4,11 +4,14 @@
 #include "GUI/Config/Config.h"
 #include "DMA/DMA Thread.h"
 #include "Makcu/MyMakcu.h"
+#include "Database/Database.h"
 
 std::atomic<bool> bRunning{ true };
 int main()
 {
 	std::println("Hello, EFT_DMA!");
+
+	Database::Initialize();
 
 	Config::LoadConfig("default");
 
