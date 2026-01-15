@@ -20,6 +20,8 @@ void ImGuiChronoEdit(const char* label, std::chrono::milliseconds& value)
 
 void FleaBot::Render()
 {
+	if (!bSettings) return;
+
 	if (m_PriceList.empty())
 	{
 		LoadPriceList();
@@ -39,7 +41,7 @@ void FleaBot::Render()
 		pInputThread = std::make_unique<std::thread>(&FleaBot::InputThread);
 	}
 
-	ImGui::Begin("Flea Bot");
+	ImGui::Begin("Flea Bot", &bSettings);
 	auto ContentRegion = ImGui::GetContentRegionAvail();
 	if (ImGui::BeginChild("ChildL", { ContentRegion.x * 0.35f, ContentRegion.y }))
 	{

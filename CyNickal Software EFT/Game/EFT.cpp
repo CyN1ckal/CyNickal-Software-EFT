@@ -10,7 +10,7 @@ bool EFT::Initialize(DMA_Connection* Conn)
 
 	Proc.GetProcessInfo(Conn);
 
-	MakeNewGameWorld(Conn);
+	//MakeNewGameWorld(Conn);
 
 	ResponseData::Initialize(Conn);
 
@@ -26,7 +26,7 @@ void EFT::MakeNewGameWorld(DMA_Connection* Conn)
 {
 	try
 	{
-		GOM::Initialize(Conn);
+		//GOM::Initialize(Conn);
 		pGameWorld = std::make_unique<CLocalGameWorld>(GOM::FindGameWorldAddressFromCache(Conn));
 		CameraList::Initialize(Conn);
 	}

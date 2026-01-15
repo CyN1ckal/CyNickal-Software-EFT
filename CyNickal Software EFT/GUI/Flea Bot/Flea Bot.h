@@ -50,6 +50,7 @@ private:
 	static void ReturnToMainMenuAndWait(CMousePos StartingPos, std::chrono::seconds Delay);
 
 public:
+	static inline bool bSettings{ true };
 	static inline bool bMasterToggle{ false };
 	static inline bool bLimitBuy{ false };
 	static inline bool bCycleBuy{ true };

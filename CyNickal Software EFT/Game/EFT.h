@@ -14,6 +14,7 @@ public:
 
 private:
 	static inline Process Proc{};
+public:
 	static void MakeNewGameWorld(DMA_Connection* Conn);
 
 public:
