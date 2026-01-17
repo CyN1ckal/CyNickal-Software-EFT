@@ -22,18 +22,23 @@ const Process& EFT::GetProcess()
 	return Proc;
 }
 
+void EFT::EnsureInRaid(DMA_Connection* Conn)
+{
+	CLocalGameWorld::EnsureGameWorld(Conn, pGameWorld);
+}
+
 void EFT::MakeNewGameWorld(DMA_Connection* Conn)
 {
-	try
-	{
+	//try
+	//{
 		//GOM::Initialize(Conn);
 		pGameWorld = std::make_unique<CLocalGameWorld>(GOM::FindGameWorldAddressFromCache(Conn));
 		CameraList::Initialize(Conn);
-	}
-	catch (const std::exception& e)
-	{
-		std::println("[EFT] Failed making new game world! {}", e.what());
-	}
+	//}
+	//catch (const std::exception& e)
+	//{
+	//	std::println("[EFT] Failed making new game world! {}", e.what());
+	//}
 }
 
 void EFT::QuickUpdatePlayers(DMA_Connection* Conn)
