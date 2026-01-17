@@ -44,7 +44,7 @@ void EFT::CreateWorldIfNeeded(DMA_Connection* Conn)
 		}
 	}
 
-	CameraList::Initialize(Conn);
+	if(pGameWorld) CameraList::Initialize(Conn);
 }
 
 uintptr_t EFT::GetMainPlayerAddress()

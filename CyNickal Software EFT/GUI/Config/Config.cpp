@@ -181,7 +181,8 @@ json Config::SerializeConfig() {
 		{"bSettings", Aimbot::bSettings},
 		{"bMasterToggle", Aimbot::bMasterToggle},
 		{"bDrawFOV", Aimbot::bDrawFOV},
-		{"fDampen", Aimbot::fDampen},
+		{"fSmoothX", Aimbot::fSmoothX},
+		{"fSmoothY", Aimbot::fSmoothY},
 		{"fPixelFOV", Aimbot::fPixelFOV},
 		{"fDeadzoneFov", Aimbot::fDeadzoneFov}
 	};
@@ -300,8 +301,11 @@ void Config::DeserializeConfig(const json& j) {
 		if (aimbotTable.contains("bDrawFOV")) {
 			Aimbot::bDrawFOV = aimbotTable["bDrawFOV"].get<bool>();
 		}
-		if (aimbotTable.contains("fDampen")) {
-			Aimbot::fDampen = aimbotTable["fDampen"].get<float>();
+		if (aimbotTable.contains("fSmoothX")) {
+			Aimbot::fSmoothX = aimbotTable["fSmoothX"].get<float>();
+		}
+		if (aimbotTable.contains("fSmoothY")) {
+			Aimbot::fSmoothY = aimbotTable["fSmoothY"].get<float>();
 		}
 		if (aimbotTable.contains("fPixelFOV")) {
 			Aimbot::fPixelFOV = aimbotTable["fPixelFOV"].get<float>();

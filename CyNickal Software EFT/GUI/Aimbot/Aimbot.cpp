@@ -14,7 +14,8 @@ void Aimbot::RenderSettings()
 	ImGui::Begin("Aimbot Settings", &bSettings);
 	ImGui::Checkbox("Master Toggle", &bMasterToggle);
 	ImGui::Checkbox("Draw FOV Circle", &bDrawFOV);
-	ImGui::SliderFloat("Dampen", &fDampen, 0.01f, 1.0f);
+	ImGui::SliderFloat("Smooth X", &fSmoothX, 1.0f, 50.0f, "%.1f");
+	ImGui::SliderFloat("Smooth Y", &fSmoothY, 1.0f, 50.0f, "%.1f");
 	ImGui::SliderFloat("FOV", &fPixelFOV, 1.0f, 300.0f);
 	ImGui::SliderFloat("Deadzone FOV", &fDeadzoneFov, 1.0f, 10.0f);
 
@@ -47,12 +48,11 @@ float Distance(ImVec2 a, ImVec2 b)
 {
 	return sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2));
 }
+
 void Aimbot::OnDMAFrame(DMA_Connection* Conn)
 {
 	if (!bMasterToggle) return;
-
 	if (c_keys::IsInitialized() == false || MyMakcu::m_Device.isConnected() == false) return;
-
 	if (Keybinds::Aimbot.IsActive(Conn) == false) return;
 
 	auto BestTarget = Aimbot::FindBestTarget();
@@ -60,23 +60,37 @@ void Aimbot::OnDMAFrame(DMA_Connection* Conn)
 
 	do
 	{
+		auto frameStart = std::chrono::high_resolution_clock::now();
+
 		RegisteredPlayers.QuickUpdate(Conn);
 		CameraList::QuickUpdateNecessaryCameras(Conn);
 
 		auto Delta = GetAimDeltaToTarget(BestTarget);
 		static ImVec2 PreviousDelta{};
+		float fDistance = Distance(Delta, PreviousDelta);
 
-		if (Distance(Delta, PreviousDelta) < 0.5f)
+		if (fDistance < 2.0f)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(5));
 			continue;
+		}
 
 		PreviousDelta = Delta;
-		Delta.x *= fDampen;
-		Delta.y *= fDampen;
 
-		MyMakcu::m_Device.mouseMove(Delta.x, Delta.y);
+		float smoothX = std::max(1.0f, fSmoothX);
+		float smoothY = std::max(1.0f, fSmoothY);
+
+		Vector2 MoveAmount{ Delta.x / smoothX, Delta.y / smoothY };
+
+		MyMakcu::m_Device.mouseMove(MoveAmount.x, MoveAmount.y);
+
+		// Limit to ~60 FPS to prevent jitter
+		auto frameEnd = std::chrono::high_resolution_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(frameEnd - frameStart);
+		if (elapsed.count() < 16) // ~60 FPS
+			std::this_thread::sleep_for(std::chrono::milliseconds(16 - elapsed.count()));
 
 	} while (Keybinds::Aimbot.IsActive(Conn));
-
 }
 
 ImVec2 Aimbot::GetAimDeltaToTarget(uintptr_t TargetAddress)
