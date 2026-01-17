@@ -12,13 +12,10 @@ bool GOM::Initialize(DMA_Connection* Conn)
 
 	uintptr_t pGOMAddress = Proc.GetUnityAddress() + Offsets::pGOM;
 	GameObjectManagerAddress = Proc.ReadMem<uintptr_t>(Conn, pGOMAddress);
-	std::println("GameObjectManager Address: 0x{:X}", GameObjectManagerAddress);
 
 	LastActiveNode = Proc.ReadMem<uintptr_t>(Conn, GameObjectManagerAddress + Offsets::CGameObjectManager::pLastActiveNode);
-	std::println("LastActiveNode Address: 0x{:X}", LastActiveNode);
 
 	ActiveNodes = Proc.ReadMem<uintptr_t>(Conn, GameObjectManagerAddress + Offsets::CGameObjectManager::pActiveNodes);
-	std::println("ActiveNodes Address: 0x{:X}", ActiveNodes);
 
 	GetObjectAddresses(Conn, 10000);
 
@@ -139,9 +136,7 @@ std::vector<uintptr_t> GOM::GetGameWorldAddresses()
 
 	for (auto& ObjInfo : m_ObjectInfo)
 	{
-		if (ObjInfo.m_ObjectName == "GameWorld")
-		{
-			std::println("[EFT] GameWorld Address: 0x{:X}", ObjInfo.m_ObjectAddress);
+		if (ObjInfo.m_ObjectName == "GameWorld") {
 			GameWorldAddresses.push_back(ObjInfo.m_ObjectAddress);
 		}
 	}
@@ -155,8 +150,6 @@ uintptr_t GOM::FindGameWorldAddressFromCache(DMA_Connection* Conn)
 
 	auto& Proc = EFT::GetProcess();
 
-	std::println("[EFT] GameWorldObjects: {}", GameWorldAddrs);
-
 	for (auto& GameWorldAddr : GameWorldAddrs)
 	{
 		auto Deref1 = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddr + Offsets::CGameObject::pComponents);
@@ -164,8 +157,7 @@ uintptr_t GOM::FindGameWorldAddressFromCache(DMA_Connection* Conn)
 		auto LocalWorldAddr = Proc.ReadMem<uintptr_t>(Conn, Deref2 + Offsets::CComponent::pObjectClass);
 		auto MainPlayerAddr = Proc.ReadMem<uintptr_t>(Conn, LocalWorldAddr + Offsets::CLocalGameWorld::pMainPlayer);
 
-		if (MainPlayerAddr)
-		{
+		if (MainPlayerAddr) {
 			std::println("[EFT] LocalGameWorld found @ 0x{:X}\n", LocalWorldAddr);
 			return LocalWorldAddr;
 		}

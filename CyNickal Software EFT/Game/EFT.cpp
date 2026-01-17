@@ -3,6 +3,7 @@
 #include "Game/GOM/GOM.h"
 #include "Game/Camera List/Camera List.h"
 #include "Game/Response Data/Response Data.h"
+#include "GUI/Flea Bot/Flea Bot.h"
 
 bool EFT::Initialize(DMA_Connection* Conn)
 {
@@ -26,6 +27,10 @@ const Process& EFT::GetProcess()
 
 void EFT::CreateWorldIfNeeded(DMA_Connection* Conn)
 {
+	if (FleaBot::bMasterToggle) {
+		return;
+	}
+
 	if (pGameWorld && pGameWorld->IsValidRaid(Conn)) {
 		return;
 	}
@@ -44,7 +49,7 @@ void EFT::CreateWorldIfNeeded(DMA_Connection* Conn)
 		}
 	}
 
-	if(pGameWorld) CameraList::Initialize(Conn);
+	CameraList::Initialize(Conn);
 }
 
 uintptr_t EFT::GetMainPlayerAddress()
