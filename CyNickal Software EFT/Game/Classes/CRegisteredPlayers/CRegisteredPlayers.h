@@ -22,6 +22,7 @@ public: /* Interface methods */
 	Vector3 GetLocalPlayerPosition();
 	Vector3 GetPlayerBonePosition(uintptr_t m_EntityAddress, EBoneIndex BoneIndex);
 	CClientPlayer* GetLocalPlayer();
+	std::size_t GetNumValidPlayers();
 
 private: /* Private methods */
 	void GetPlayerAddresses(DMA_Connection* Conn, std::vector<uintptr_t>& OutClientPlayers, std::vector<uintptr_t>& OutObservedPlayers);

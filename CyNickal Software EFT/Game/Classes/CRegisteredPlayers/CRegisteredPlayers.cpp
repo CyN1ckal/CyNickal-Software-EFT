@@ -423,3 +423,16 @@ void CRegisteredPlayers::HandlePlayerAllocations(DMA_Connection* Conn)
 	if (OutdatedObservers.size())
 		DeallocatePlayersFromVector(OutdatedObservers, EPlayerType::eObservedPlayer);
 }
+
+std::size_t CRegisteredPlayers::GetNumValidPlayers()
+{
+	std::scoped_lock Lock(m_Mut);
+
+	std::size_t ValidPlayerCount{ 0 };
+
+	for (auto& Player : m_Players) {
+		std::visit([&](auto& Player) { if (Player.IsInvalid() == false) ValidPlayerCount++; }, Player);
+	}
+
+	return ValidPlayerCount;
+}

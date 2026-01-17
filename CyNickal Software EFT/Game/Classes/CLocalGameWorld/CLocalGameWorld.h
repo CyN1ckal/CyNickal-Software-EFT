@@ -14,7 +14,17 @@ public:
 	void HandlePlayerAllocations(DMA_Connection* Conn);
 
 public:
+	bool IsValidRaid(DMA_Connection* Conn);
+	uintptr_t GetMainPlayerAddress() const { return m_MainPlayerAddress; }
+
+public:
 	std::unique_ptr<class CLootList> m_pLootList{ nullptr };
 	std::unique_ptr<class CRegisteredPlayers> m_pRegisteredPlayers{ nullptr };
 	std::unique_ptr<class CExfilController> m_pExfilController{ nullptr };
+
+private:
+	uintptr_t m_MainPlayerAddress{ 0 };
+	std::uintptr_t LootListAddress{};
+	std::uintptr_t RegisteredPlayersAddress{};
+	std::uintptr_t ExfiltrationControllerAddress{};
 };

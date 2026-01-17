@@ -14,14 +14,19 @@ public:
 
 private:
 	static inline Process Proc{};
-	static void MakeNewGameWorld(DMA_Connection* Conn);
+
+public:
+	static void CreateWorldIfNeeded(DMA_Connection* Conn);
+	static uintptr_t GetMainPlayerAddress();
 
 public:
 	static void QuickUpdatePlayers(DMA_Connection* Conn);
 	static void HandlePlayerAllocations(DMA_Connection* Conn);
 
 public:
+	static inline std::mutex m_GameWorldMutex{};
 	static inline std::unique_ptr<class CLocalGameWorld> pGameWorld{ nullptr };
+
 	static class CRegisteredPlayers& GetRegisteredPlayers();
 	static class CLootList& GetLootList();
 	static class CExfilController& GetExfilController();

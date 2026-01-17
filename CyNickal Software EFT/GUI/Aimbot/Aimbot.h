@@ -12,7 +12,8 @@ public:
 	static inline bool bSettings{ false };
 	static inline bool bMasterToggle{ false };
 	static inline bool bDrawFOV{ true };
-	static inline float fDampen{ 0.95f };
+	static inline float fSmoothX{ 10.0f };
+	static inline float fSmoothY{ 10.0f };
 	static inline float fPixelFOV{ 75.0f };
 	static inline float fDeadzoneFov{ 2.0f };
 

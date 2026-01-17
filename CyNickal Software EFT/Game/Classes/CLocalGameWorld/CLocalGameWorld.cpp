@@ -11,19 +11,21 @@ CLocalGameWorld::CLocalGameWorld(uintptr_t GameWorldAddress) : CBaseEntity(GameW
 	auto Conn = DMA_Connection::GetInstance();
 	auto& Proc = EFT::GetProcess();
 
-	uintptr_t LootListAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pLootList);
+	LootListAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pLootList);
 	m_pLootList = std::make_unique<CLootList>(LootListAddress);
 
-	uintptr_t RegisteredPlayersAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pRegisteredPlayers);
+	RegisteredPlayersAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pRegisteredPlayers);
 	m_pRegisteredPlayers = std::make_unique<CRegisteredPlayers>(RegisteredPlayersAddress);
 
-	uintptr_t ExfiltrationControllerAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pExfiltrationController);
+	ExfiltrationControllerAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pExfiltrationController);
 	m_pExfilController = std::make_unique<CExfilController>(ExfiltrationControllerAddress);
+
+	m_MainPlayerAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pMainPlayer);
 }
 
 void CLocalGameWorld::QuickUpdatePlayers(DMA_Connection* Conn)
 {
-	if(m_pRegisteredPlayers)
+	if (m_pRegisteredPlayers)
 		m_pRegisteredPlayers->QuickUpdate(Conn);
 }
 
@@ -33,4 +35,19 @@ void CLocalGameWorld::HandlePlayerAllocations(DMA_Connection* Conn)
 
 	m_pRegisteredPlayers->UpdateBaseAddresses(Conn);
 	m_pRegisteredPlayers->HandlePlayerAllocations(Conn);
+}
+
+bool CLocalGameWorld::IsValidRaid(DMA_Connection* Conn)
+{
+	if (IsInvalid()) return false;
+
+	if (m_pExfilController == nullptr || m_pExfilController->IsInvalid()) return false;
+
+	if (m_pRegisteredPlayers == nullptr || m_pRegisteredPlayers->IsInvalid()) return false;
+
+	if (m_pLootList == nullptr || m_pLootList->IsInvalid()) return false;
+
+	if (m_pRegisteredPlayers->GetNumValidPlayers() == 0) return false;
+
+	return true;
 }

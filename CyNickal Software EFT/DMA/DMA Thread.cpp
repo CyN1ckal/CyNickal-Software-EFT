@@ -8,8 +8,10 @@
 #include "Game/Camera List/Camera List.h"
 #include "GUI/Aimbot/Aimbot.h"
 #include "GUI/Keybinds/Keybinds.h"
+#include "Game/Offsets/Offsets.h"
 
 extern std::atomic<bool> bRunning;
+static std::atomic<bool> bInRaid = false;
 
 void DMA_Thread_Main()
 {
@@ -27,16 +29,30 @@ void DMA_Thread_Main()
 	}
 
 	CTimer LightRefresh(std::chrono::seconds(5), [&Conn]() { Conn->LightRefresh(); });
-	CTimer ResponseData(std::chrono::milliseconds(25), [&Conn]() { ResponseData::OnDMAFrame(Conn); });
-	CTimer Player_Quick(std::chrono::milliseconds(25), [&Conn]() { EFT::QuickUpdatePlayers(Conn); });
-	CTimer Player_Allocations(std::chrono::seconds(5), [&Conn]() { EFT::HandlePlayerAllocations(Conn); });
-	CTimer Camera_UpdateViewMatrix(std::chrono::milliseconds(2), [&Conn]() { CameraList::QuickUpdateNecessaryCameras(Conn); });
+	CTimer RaidCheck(std::chrono::seconds(10), [&Conn]() {
+		EFT::CreateWorldIfNeeded(Conn);
+		});
+
+	CTimer ResponseData(std::chrono::milliseconds(25), [&Conn]() {
+		ResponseData::OnDMAFrame(Conn);
+		});
+
+	CTimer Player_Quick(std::chrono::milliseconds(25), [&Conn]() {
+		if (EFT::pGameWorld) EFT::QuickUpdatePlayers(Conn);
+		});
+	CTimer Player_Allocations(std::chrono::seconds(5), [&Conn]() {
+		if (EFT::pGameWorld) EFT::HandlePlayerAllocations(Conn);
+		});
+	CTimer Camera_UpdateViewMatrix(std::chrono::milliseconds(2), [&Conn]() {
+		if (EFT::pGameWorld) CameraList::QuickUpdateNecessaryCameras(Conn);
+		});
 	CTimer Keybinds(std::chrono::milliseconds(50), [&Conn]() { Keybinds::OnDMAFrame(Conn); });
 
 	while (bRunning)
 	{
 		auto TimeNow = std::chrono::high_resolution_clock::now();
 		LightRefresh.Tick(TimeNow);
+		RaidCheck.Tick(TimeNow);
 		ResponseData.Tick(TimeNow);
 		Player_Quick.Tick(TimeNow);
 		Player_Allocations.Tick(TimeNow);

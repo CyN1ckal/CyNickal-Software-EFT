@@ -20,6 +20,7 @@ void CExfilController::Initialize(DMA_Connection* Conn)
 	if (!ExfilList)
 	{
 		std::println("[CExfilController] ExfilList is null");
+		SetInvalid();
 		return;
 	}
 
@@ -28,12 +29,14 @@ void CExfilController::Initialize(DMA_Connection* Conn)
 	if (ExfilCount > 64)
 	{
 		std::println("[CExfilController] Number of exfils is unreasonably high: {}", ExfilCount);
+		SetInvalid();
 		return;
 	}
 
 	if (ExfilCount == 0)
 	{
 		std::println("[CExfilController] Exfil Count is zero");
+		SetInvalid();
 		return;
 	}
 

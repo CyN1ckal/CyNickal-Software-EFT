@@ -6,8 +6,6 @@ void ItemTable::Render()
 {
 	if (!bMasterToggle)	return;
 
-	if (!EFT::pGameWorld || !EFT::pGameWorld->m_pLootList || !EFT::pGameWorld->m_pRegisteredPlayers)
-		return;
 
 	ImGui::Begin("Item Table", &bMasterToggle);
 
@@ -27,12 +25,14 @@ void ItemTable::Render()
 		ImGui::TableSetupColumn("Stack Count");
 		ImGui::TableHeadersRow();
 
-		auto LocalPlayerPos = EFT::GetRegisteredPlayers().GetLocalPlayerPosition();
-		auto& LootList = EFT::GetLootList();
-
-		std::scoped_lock lk(LootList.m_ObservedItems.m_Mut);
-		for (auto& Item : LootList.m_ObservedItems.m_Entities)
-			AddRow(Item, LocalPlayerPos);
+		std::scoped_lock Lock(EFT::m_GameWorldMutex);
+		if (EFT::pGameWorld && EFT::pGameWorld->m_pLootList && EFT::pGameWorld->m_pRegisteredPlayers) {
+			auto LocalPlayerPos = EFT::GetRegisteredPlayers().GetLocalPlayerPosition();
+			auto& LootList = EFT::GetLootList();
+			std::scoped_lock lk(LootList.m_ObservedItems.m_Mut);
+			for (auto& Item : LootList.m_ObservedItems.m_Entities)
+				AddRow(Item, LocalPlayerPos);
+		}
 
 		ImGui::EndTable();
 	}

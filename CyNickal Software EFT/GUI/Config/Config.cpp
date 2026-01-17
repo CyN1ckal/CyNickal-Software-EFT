@@ -12,6 +12,8 @@
 #include "GUI/Fuser/Draw/Players.h"
 #include "GUI/Fuser/Draw/Exfils.h"
 #include "GUI/Keybinds/Keybinds.h"
+#include "GUI/Main Menu/Main Menu.h"
+#include "GUI/Flea Bot/Flea Bot.h"
 
 #include <shlobj.h>
 #include <fstream>
@@ -167,11 +169,20 @@ json Config::SerializeKeybinds(json& j) {
 json Config::SerializeConfig() {
 	json j;
 
+	j["MainMenu"] = {
+		{"bVSync", MainMenu::bVSync}
+	};
+
+	j["FleaBot"] = {
+		{"bSettings", FleaBot::bSettings}
+	};
+
 	j["Aimbot"] = {
 		{"bSettings", Aimbot::bSettings},
 		{"bMasterToggle", Aimbot::bMasterToggle},
 		{"bDrawFOV", Aimbot::bDrawFOV},
-		{"fDampen", Aimbot::fDampen},
+		{"fSmoothX", Aimbot::fSmoothX},
+		{"fSmoothY", Aimbot::fSmoothY},
 		{"fPixelFOV", Aimbot::fPixelFOV},
 		{"fDeadzoneFov", Aimbot::fDeadzoneFov}
 	};
@@ -262,6 +273,22 @@ json Config::SerializeConfig() {
 
 void Config::DeserializeConfig(const json& j) {
 
+	if (j.contains("MainMenu")) {
+		const auto& mainMenuTable = j["MainMenu"];
+
+		if (mainMenuTable.contains("bVSync")) {
+			MainMenu::bVSync = mainMenuTable["bVSync"].get<bool>();
+		}
+	}
+
+	if (j.contains("FleaBot")) {
+		const auto& fleaBotTable = j["FleaBot"];
+
+		if (fleaBotTable.contains("bSettings")) {
+			FleaBot::bSettings = fleaBotTable["bSettings"].get<bool>();
+		}
+	}
+
 	if (j.contains("Aimbot")) {
 		const auto& aimbotTable = j["Aimbot"];
 
@@ -274,8 +301,11 @@ void Config::DeserializeConfig(const json& j) {
 		if (aimbotTable.contains("bDrawFOV")) {
 			Aimbot::bDrawFOV = aimbotTable["bDrawFOV"].get<bool>();
 		}
-		if (aimbotTable.contains("fDampen")) {
-			Aimbot::fDampen = aimbotTable["fDampen"].get<float>();
+		if (aimbotTable.contains("fSmoothX")) {
+			Aimbot::fSmoothX = aimbotTable["fSmoothX"].get<float>();
+		}
+		if (aimbotTable.contains("fSmoothY")) {
+			Aimbot::fSmoothY = aimbotTable["fSmoothY"].get<float>();
 		}
 		if (aimbotTable.contains("fPixelFOV")) {
 			Aimbot::fPixelFOV = aimbotTable["fPixelFOV"].get<float>();

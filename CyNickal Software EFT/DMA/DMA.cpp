@@ -36,16 +36,23 @@ bool DMA_Connection::EndConnection()
 
 DMA_Connection::DMA_Connection()
 {
-	std::println("[DMA] Connecting...");
+	try {
+		std::println("[DMA] Connecting...");
 
-	LPCSTR args[] = { "", "-device", "FPGA", "-norefresh"};
+		LPCSTR args[] = { "", "-device", "FPGA", "-norefresh" };
 
-	m_VMMHandle = VMMDLL_Initialize(4, args);
+		m_VMMHandle = VMMDLL_Initialize(4, args);
 
-	if (!m_VMMHandle)
-		throw std::runtime_error("Failed to initialize VMM DLL");
+		if (!m_VMMHandle)
+			throw std::runtime_error("Failed to initialize VMM DLL");
 
-	std::println("[DMA] Connected to DMA!");
+		std::println("[DMA] Connected to DMA!");
+	}
+	catch (const std::exception& e) {
+		std::println(stderr, "\nFatal error: {}", e.what());
+		std::println(stderr, "Press Enter to exit...");
+		std::cin.get();
+	}
 }
 
 DMA_Connection::~DMA_Connection()

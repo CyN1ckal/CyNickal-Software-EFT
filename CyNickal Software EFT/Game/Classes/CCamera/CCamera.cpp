@@ -5,13 +5,10 @@
 
 CCamera::CCamera(uintptr_t CameraAddress) : CBaseEntity(CameraAddress)
 {
-	std::println("[CCamera] Constructed CCamera with {:X}", CameraAddress);
 }
 
 CCamera::CCamera(CCamera&& Cam) noexcept: CBaseEntity(Cam)
 {
-	std::println("[CCamera] Move assigned CCamera with {:X}", Cam.m_EntityAddress);
-
 	m_GameObjectAddress = Cam.m_GameObjectAddress;
 	m_ComponentsAddress = Cam.m_ComponentsAddress;
 	m_CameraInfoAddress = Cam.m_CameraInfoAddress;
@@ -84,8 +81,6 @@ void CCamera::Finalize()
 	SetViewMatrix(m_PrivateViewMatrix);
 	SetFOV(m_PrivateFOV);
 	SetAspectRatio(m_PrivateAspectRatio);
-
-	std::println("[CCamera] Loaded camera: {} with {{fov{},apsect{}}}", GetName(), GetFOV(), GetAspectRatio());
 }
 
 void CCamera::QuickFinalize()

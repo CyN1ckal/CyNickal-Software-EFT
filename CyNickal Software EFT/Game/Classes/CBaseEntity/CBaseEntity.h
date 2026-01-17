@@ -12,4 +12,5 @@ public:
 	void SetInvalid();
 	bool IsInvalid() const;
 	bool operator==(const CBaseEntity& other) const;
+	uintptr_t GetAddress() const { return m_EntityAddress; }
 };

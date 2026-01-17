@@ -12,9 +12,6 @@ void Fuser::Render()
 {
 	if (!bMasterToggle) return;
 
-	if (!EFT::pGameWorld)
-		return;
-
 	ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(Fuser::m_ScreenSize);
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 255.0f));
@@ -22,17 +19,20 @@ void Fuser::Render()
 	auto WindowPos = ImGui::GetWindowPos();
 	auto DrawList = ImGui::GetWindowDrawList();
 
-	Aimbot::RenderFOVCircle(WindowPos, DrawList);
+	std::scoped_lock Lock(EFT::m_GameWorldMutex);
+	if (EFT::pGameWorld) {
+		Aimbot::RenderFOVCircle(WindowPos, DrawList);
 
-	if (EFT::pGameWorld->m_pLootList)
-		DrawESPLoot::DrawAll(WindowPos, DrawList);
+		if (EFT::pGameWorld->m_pLootList)
+			DrawESPLoot::DrawAll(WindowPos, DrawList);
 
-	DrawExfils::DrawAll(WindowPos, DrawList);
+		DrawExfils::DrawAll(WindowPos, DrawList);
 
-	if (EFT::pGameWorld->m_pRegisteredPlayers)
-		DrawESPPlayers::DrawAll(WindowPos, DrawList);
+		if (EFT::pGameWorld->m_pRegisteredPlayers)
+			DrawESPPlayers::DrawAll(WindowPos, DrawList);
 
-	AmmoCountOverlay::Render();
+		AmmoCountOverlay::Render();
+	}
 
 	ImGui::End();
 	ImGui::PopStyleColor();
