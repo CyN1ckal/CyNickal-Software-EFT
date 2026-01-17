@@ -30,12 +30,13 @@ void DMA_Thread_Main()
 
 	CTimer LightRefresh(std::chrono::seconds(5), [&Conn]() { Conn->LightRefresh(); });
 	CTimer RaidCheck(std::chrono::seconds(10), [&Conn]() {
-		EFT::EnsureInRaid(Conn);
+		EFT::CreateWorldIfNeeded(Conn);
 		});
 
 	CTimer ResponseData(std::chrono::milliseconds(25), [&Conn]() {
-		if (EFT::pGameWorld) ResponseData::OnDMAFrame(Conn);
+		ResponseData::OnDMAFrame(Conn);
 		});
+
 	CTimer Player_Quick(std::chrono::milliseconds(25), [&Conn]() {
 		if (EFT::pGameWorld) EFT::QuickUpdatePlayers(Conn);
 		});
@@ -57,7 +58,6 @@ void DMA_Thread_Main()
 		Player_Allocations.Tick(TimeNow);
 		Camera_UpdateViewMatrix.Tick(TimeNow);
 		Keybinds.Tick(TimeNow);
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	Conn->EndConnection();

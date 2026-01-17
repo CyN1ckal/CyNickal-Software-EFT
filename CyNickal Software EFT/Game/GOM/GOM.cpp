@@ -133,7 +133,7 @@ void GOM::GetObjectAddresses(DMA_Connection* Conn, uint32_t MaxNodes)
 	std::println("[EFT] UpdateObjectList; {} total nodes in {}ms", NodeCount, Duration);
 }
 
-std::vector<uintptr_t> GOM::GetGameWorldAddresses(DMA_Connection* Conn)
+std::vector<uintptr_t> GOM::GetGameWorldAddresses()
 {
 	std::vector<uintptr_t> GameWorldAddresses{};
 
@@ -151,9 +151,11 @@ std::vector<uintptr_t> GOM::GetGameWorldAddresses(DMA_Connection* Conn)
 
 uintptr_t GOM::FindGameWorldAddressFromCache(DMA_Connection* Conn)
 {
-	auto GameWorldAddrs = GetGameWorldAddresses(Conn);
+	auto GameWorldAddrs = GetGameWorldAddresses();
 
 	auto& Proc = EFT::GetProcess();
+
+	std::println("[EFT] GameWorldObjects: {}", GameWorldAddrs);
 
 	for (auto& GameWorldAddr : GameWorldAddrs)
 	{
@@ -164,8 +166,7 @@ uintptr_t GOM::FindGameWorldAddressFromCache(DMA_Connection* Conn)
 
 		if (MainPlayerAddr)
 		{
-			m_MainPlayerAddress = MainPlayerAddr;
-			std::println("[EFT] LocalGameWorld Address: 0x{:X}\n", LocalWorldAddr);
+			std::println("[EFT] LocalGameWorld found @ 0x{:X}\n", LocalWorldAddr);
 			return LocalWorldAddr;
 		}
 	}
@@ -231,4 +232,21 @@ void GOM::PopulateObjectInfoListFromAddresses(DMA_Connection* Conn)
 		ObjInfo.m_ObjectName = Name;
 		m_ObjectInfo.push_back(ObjInfo);
 	}
+}
+
+uintptr_t GOM::GetLatestWorldAddr(DMA_Connection* Conn)
+{
+	GOM::Initialize(Conn);
+
+	uintptr_t Return{};
+
+	try {
+		Return = FindGameWorldAddressFromCache(Conn);
+	}
+	catch (const std::exception& e)
+	{
+		std::println("[EFT] GetLatestWorldAddr; Exception: {}", e.what());
+	}
+
+	return Return;
 }

@@ -9,9 +9,6 @@ void Radar::Render()
 {
 	if (!bMasterToggle) return;
 
-	if (!EFT::pGameWorld)
-		return;
-
 	ImGui::SetNextWindowPos(ImVec2(175, 10), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(350, 350), ImGuiCond_FirstUseEver);
 
@@ -34,14 +31,17 @@ void Radar::Render()
 
 	DrawList->AddRectFilled(RectTopLeft, RectBottomRight, IM_COL32(55, 55, 55, 255));
 
-	if (EFT::pGameWorld->m_pLootList)
-		DrawRadarLoot::DrawAll(WindowPos, WindowSize, DrawList);
+	std::scoped_lock Lock(EFT::m_GameWorldMutex);
+	if (EFT::pGameWorld) {
+		if (EFT::pGameWorld->m_pLootList)
+			DrawRadarLoot::DrawAll(WindowPos, WindowSize, DrawList);
 
-	if (EFT::pGameWorld->m_pExfilController)
-		DrawRadarExfils::DrawAll(WindowPos, WindowSize, DrawList);
+		if (EFT::pGameWorld->m_pExfilController)
+			DrawRadarExfils::DrawAll(WindowPos, WindowSize, DrawList);
 
-	if (EFT::pGameWorld->m_pRegisteredPlayers)
-		DrawRadarPlayers::DrawAll(WindowPos, WindowSize, DrawList);
+		if (EFT::pGameWorld->m_pRegisteredPlayers)
+			DrawRadarPlayers::DrawAll(WindowPos, WindowSize, DrawList);
+	}
 
 	ImGui::End();
 }

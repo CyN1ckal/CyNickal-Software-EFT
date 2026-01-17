@@ -3,7 +3,6 @@
 #include "Game/Offsets/Offsets.h"
 #include "DMA/DMA.h"
 #include "Game/EFT.h"
-#include "Game/GOM/GOM.h"
 
 CLocalGameWorld::CLocalGameWorld(uintptr_t GameWorldAddress) : CBaseEntity(GameWorldAddress)
 {
@@ -20,11 +19,13 @@ CLocalGameWorld::CLocalGameWorld(uintptr_t GameWorldAddress) : CBaseEntity(GameW
 
 	ExfiltrationControllerAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pExfiltrationController);
 	m_pExfilController = std::make_unique<CExfilController>(ExfiltrationControllerAddress);
+
+	m_MainPlayerAddress = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddress + Offsets::CLocalGameWorld::pMainPlayer);
 }
 
 void CLocalGameWorld::QuickUpdatePlayers(DMA_Connection* Conn)
 {
-	if(m_pRegisteredPlayers)
+	if (m_pRegisteredPlayers)
 		m_pRegisteredPlayers->QuickUpdate(Conn);
 }
 
@@ -36,97 +37,17 @@ void CLocalGameWorld::HandlePlayerAllocations(DMA_Connection* Conn)
 	m_pRegisteredPlayers->HandlePlayerAllocations(Conn);
 }
 
-bool CLocalGameWorld::Validate(DMA_Connection* Conn, std::unique_ptr<CLocalGameWorld>& pGameWorld)
+bool CLocalGameWorld::IsValidRaid(DMA_Connection* Conn)
 {
-    try
-    {
-        auto& Proc = EFT::GetProcess();
-        uintptr_t GameWorldAddr = pGameWorld->GetAddress();
+	if (IsInvalid()) return false;
 
-        // Read MainPlayer pointer
-        uintptr_t MainPlayerAddr = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddr + Offsets::CLocalGameWorld::pMainPlayer);
+	if (m_pExfilController == nullptr || m_pExfilController->IsInvalid()) return false;
 
-        // Check if MainPlayer pointer is valid
-        if (MainPlayerAddr == 0 || MainPlayerAddr > 0x7FFFFFFFFFFF)
-        {
-            std::println("[CLocalGameWorld] MainPlayer pointer invalid - left raid!");
-            pGameWorld.reset();
-            return false;
-        }
+	if (m_pRegisteredPlayers == nullptr || m_pRegisteredPlayers->IsInvalid()) return false;
 
-        // Try to read from MainPlayer to verify it's accessible
-        // Read Profile pointer (adjust offset as needed - typically around 0x10-0x18)
-        uintptr_t ProfileAddr = Proc.ReadMem<uintptr_t>(Conn, MainPlayerAddr + 0x10);
+	if (m_pLootList == nullptr || m_pLootList->IsInvalid()) return false;
 
-        if (ProfileAddr == 0 || ProfileAddr > 0x7FFFFFFFFFFF)
-        {
-            std::println("[CLocalGameWorld] MainPlayer Profile invalid - left raid!");
-            pGameWorld.reset();
-            return false;
-        }
+	if (m_pRegisteredPlayers->GetNumValidPlayers() == 0) return false;
 
-        // All checks passed - still in raid
-        return true;
-    }
-    catch (...)
-    {
-        // Any exception means we can't read the data - left raid
-        std::println("[CLocalGameWorld] Failed to read MainPlayer data - left raid!");
-        pGameWorld.reset();
-        return false;
-    }
-}
-
-void CLocalGameWorld::EnsureGameWorld(DMA_Connection* Conn, std::unique_ptr<CLocalGameWorld>& pGameWorld)
-{
-    static int FailCount = 0;
-
-    // Validate existing GameWorld if it exists
-    if (pGameWorld != nullptr)
-    {
-        if (Validate(Conn, pGameWorld))
-        {
-            // Still valid
-            FailCount = 0;
-            return;
-        }
-        // Validation failed and nulled pGameWorld - fall through to search
-    }
-
-    // No GameWorld - search for one
-    try
-    {
-        auto& Proc = EFT::GetProcess();
-
-        // Update GOM pointers
-        uintptr_t pGOMAddress = Proc.GetUnityAddress() + Offsets::pGOM;
-        GOM::GameObjectManagerAddress = Proc.ReadMem<uintptr_t>(Conn, pGOMAddress);
-        GOM::LastActiveNode = Proc.ReadMem<uintptr_t>(Conn, GOM::GameObjectManagerAddress + Offsets::CGameObjectManager::pLastActiveNode);
-        GOM::ActiveNodes = Proc.ReadMem<uintptr_t>(Conn, GOM::GameObjectManagerAddress + Offsets::CGameObjectManager::pActiveNodes);
-
-        // Escalate to full scan after every 3rd failure
-        if (FailCount > 0 && FailCount % 3 == 0)
-        {
-            std::println("[CLocalGameWorld] Doing full scan (fail count: {})...", FailCount);
-            GOM::GetObjectAddresses(Conn, UINT32_MAX);
-        }
-        else
-        {
-            std::println("[CLocalGameWorld] Doing quick scan...");
-            GOM::GetObjectAddresses(Conn, 10000);
-        }
-
-        GOM::PopulateObjectInfoListFromAddresses(Conn);
-
-        // Try to find and create LocalGameWorld
-        //std::println("[CLocalGameWorld] Found LocalGameWorld! Initializing...");
-        EFT::MakeNewGameWorld(Conn);
-
-        FailCount = 0;
-        //std::println("[CLocalGameWorld] Successfully entered raid!");
-    }
-    catch (const std::exception& e)
-    {
-        FailCount++;
-    }
+	return true;
 }

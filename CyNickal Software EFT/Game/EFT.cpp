@@ -10,7 +10,9 @@ bool EFT::Initialize(DMA_Connection* Conn)
 
 	Proc.GetProcessInfo(Conn);
 
-	//MakeNewGameWorld(Conn);
+	CreateWorldIfNeeded(Conn);
+
+	CameraList::Initialize(Conn);
 
 	ResponseData::Initialize(Conn);
 
@@ -22,23 +24,35 @@ const Process& EFT::GetProcess()
 	return Proc;
 }
 
-void EFT::EnsureInRaid(DMA_Connection* Conn)
+void EFT::CreateWorldIfNeeded(DMA_Connection* Conn)
 {
-	CLocalGameWorld::EnsureGameWorld(Conn, pGameWorld);
+	if (pGameWorld && pGameWorld->IsValidRaid(Conn)) {
+		return;
+	}
+
+	std::println("[EFT] Not in raid or invalid raid detected.");
+
+	auto LatestWorldAddr = GOM::GetLatestWorldAddr(Conn);
+
+	{
+		std::scoped_lock Lock(m_GameWorldMutex);
+
+		pGameWorld.reset();
+
+		if (LatestWorldAddr) {
+			pGameWorld = std::make_unique<CLocalGameWorld>(LatestWorldAddr);
+		}
+	}
+
+	CameraList::Initialize(Conn);
 }
 
-void EFT::MakeNewGameWorld(DMA_Connection* Conn)
+uintptr_t EFT::GetMainPlayerAddress()
 {
-	//try
-	//{
-		//GOM::Initialize(Conn);
-		pGameWorld = std::make_unique<CLocalGameWorld>(GOM::FindGameWorldAddressFromCache(Conn));
-		CameraList::Initialize(Conn);
-	//}
-	//catch (const std::exception& e)
-	//{
-	//	std::println("[EFT] Failed making new game world! {}", e.what());
-	//}
+	if (pGameWorld)
+		return pGameWorld->GetMainPlayerAddress();
+
+	return uintptr_t();
 }
 
 void EFT::QuickUpdatePlayers(DMA_Connection* Conn)

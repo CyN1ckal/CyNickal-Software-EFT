@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CBaseEFTPlayer.h"
 #include "Game/Offsets/Offsets.h"
-#include "Game/GOM/GOM.h"
+#include "Game/EFT.h"
 
 void CBaseEFTPlayer::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh, EPlayerType playerType)
 {
@@ -109,7 +109,7 @@ void CBaseEFTPlayer::Finalize()
 	if (IsInvalid())
 		return;
 
-	if (m_EntityAddress == GOM::GetMainPlayerAddress())
+	if (m_EntityAddress == EFT::GetMainPlayerAddress())
 		SetLocalPlayer();
 
 	if (m_pHands)

@@ -7,9 +7,6 @@ void PlayerTable::Render()
 	if (!bMasterToggle)
 		return;
 
-	if (!EFT::pGameWorld || !EFT::pGameWorld->m_pRegisteredPlayers)
-		return;
-
 	ImGui::Begin("Player Table", &bMasterToggle);
 
 	ImGuiTableFlags TableFlags = ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_NoBordersInBody;
@@ -30,10 +27,14 @@ void PlayerTable::Render()
 		ImGui::TableSetupColumn("Ammo");
 		ImGui::TableHeadersRow();
 
-		auto& PlayerList = EFT::GetRegisteredPlayers();
-		std::scoped_lock Lock(PlayerList.m_Mut);
-		for (auto& Player : PlayerList.m_Players)
-			std::visit([](auto& Player) { PlayerTable::AddRow(Player); }, Player);
+		std::scoped_lock Lock(EFT::m_GameWorldMutex);
+		if (EFT::pGameWorld && EFT::pGameWorld->m_pRegisteredPlayers) {
+			auto& PlayerList = EFT::GetRegisteredPlayers();
+
+			std::scoped_lock Lock(PlayerList.m_Mut);
+			for (auto& Player : PlayerList.m_Players)
+				std::visit([](auto& Player) { PlayerTable::AddRow(Player); }, Player);
+		}
 
 		ImGui::EndTable();
 	}
