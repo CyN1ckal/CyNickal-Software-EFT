@@ -13,5 +13,5 @@
 
 Currently all features are **READ ONLY**
 
-# Contribute!
-This project is open to pull requests, please contribute!
+# Archived
+This project is currently archived. It may or may not come back in the future. I hope the source is helpful for those wanting to learn.
