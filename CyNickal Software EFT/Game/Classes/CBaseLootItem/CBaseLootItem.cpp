@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "CBaseLootItem.h"
 #include "Game/Offsets/Offsets.h"
@@ -54,7 +62,7 @@ void CBaseLootItem::PrepareRead_5(VMMDLL_SCATTER_HANDLE vmsh)
 
 	if (IsInvalid()) return;
 
-	m_pTransform = std::make_unique<CUnityTransform>(m_TransformAddress);
+	m_pTransform.emplace(m_TransformAddress);
 	m_pTransform->PrepareRead_1(vmsh);
 }
 
@@ -81,7 +89,7 @@ void CBaseLootItem::PrepareRead_8(VMMDLL_SCATTER_HANDLE vmsh)
 
 void CBaseLootItem::Finalize()
 {
-	if(!m_pTransform)
+	if (!m_pTransform || m_pTransform->IsInvalid())
 		SetInvalid();
 
 	if (IsInvalid()) return;

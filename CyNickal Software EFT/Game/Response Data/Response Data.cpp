@@ -1,23 +1,33 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "Response Data.h"
 #include "Game/EFT.h"
 #include "Game/Offsets/Offsets.h"
-#include "GUI/Flea Bot/Flea Bot.h"
+#include "GUI/Windows/Flea Bot/Flea Bot.h"
 
-void ResponseData::Initialize(DMA_Connection* Conn)
+void ResponseData::Initialize(CDMAConnection* Conn)
 {
 	auto& Proc = EFT::GetProcess();
 
-	uintptr_t zlibObject = Proc.ReadMem<uintptr_t>(Conn, Proc.GetAssemblyBase() + Offsets::ZLibObject);
+	uintptr_t zlibObject = Proc.ReadMem<uintptr_t>(Conn, Proc.GetAssemblyBase() + Offsets::pZLib);
 	m_JsonDataAddress = Proc.ReadChain(Conn, zlibObject, { 0xB8, 0x8, 0x28, 0x28 }) + 0x20;
 
 	std::println("[ResponseData] JSON Data Address: 0x{:X}", m_JsonDataAddress);
 }
 
-void ResponseData::OnDMAFrame(DMA_Connection* Conn)
+void ResponseData::OnDMAFrame(CDMAConnection* Conn)
 {
 	if (!FleaBot::bMasterToggle)
 		return;
+
+	ZoneScoped;
 
 	static uintptr_t PreviousData{ 0x0 };
 
@@ -39,7 +49,7 @@ void ResponseData::OnDMAFrame(DMA_Connection* Conn)
 	FleaBot::OnNewResponse();
 }
 
-bool ResponseData::UpdateJsonData(DMA_Connection* Conn)
+bool ResponseData::UpdateJsonData(CDMAConnection* Conn)
 {
 	if (!ReadJsonBuffer(Conn))
 	{
@@ -60,7 +70,7 @@ bool ResponseData::UpdateJsonData(DMA_Connection* Conn)
 	return true;
 }
 
-bool ResponseData::ReadJsonBuffer(DMA_Connection* Conn)
+bool ResponseData::ReadJsonBuffer(CDMAConnection* Conn)
 {
 	if(!m_JsonDataAddress)
 		return false;

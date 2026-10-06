@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "GOM.h"
 #include "Game/EFT.h"
@@ -5,9 +13,14 @@
 #include <unordered_set>
 #include "Game/Offsets/Offsets.h"
 #include "Game/Classes/CLinkedListEntry.h"
+#include "GUI/Windows/Flea Bot/Flea Bot.h"
 
-bool GOM::Initialize(DMA_Connection* Conn)
+bool GOM::Initialize(CDMAConnection* Conn)
 {
+	ZoneScoped;
+
+	std::println("[GOM] Initializing...");
+
 	auto& Proc = EFT::GetProcess();
 
 	uintptr_t pGOMAddress = Proc.GetUnityAddress() + Offsets::pGOM;
@@ -17,14 +30,18 @@ bool GOM::Initialize(DMA_Connection* Conn)
 
 	ActiveNodes = Proc.ReadMem<uintptr_t>(Conn, GameObjectManagerAddress + Offsets::CGameObjectManager::pActiveNodes);
 
-	GetObjectAddresses(Conn, 10000);
+	GetObjectAddresses(Conn, 50000);
 
 	PopulateObjectInfoListFromAddresses(Conn);
+
+	SaveAllObjectsToFile("GOM_ObjectList.txt");
+
+	std::println("[GOM] Finished.");
 
 	return false;
 }
 
-void GOM::GetObjectAddresses(DMA_Connection* Conn, uint32_t MaxNodes)
+void GOM::GetObjectAddresses(CDMAConnection* Conn, uint32_t MaxNodes)
 {
 	auto& Proc = EFT::GetProcess();
 
@@ -127,113 +144,63 @@ void GOM::GetObjectAddresses(DMA_Connection* Conn, uint32_t MaxNodes)
 
 	auto EndTime = std::chrono::high_resolution_clock::now();
 	auto Duration = std::chrono::duration_cast<std::chrono::milliseconds>(EndTime - StartTime).count();
-	std::println("[EFT] UpdateObjectList; {} total nodes in {}ms", NodeCount, Duration);
+	std::println("[GOM] UpdateObjectList; {} total nodes in {}ms", NodeCount, Duration);
 }
 
-std::vector<uintptr_t> GOM::GetGameWorldAddresses()
+std::vector<uintptr_t> GOM::GetPotentialGameWorlds()
 {
 	std::vector<uintptr_t> GameWorldAddresses{};
 
 	for (auto& ObjInfo : m_ObjectInfo)
 	{
 		if (ObjInfo.m_ObjectName == "GameWorld") {
-			GameWorldAddresses.push_back(ObjInfo.m_ObjectAddress);
+			GameWorldAddresses.push_back(ObjInfo.m_EntityAddress);
 		}
 	}
 
 	return GameWorldAddresses;
 }
 
-uintptr_t GOM::FindGameWorldAddressFromCache(DMA_Connection* Conn)
+uintptr_t GOM::GetWinningGameWorld(CDMAConnection* Conn)
 {
-	auto GameWorldAddrs = GetGameWorldAddresses();
-
 	auto& Proc = EFT::GetProcess();
 
-	for (auto& GameWorldAddr : GameWorldAddrs)
-	{
-		auto Deref1 = Proc.ReadMem<uintptr_t>(Conn, GameWorldAddr + Offsets::CGameObject::pComponents);
-		auto Deref2 = Proc.ReadMem<uintptr_t>(Conn, Deref1 + 0x18);
-		auto LocalWorldAddr = Proc.ReadMem<uintptr_t>(Conn, Deref2 + Offsets::CComponent::pObjectClass);
-		auto MainPlayerAddr = Proc.ReadMem<uintptr_t>(Conn, LocalWorldAddr + Offsets::CLocalGameWorld::pMainPlayer);
+	std::println("[GOM] Searching for valid GameWorld in {} objects...", m_ObjectInfo.size());
 
-		if (MainPlayerAddr) {
-			std::println("[EFT] LocalGameWorld found @ 0x{:X}\n", LocalWorldAddr);
-			return LocalWorldAddr;
+	for (auto& ObjInfo : m_ObjectInfo) {
+		if (ObjInfo.IsInvalid()) continue;
+
+		if (ObjInfo.m_ObjectName.at(0) == 'G' && ObjInfo.m_ObjectName.at(4) == 'W') {
+			auto LocalWorldAddr = ObjInfo.m_Components[0].GetComponentClassAddress();
+			auto MainPlayerAddr = Proc.ReadMem<uintptr_t>(Conn, LocalWorldAddr + Offsets::CLocalGameWorld::pMainPlayer);
+
+			if (MainPlayerAddr) {
+				std::println("[EFT] LocalGameWorld found @ 0x{:X}\n", LocalWorldAddr);
+				return LocalWorldAddr;
+			}
 		}
 	}
 
 	throw std::runtime_error("Failed to find valid LocalGameWorld address.");
 }
 
-void GOM::DumpAllObjectsToFile(const std::string& FileName)
+void GOM::PopulateObjectInfoListFromAddresses(CDMAConnection* Conn)
 {
-	std::ofstream OutFile(FileName, std::ios::out | std::ios::trunc);
-	if (!OutFile.is_open())
-	{
-		std::println("[EFT] DumpAllObjectsToFile; Failed to open file: {}", FileName);
-		return;
-	}
-
-	for (int i = 0; i < m_ObjectInfo.size(); i++)
-	{
-		auto& ObjInfo = m_ObjectInfo[i];
-		OutFile << std::format("Entity #{0:d} @ {1:X} named `{2:s}`", i, ObjInfo.m_ObjectAddress, ObjInfo.m_ObjectName.c_str()) << std::endl;
-	}
-
-	OutFile.close();
-}
-
-std::vector<std::pair<uintptr_t, std::array<std::byte, 32>>> ObjectDataBuffers{};
-void GOM::PopulateObjectInfoListFromAddresses(DMA_Connection* Conn)
-{
-	auto& Proc = EFT::GetProcess();
-
-	ObjectDataBuffers.resize(m_ObjectAddresses.size());
-
-	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (int i = 0; i < m_ObjectAddresses.size(); i++)
-	{
-		auto& ObjAddr = m_ObjectAddresses[i];
-		uintptr_t NameAddress = ObjAddr + Offsets::CGameObject::pName;
-		VMMDLL_Scatter_PrepareEx(vmsh, NameAddress, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&ObjectDataBuffers[i].first), nullptr);
-	}
-
-	VMMDLL_Scatter_Execute(vmsh);
-
-	VMMDLL_Scatter_Clear(vmsh, Proc.GetPID(), VMMDLL_FLAG_NOCACHE);
-
-	for (int i = 0; i < m_ObjectAddresses.size(); i++)
-	{
-		auto& [NameAddress, DataBuffer] = ObjectDataBuffers[i];
-		VMMDLL_Scatter_PrepareEx(vmsh, NameAddress, DataBuffer.size(), reinterpret_cast<BYTE*>(DataBuffer.data()), nullptr);
-	}
-
-	VMMDLL_Scatter_Execute(vmsh);
-
-	VMMDLL_Scatter_CloseHandle(vmsh);
+	ZoneScoped;
 
 	m_ObjectInfo.clear();
-	for (int i = 0; i < m_ObjectAddresses.size(); i++)
-	{
-		auto& [NameAddress, DataBuffer] = ObjectDataBuffers[i];
-		std::string Name(reinterpret_cast<char*>(DataBuffer.data()), strnlen_s(reinterpret_cast<char*>(DataBuffer.data()), DataBuffer.size()));
-		CObjectInfo ObjInfo{};
-		ObjInfo.m_ObjectAddress = m_ObjectAddresses[i];
-		ObjInfo.m_ObjectName = Name;
-		m_ObjectInfo.push_back(ObjInfo);
-	}
+
+	m_ObjectInfo = CGameObject::ScatterFactory(m_ObjectAddresses);
 }
 
-uintptr_t GOM::GetLatestWorldAddr(DMA_Connection* Conn)
+uintptr_t GOM::GetLatestWorldAddr(CDMAConnection* Conn)
 {
 	GOM::Initialize(Conn);
 
 	uintptr_t Return{};
 
 	try {
-		Return = FindGameWorldAddressFromCache(Conn);
+		Return = GetWinningGameWorld(Conn);
 	}
 	catch (const std::exception& e)
 	{
@@ -241,4 +208,39 @@ uintptr_t GOM::GetLatestWorldAddr(DMA_Connection* Conn)
 	}
 
 	return Return;
+}
+
+void GOM::SaveAllObjectsToFile(const std::string& FileName)
+{
+	std::ofstream OutFile(FileName, std::ios::out | std::ios::trunc);
+
+	for (auto& ObjInfo : m_ObjectInfo) {
+		if (ObjInfo.IsInvalid()) continue;
+
+		OutFile << std::format("Entity @ {0:X} named `{1:s}`", ObjInfo.m_EntityAddress, ObjInfo.m_ObjectName.c_str()) << std::endl;
+
+		for (auto& Component : ObjInfo.m_Components) {
+			if (Component.IsInvalid()) continue;
+
+			OutFile << std::format("   Component @ {0:X} named `{1:s}`", Component.m_EntityAddress, Component.m_ComponentName.c_str()) << std::endl;
+		}
+	}
+
+	OutFile.close();
+}
+
+uintptr_t GOM::FindComponentInGOM(std::string ComponentName)
+{
+	for (auto& Obj : m_ObjectInfo) {
+		if (Obj.IsInvalid()) continue;
+
+		for (auto& Component : Obj.m_Components) {
+			if (Component.IsInvalid()) continue;
+
+			if (Component.m_ComponentName.contains(ComponentName))
+				return Component.GetComponentClassAddress();
+		}
+	}
+
+	return uintptr_t();
 }

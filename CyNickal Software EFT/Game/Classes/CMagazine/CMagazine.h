@@ -1,11 +1,33 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #pragma once
 #include "Game/Classes/CBaseEntity/CBaseEntity.h"
 #include "Game/Classes/CItemTemplate/CItemTemplate.h"
+
+struct CShallowMagazine
+{
+	std::string m_AmmoTypeName{};
+	uint32_t m_CurrentCartridges{ 0 };
+	uint32_t m_MaxCartridges{ 0 };
+};
 
 class CMagazine : public CBaseEntity
 {
 public:
 	CMagazine(uintptr_t MagazineSlotAddress);
+
+	~CMagazine() = default;
+	CMagazine(CMagazine&&) = default;
+	CMagazine(const CMagazine&) = default;
+	CMagazine& operator=(CMagazine&&) = default;
+	CMagazine& operator=(const CMagazine&) = default;
+
 	void PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh);
@@ -19,13 +41,14 @@ public:
 	void QuickFinalize();
 
 	const std::string& GetAmmoName() const;
+	const CShallowMagazine ShallowCopy() const;
 
 public:
 	uint32_t m_MaxCartridges{ 0 };
 	uint32_t m_CurrentCartridges{ 0 };
 
-	std::unique_ptr<CItemTemplate> m_pMagazineItemTemplate{ nullptr };
-	std::unique_ptr<CItemTemplate> m_pAmmoItemTemplate{ nullptr };
+	std::optional<CItemTemplate> m_pMagazineItemTemplate{ std::nullopt };
+	std::optional<CItemTemplate> m_pAmmoItemTemplate{ std::nullopt };
 
 private:
 	std::string m_AmmoName{ "" };

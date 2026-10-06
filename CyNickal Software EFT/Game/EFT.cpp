@@ -1,33 +1,47 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "EFT.h"
 #include "Game/GOM/GOM.h"
-#include "Game/Camera List/Camera List.h"
 #include "Game/Response Data/Response Data.h"
-#include "GUI/Flea Bot/Flea Bot.h"
+#include "GUI/Windows/Flea Bot/Flea Bot.h"
+#include "Game/Offsets/Offsets.h"
 
-bool EFT::Initialize(DMA_Connection* Conn)
+bool EFT::Initialize(CDMAConnection* Conn)
 {
-	std::println("Initializing EFT module...");
+	std::println("[EFT] Initializing EFT module...");
 
 	Proc.GetProcessInfo(Conn);
 
-	CreateWorldIfNeeded(Conn);
-
-	CameraList::Initialize(Conn);
+	Offsets::ResolveAll(Proc);
 
 	ResponseData::Initialize(Conn);
+
+	CreateWorldIfNeeded(Conn);
 
 	return true;
 }
 
-const Process& EFT::GetProcess()
+const CProcess& EFT::GetProcess()
 {
 	return Proc;
 }
 
-void EFT::CreateWorldIfNeeded(DMA_Connection* Conn)
+void EFT::CreateWorldIfNeeded(CDMAConnection* Conn)
 {
-	if (FleaBot::bMasterToggle) {
+	if (FleaBot::bMasterToggle) {return;}
+
+	if (pGameWorld && pGameWorld->NeedsRefresh()) {
+		ZoneScopedN("EFT::CreateWorldIfNeeded::Refresh");
+		std::println("[EFT] Current raid needs refresh...");
+		std::scoped_lock Lock(m_GameWorldMutex);
+		pGameWorld = std::make_unique<CLocalGameWorld>(pGameWorld->m_EntityAddress);
 		return;
 	}
 
@@ -35,21 +49,14 @@ void EFT::CreateWorldIfNeeded(DMA_Connection* Conn)
 		return;
 	}
 
-	std::println("[EFT] Not in raid or invalid raid detected.");
-
+	ZoneScopedN("EFT::CreateWorldIfNeeded::Invalid");
+	std::println("[EFT] Invalid raid detected.");
 	auto LatestWorldAddr = GOM::GetLatestWorldAddr(Conn);
-
-	{
-		std::scoped_lock Lock(m_GameWorldMutex);
-
-		pGameWorld.reset();
-
-		if (LatestWorldAddr) {
-			pGameWorld = std::make_unique<CLocalGameWorld>(LatestWorldAddr);
-		}
+	std::scoped_lock Lock(m_GameWorldMutex);
+	pGameWorld.reset();
+	if (LatestWorldAddr) {
+		pGameWorld = std::make_unique<CLocalGameWorld>(LatestWorldAddr);
 	}
-
-	CameraList::Initialize(Conn);
 }
 
 uintptr_t EFT::GetMainPlayerAddress()
@@ -60,16 +67,40 @@ uintptr_t EFT::GetMainPlayerAddress()
 	return uintptr_t();
 }
 
-void EFT::QuickUpdatePlayers(DMA_Connection* Conn)
+void EFT::QuickUpdatePlayers(CDMAConnection* Conn)
 {
 	if (pGameWorld)
 		pGameWorld->QuickUpdatePlayers(Conn);
 }
 
-void EFT::HandlePlayerAllocations(DMA_Connection* Conn)
+void EFT::QuickUpdateGrenades(CDMAConnection* Conn)
+{
+	if (pGameWorld)
+		pGameWorld->QuickUpdateGrenades(Conn);
+}
+
+void EFT::QuickUpdateItems(CDMAConnection* Conn)
+{
+	if (pGameWorld)
+		pGameWorld->QuickUpdateItems(Conn);
+}
+
+void EFT::HandlePlayerAllocations(CDMAConnection* Conn)
 {
 	if (pGameWorld)
 		pGameWorld->HandlePlayerAllocations(Conn);
+}
+
+void EFT::HandleLootListAllocations(CDMAConnection* Conn)
+{
+	if (pGameWorld)
+		pGameWorld->HandleLootListAllocations(Conn);
+}
+
+void EFT::FullUpdateGrenades(CDMAConnection* Conn)
+{
+	if (pGameWorld)
+		pGameWorld->FullUpdateGrenades(Conn);
 }
 
 CRegisteredPlayers& EFT::GetRegisteredPlayers()
@@ -103,4 +134,13 @@ CExfilController& EFT::GetExfilController()
 		throw std::runtime_error("EFT::pGameWorld->m_pRegisteredExfils is null");
 
 	return *(pGameWorld->m_pExfilController);
+}
+
+EMap EFT::GetCurrentMap()
+{
+	std::scoped_lock Lock(m_GameWorldMutex);
+	if (pGameWorld)
+		return pGameWorld->m_CurrentMap;
+
+	return EMap::UNKNOWN;
 }

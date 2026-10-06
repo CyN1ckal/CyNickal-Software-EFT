@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "CItemTemplate.h"
 #include "Game/Offsets/Offsets.h"
@@ -14,6 +22,7 @@ void CItemTemplate::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CItemTemplate::pTarkovID, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_TarkovIDAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CItemTemplate::Width, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_Width), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CItemTemplate::Height, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_Height), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CItemTemplate::bQuestItem, sizeof(std::byte), reinterpret_cast<BYTE*>(&m_QuestItemByte), nullptr);
 }
 
 void CItemTemplate::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)

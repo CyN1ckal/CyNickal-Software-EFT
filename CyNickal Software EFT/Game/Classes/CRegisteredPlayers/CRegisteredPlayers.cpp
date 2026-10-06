@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "CRegisteredPlayers.h"
 #include "Game/EFT.h"
@@ -43,7 +51,7 @@ void ExecuteStages(VMMDLL_SCATTER_HANDLE vmsh, std::vector<CRegisteredPlayers::P
 	(ExecuteStage<Stages + 1>(vmsh, Players, PID), ...);
 }
 
-void CRegisteredPlayers::ExecuteReadsOnPlayerVec(DMA_Connection* Conn, std::vector<Player>& Players)
+void CRegisteredPlayers::ExecuteReadsOnPlayerVec(CDMAConnection* Conn, std::vector<Player>& Players, uintptr_t LocalPlayerAddress)
 {
 	const auto PID = EFT::GetProcess().GetPID();
 
@@ -54,7 +62,7 @@ void CRegisteredPlayers::ExecuteReadsOnPlayerVec(DMA_Connection* Conn, std::vect
 	VMMDLL_Scatter_CloseHandle(vmsh);
 
 	for (auto& Player : Players)
-		std::visit([](auto& p) { p.Finalize(); }, Player);
+		std::visit([&LocalPlayerAddress](auto& p) { p.Finalize(LocalPlayerAddress); }, Player);
 }
 
 void CRegisteredPlayers::AddPlayersToCache(std::vector<uintptr_t>& Addresses, EPlayerType PlayerType)
@@ -103,35 +111,82 @@ void CRegisteredPlayers::RemoveAddressesFromCache(std::vector<uintptr_t>& Addres
 	}
 }
 
-void CRegisteredPlayers::QuickUpdate(DMA_Connection* Conn)
-{
-	std::scoped_lock Lock(m_Mut);
+void CRegisteredPlayers::QuickUpdate(CDMAConnection* Conn) {
+	if (IsInvalid()) return;
+
+	ZoneScoped;
+
+	static std::vector<Player> LocalPlayerVec{};
+	{
+		ZoneScopedN("CRegisteredPlayers::QuickUpdate::Copy");
+		LocalPlayerVec.clear();
+		std::scoped_lock Lock(m_Mut);
+		for (auto& Player : m_Players) {
+			LocalPlayerVec.push_back(Player);
+		}
+	}
+
+	std::byte TestRead{};
+	DWORD BytesRead{ 0 };
 
 	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), EFT::GetProcess().GetPID(), VMMDLL_FLAG_NOCACHE);
 
-	for (auto& Player : m_Players)
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress, sizeof(std::byte), reinterpret_cast<BYTE*>(&TestRead), &BytesRead);
+
+	static std::size_t UpdateIdx{ 0 };
+	constexpr std::size_t BucketSize{ 6 };
+
+	if (UpdateIdx >= LocalPlayerVec.size())
+		UpdateIdx = 0;
+
+	auto View = LocalPlayerVec | std::views::drop(UpdateIdx) | std::views::take(BucketSize);
+
+	for (auto& Player : View)
 		std::visit([vmsh](auto& p) { p.QuickRead(vmsh); }, Player);
 
 	VMMDLL_Scatter_Execute(vmsh);
 
-	for (auto& Player : m_Players)
+	for (auto& Player : View)
 		std::visit([](auto& p) { p.QuickFinalize(); }, Player);
 
 	VMMDLL_Scatter_CloseHandle(vmsh);
+
+	UpdateIdx += BucketSize;
+
+	if (BytesRead != sizeof(std::byte)) {
+		SetInvalid();
+		std::println("[CRegisteredPlayers] Failed to read test byte! Raid is invalid.");
+		std::scoped_lock Lock(m_Mut);
+		m_Players.clear();
+		return;
+	}
+
+	{
+		ZoneScopedN("CRegisteredPlayers::QuickUpdate::Write");
+		std::scoped_lock Lock(m_Mut);
+		m_Players.clear();
+		for (auto& Player : LocalPlayerVec) {
+			m_Players.emplace_back(std::move(Player));
+		}
+	}
 }
 
-void CRegisteredPlayers::FullUpdate(DMA_Connection* Conn)
+void CRegisteredPlayers::FullUpdate(CDMAConnection* Conn, uintptr_t LocalPlayerAddress)
 {
-	std::println("[PlayerList] Full update requested.");
+	ZoneScoped;
+
+	std::println("[CRegisteredPlayers] Full update requested.");
 
 	Conn->LightRefresh();
 
 	std::scoped_lock Lock(m_Mut);
-	ExecuteReadsOnPlayerVec(Conn, m_Players);
+	ExecuteReadsOnPlayerVec(Conn, m_Players, LocalPlayerAddress);
 }
 
-void CRegisteredPlayers::UpdateBaseAddresses(DMA_Connection* Conn)
+void CRegisteredPlayers::UpdateBaseAddresses(CDMAConnection* Conn)
 {
+	ZoneScoped;
+
 	auto& Proc = EFT::GetProcess();
 
 	m_PlayerDataBaseAddress = Proc.ReadMem<uintptr_t>(Conn, m_EntityAddress + Offsets::CRegisteredPlayers::pPlayerArray);
@@ -156,8 +211,10 @@ struct NameInfo
 };
 std::vector<NameInfo> ObjectNames{};
 std::unordered_map<uintptr_t, std::string> NameMap{};
-void CRegisteredPlayers::GetPlayerAddresses(DMA_Connection* Conn, std::vector<uintptr_t>& OutClientPlayers, std::vector<uintptr_t>& OutObservedPlayers)
+void CRegisteredPlayers::GetPlayerAddresses(CDMAConnection* Conn, std::vector<uintptr_t>& OutClientPlayers, std::vector<uintptr_t>& OutObservedPlayers)
 {
+	ZoneScoped;
+
 	OutClientPlayers.clear();
 	OutObservedPlayers.clear();
 
@@ -220,7 +277,7 @@ void CRegisteredPlayers::GetPlayerAddresses(DMA_Connection* Conn, std::vector<ui
 			auto& ObjName = ObjectNames[i];
 			auto& ObjAddress = UniqueObjectAddresses[i];
 
-			std::println("Object {0:X} is type '{1:s}'", ObjAddress, ObjName.Name);
+			std::println("[CRegisteredPlayers] Object {0:X} is type '{1:s}'", ObjAddress, ObjName.Name);
 			NameMap[ObjAddress] = std::string(ObjName.Name);
 		}
 	}
@@ -301,9 +358,9 @@ CClientPlayer* CRegisteredPlayers::GetLocalPlayer()
 	return pClientPlayer;
 }
 
-void CRegisteredPlayers::AllocatePlayersFromVector(DMA_Connection* Conn, std::vector<uintptr_t> PlayerAddresses, EPlayerType playerType)
+void CRegisteredPlayers::AllocatePlayersFromVector(CDMAConnection* Conn, std::vector<uintptr_t> PlayerAddresses, EPlayerType playerType, uintptr_t LocalPlayerAddress)
 {
-	std::println("[PlayerList] Allocating {} players of type {}", PlayerAddresses.size(),
+	std::println("[CRegisteredPlayers] Allocating {} players of type {}", PlayerAddresses.size(),
 		(playerType == EPlayerType::eMainPlayer) ? "ClientPlayer" : "ObservedPlayer");
 
 	std::vector<Player> m_LocalCopy{};
@@ -316,7 +373,7 @@ void CRegisteredPlayers::AllocatePlayersFromVector(DMA_Connection* Conn, std::ve
 			m_LocalCopy.emplace_back(CObservedPlayer(Addr));
 	}
 
-	ExecuteReadsOnPlayerVec(Conn, m_LocalCopy);
+	ExecuteReadsOnPlayerVec(Conn, m_LocalCopy, LocalPlayerAddress);
 
 	std::scoped_lock Lock(m_Mut);
 	m_Players.insert(m_Players.end(),
@@ -340,7 +397,7 @@ void CRegisteredPlayers::DeallocatePlayersFromVector(std::vector<uintptr_t> Play
 		if (it != m_Players.end())
 		{
 			m_Players.erase(it);
-			std::println("[PlayerList] Deallocated player at address 0x{0:X}", Addr);
+			std::println("[CRegisteredPlayers] Deallocated player at address 0x{0:X}", Addr);
 		}
 	}
 
@@ -353,8 +410,10 @@ std::vector<uintptr_t> OutdatedClients{};
 std::vector<uintptr_t> OutdatedObservers{};
 std::vector<uintptr_t> All_ClientPlayers{};
 std::vector<uintptr_t> All_ObservedPlayers{};
-void CRegisteredPlayers::HandlePlayerAllocations(DMA_Connection* Conn)
+void CRegisteredPlayers::HandlePlayerAllocations(CDMAConnection* Conn, uintptr_t LocalPlayerAddress)
 {
+	ZoneScoped;
+
 	GetPlayerAddresses(Conn, All_ClientPlayers, All_ObservedPlayers);
 
 	std::ranges::sort(All_ClientPlayers);
@@ -371,9 +430,9 @@ void CRegisteredPlayers::HandlePlayerAllocations(DMA_Connection* Conn)
 		std::back_inserter(NewObservedPlayers));
 
 	if (NewClientPlayers.size())
-		AllocatePlayersFromVector(Conn, NewClientPlayers, EPlayerType::eMainPlayer);
+		AllocatePlayersFromVector(Conn, NewClientPlayers, EPlayerType::eMainPlayer, LocalPlayerAddress);
 	if (NewObservedPlayers.size())
-		AllocatePlayersFromVector(Conn, NewObservedPlayers, EPlayerType::eObservedPlayer);
+		AllocatePlayersFromVector(Conn, NewObservedPlayers, EPlayerType::eObservedPlayer, LocalPlayerAddress);
 
 	OutdatedClients.clear();
 	std::set_difference(m_PreviousClientPlayers.begin(), m_PreviousClientPlayers.end(),
@@ -398,8 +457,39 @@ std::size_t CRegisteredPlayers::GetNumValidPlayers()
 	std::size_t ValidPlayerCount{ 0 };
 
 	for (auto& Player : m_Players) {
-		std::visit([&](auto& Player) { if (Player.IsInvalid() == false) ValidPlayerCount++; }, Player);
+		std::visit([&ValidPlayerCount](auto& Player) { if (Player.IsInvalid() == false) ++ValidPlayerCount; }, Player);
 	}
 
 	return ValidPlayerCount;
+}
+
+const bool CRegisteredPlayers::IsLocalPlayerAiming()
+{
+	std::scoped_lock Lock(m_Mut);
+
+	CClientPlayer* pLocal = GetLocalPlayer();
+
+	if (pLocal && !pLocal->IsInvalid())
+		return pLocal->IsAiming();
+
+	return false;
+}
+
+CShallowMagazine CRegisteredPlayers::GetLocalPlayerMagazine()
+{
+	auto Return = CShallowMagazine{};
+
+	std::scoped_lock Lock(m_Mut);
+	CClientPlayer* pLocal = GetLocalPlayer();
+
+	if (!pLocal || pLocal->IsInvalid())
+		return Return;
+
+	if (!pLocal->m_pHands)
+		return Return;
+
+	if (!pLocal->m_pHands->m_pMagazine)
+		return Return;
+
+	return pLocal->m_pHands->m_pMagazine->ShallowCopy();
 }

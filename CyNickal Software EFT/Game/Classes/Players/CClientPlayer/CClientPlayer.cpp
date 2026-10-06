@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 
 #include "CClientPlayer.h"
@@ -15,6 +23,8 @@ void CClientPlayer::PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh)
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pProfile, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_ProfileAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pHandsController, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HandsControllerAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pProceduralWeaponAnimation, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_ProceduralWeaponAnimationAddress), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pPhysical, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_PhysicalAddress), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pCorpse, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_CorpseAddress), nullptr);
 }
 
 void CClientPlayer::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
@@ -27,7 +37,7 @@ void CClientPlayer::PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh)
 	if (IsInvalid())
 		return;
 
-	m_pHands = std::make_unique<CHeldItem>(m_HandsControllerAddress);
+	m_pHands.emplace(m_HandsControllerAddress);
 	m_PreviousHandsControllerAddress = m_HandsControllerAddress;
 	m_pHands->PrepareRead_1(vmsh, EPlayerType::eMainPlayer);
 
@@ -147,20 +157,24 @@ void CClientPlayer::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 	if (IsInvalid())
 		return;
 
-	if(m_pHands)
-		m_pHands->QuickRead(vmsh, EPlayerType::eMainPlayer);
+	if (m_pHands)
+		m_pHands->QuickRead(vmsh);
 
 	VMMDLL_Scatter_PrepareEx(vmsh, m_MovementContextAddress + Offsets::CMovementContext::Rotation, sizeof(float), reinterpret_cast<BYTE*>(&m_Yaw), nullptr);
-	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pHandsController, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HandsControllerAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_ProceduralWeaponAnimationAddress + Offsets::CProceduralWeaponAnimation::bAiming, sizeof(std::byte), reinterpret_cast<BYTE*>(&m_AimingByte), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pHandsController, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_HandsControllerAddress), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_EntityAddress + Offsets::CPlayer::pCorpse, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_CorpseAddress), nullptr);
 }
 
-void CClientPlayer::Finalize()
+void CClientPlayer::Finalize(uintptr_t LocalPlayerAddress)
 {
-	CBaseEFTPlayer::Finalize();
+	CBaseEFTPlayer::Finalize(LocalPlayerAddress);
 
 	if (IsInvalid())
 		return;
+
+	if (m_pHands)
+		m_pHands->Finalize();
 }
 
 void CClientPlayer::QuickFinalize()
@@ -170,9 +184,15 @@ void CClientPlayer::QuickFinalize()
 	if (IsInvalid())
 		return;
 
+	if (m_pHands)
+		m_pHands->QuickFinalize();
+
 	if (m_HandsControllerAddress == m_PreviousHandsControllerAddress) return;
 
 	m_PreviousHandsControllerAddress = m_HandsControllerAddress;
-	m_pHands = std::make_unique<CHeldItem>(m_HandsControllerAddress);
-	m_pHands->CompleteUpdate(EPlayerType::eMainPlayer);
+
+	if (m_HandsControllerAddress) {
+		m_pHands.emplace(m_HandsControllerAddress);
+		m_pHands->CompleteUpdate(EPlayerType::eMainPlayer);
+	}
 }

@@ -21,16 +21,16 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Main Window\Main Window.cpp">
+    <ClCompile Include="GUI\Windows\Main Window\Main Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DMA\DMA.cpp">
+    <ClCompile Include="DMA\CDMAConnection\CDMAConnection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\EFT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DMA\Process.cpp">
+    <ClCompile Include="DMA\CProcess\CProcess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\ImGui\imgui.cpp">
@@ -63,19 +63,19 @@
     <ClCompile Include="DMA\DMA Thread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Radar\Radar.cpp">
+    <ClCompile Include="GUI\Windows\Radar\Radar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Fuser\Fuser.cpp">
+    <ClCompile Include="GUI\Windows\Fuser\Fuser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Player Table\Player Table.cpp">
+    <ClCompile Include="GUI\Windows\Player Table\Player Table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Camera List\Camera List.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Fuser\Draw\Players.cpp">
+    <ClCompile Include="GUI\Windows\Fuser\Draw\Fuser Players.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Classes\CBaseEntity\CBaseEntity.cpp">
@@ -90,10 +90,10 @@
     <ClCompile Include="Game\Classes\Players\CClientPlayer\CClientPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Color Picker\Color Picker.cpp">
+    <ClCompile Include="GUI\Windows\Color Picker\Color Picker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Radar\Draw\Radar Players.cpp">
+    <ClCompile Include="GUI\Windows\Radar\Draw\Radar Players.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Fonts\Fonts.cpp">
@@ -105,28 +105,28 @@
     <ClCompile Include="Game\Classes\CPlayerSkeleton\CPlayerSkeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Fuser\Draw\Loot.cpp">
+    <ClCompile Include="GUI\Windows\Fuser\Draw\Fuser Loot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Radar\Draw\Radar Loot.cpp">
+    <ClCompile Include="GUI\Windows\Radar\Draw\Radar Loot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Item Table\Item Table.cpp">
+    <ClCompile Include="GUI\Windows\Item Table\Item Table.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Main Menu\Main Menu.cpp">
+    <ClCompile Include="GUI\Windows\Main Menu\Main Menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Aimbot\Aimbot.cpp">
+    <ClCompile Include="GUI\Windows\Aimbot\Aimbot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DMA\Input Manager.cpp">
+    <ClCompile Include="DMA\CInputManager\CInputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Classes\CItem\CItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Classes\CHeldItem\CHeldItem.cpp">
+    <ClCompile Include="Game\Classes\CHandsController\CHandsController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Database\Database.cpp">
@@ -135,28 +135,28 @@
     <ClCompile Include="..\Dependencies\sqlite\sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Keybinds\Keybinds.cpp">
+    <ClCompile Include="GUI\Windows\Keybinds\Keybinds.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Classes\CExfilPoint\CExfilPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Fuser\Draw\Exfils.cpp">
+    <ClCompile Include="GUI\Windows\Fuser\Draw\Fuser Exfils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Radar\Draw\Radar Exfils.cpp">
+    <ClCompile Include="GUI\Windows\Radar\Draw\Radar Exfils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Classes\CMagazine\CMagazine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Fuser\Overlays\Ammo Count\Ammo Count.cpp">
+    <ClCompile Include="GUI\Windows\Fuser\Overlays\Ammo Count\Ammo Count.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Classes\CItemTemplate\CItemTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Config\Config.cpp">
+    <ClCompile Include="GUI\Windows\Config\Config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Classes\CObservedLootItem\CObservedLootItem.cpp">
@@ -183,7 +183,7 @@
     <ClCompile Include="Game\Response Data\Response Data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Flea Bot\Flea Bot.cpp">
+    <ClCompile Include="GUI\Windows\Flea Bot\Flea Bot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Makcu\MyMakcu.cpp">
@@ -198,21 +198,144 @@
     <ClCompile Include="Network\Callbacks\Callbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\Image Loader\Image Loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Quest Manager\Quest Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CTaskEntry\CTaskEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CTaskObjective\CTaskObjective.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Quest List\Quest List.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CTaskZone\CTaskZone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Fuser\Draw\Fuser Objectives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Draw\Radar Objectives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\Tracy\TracyClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Classes\CRadarDrawable\CRadarDrawable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Classes\CRadarLootItem\CRadarLootItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Classes\CRadarHoverable\CRadarHoverable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Classes\CRadarContainer\CRadarContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Classes\CRadarExfil\CRadarExfil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Classes\CRadarObjective\CRadarObjective.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Exploits\Exploits.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Exploits\Fullbright\Fullbright.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CGameObject\CGameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CComponent\CComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Exploits\Time Changer\Time Changer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Exploits\Clear Weather\Clear Weather.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Exploits\Inf Stamina\Inf Stamina.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\Catch2\catch_amalgamated.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CCorpse\CCorpse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Classes\CRadarCorpse\CRadarCorpse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CGrenades\CGrenades.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CGrenade\CGrenade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Fuser\Draw\Fuser Grenades.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Classes\CRadarGrenade\CRadarGrenade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Radar\Draw\Radar Grenades.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Offsets\Offsets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DMA\CModule\CModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DMA\Pattern Scanner\Pattern Scanner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Windows\Fuser\Overlays\Nearby Items\Nearby Items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Texture Manager\Texture Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Classes\CSimpleGet\CSimpleGet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Exploits\No Spread %28WIP%29\No Spread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Classes\CFirearmController\CFirearmController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Exploits\Silent Aim\Silent Aim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\MyImGui\MyImGui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Exploits\No Sway %28WIP%29\No Sway.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Main Window\Main Window.h">
+    <ClInclude Include="GUI\Windows\Main Window\Main Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DMA\DMA.h">
+    <ClInclude Include="DMA\CDMAConnection\CDMAConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\EFT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DMA\Process.h">
+    <ClInclude Include="DMA\CProcess\CProcess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
@@ -245,13 +368,7 @@
     <ClInclude Include="Game\Classes\CLinkedListEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Classes\CGameObjectManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Classes\CObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Classes\CObjectInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Classes\Vector.h">
@@ -266,19 +383,19 @@
     <ClInclude Include="DMA\DMA Thread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Radar\Radar.h">
+    <ClInclude Include="GUI\Windows\Radar\Radar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Fuser\Fuser.h">
+    <ClInclude Include="GUI\Windows\Fuser\Fuser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Player Table\Player Table.h">
+    <ClInclude Include="GUI\Windows\Player Table\Player Table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Camera List\Camera List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Fuser\Draw\Players.h">
+    <ClInclude Include="GUI\Windows\Fuser\Draw\Fuser Players.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Classes\Players\CBaseEFTPlayer\CBaseEFTPlayer.h">
@@ -293,7 +410,7 @@
     <ClInclude Include="Game\Classes\Players\CObservedPlayer\CObservedPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Color Picker\Color Picker.h">
+    <ClInclude Include="GUI\Windows\Color Picker\Color Picker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Classes\Players\CBaseEFTPlayer\BossNameMap.h">
@@ -320,31 +437,31 @@
     <ClInclude Include="Game\Enums\EPlayerSide.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Fuser\Draw\Loot.h">
+    <ClInclude Include="GUI\Windows\Fuser\Draw\Fuser Loot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Radar\Draw\Radar Loot.h">
+    <ClInclude Include="GUI\Windows\Radar\Draw\Radar Loot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Radar\Draw\Radar Players.h">
+    <ClInclude Include="GUI\Windows\Radar\Draw\Radar Players.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Item Table\Item Table.h">
+    <ClInclude Include="GUI\Windows\Item Table\Item Table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Main Menu\Main Menu.h">
+    <ClInclude Include="GUI\Windows\Main Menu\Main Menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Aimbot\Aimbot.h">
+    <ClInclude Include="GUI\Windows\Aimbot\Aimbot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DMA\Input Manager.h">
+    <ClInclude Include="DMA\CInputManager\CInputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Classes\CItem\CItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Classes\CHeldItem\CHeldItem.h">
+    <ClInclude Include="Game\Classes\CHandsController\CHandsController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Enums\EPlayerType.h">
@@ -353,16 +470,16 @@
     <ClInclude Include="Database\Database.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Keybinds\Keybinds.h">
+    <ClInclude Include="GUI\Windows\Keybinds\Keybinds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Classes\CExfilPoint\CExfilPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Fuser\Draw\Exfils.h">
+    <ClInclude Include="GUI\Windows\Fuser\Draw\Fuser Exfils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Radar\Draw\Radar Exfils.h">
+    <ClInclude Include="GUI\Windows\Radar\Draw\Radar Exfils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Enums\EExfilStatus.h">
@@ -371,13 +488,13 @@
     <ClInclude Include="Game\Classes\CMagazine\CMagazine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Fuser\Overlays\Ammo Count\Ammo Count.h">
+    <ClInclude Include="GUI\Windows\Fuser\Overlays\Ammo Count\Ammo Count.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Classes\CItemTemplate\CItemTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Config\Config.h">
+    <ClInclude Include="GUI\Windows\Config\Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Classes\CLootableContainer\CLootableContainer.h">
@@ -395,9 +512,6 @@
     <ClInclude Include="Game\Classes\CLootList\CLootList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Classes\CLootList\CGenericLootList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Classes\CRegisteredPlayers\CRegisteredPlayers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -407,7 +521,7 @@
     <ClInclude Include="Game\Response Data\Response Data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Flea Bot\Flea Bot.h">
+    <ClInclude Include="GUI\Windows\Flea Bot\Flea Bot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Makcu\MyMakcu.h">
@@ -420,6 +534,150 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Network\Callbacks\Callbacks.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Enums\EMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Image Loader\Image Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CUnityList\CUnityList.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Quest Manager\Quest Manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CTaskEntry\CTaskEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CTaskObjective\CTaskObjective.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Quest List\Quest List.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CTaskZone\CTaskZone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Fuser\Draw\Fuser Objectives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Draw\Radar Objectives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Utils\ImDistance.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Classes\CRadarDrawable\CRadarDrawable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Classes\CRadarLootItem\CRadarLootItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Classes\CRadarHoverable\CRadarHoverable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Classes\CRadarContainer\CRadarContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Classes\CRadarExfil\CRadarExfil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Classes\CRadarObjective\CRadarObjective.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Exploits\Exploits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Exploits\Fullbright\Fullbright.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CGameObject\CGameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CComponent\CComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Enums\EAllocationType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Constants\EngineConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Exploits\Time Changer\Time Changer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Exploits\Clear Weather\Clear Weather.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Exploits\Inf Stamina\Inf Stamina.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests\All Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\CUniqueEntList\CUniqueEntList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests\Classes\CUniqueEntList\Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CCorpse\CCorpse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Classes\CRadarCorpse\CRadarCorpse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CGrenades\CGrenades.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CGrenade\CGrenade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Fuser\Draw\Fuser Grenades.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Classes\CRadarGrenade\CRadarGrenade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Radar\Draw\Radar Grenades.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DMA\CModule\CModule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DMA\Pattern Scanner\Pattern Scanner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests\Pattern Scanner\Pattern Scanner Tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Windows\Fuser\Overlays\Nearby Items\Nearby Items.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Texture Manager\Texture Manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Classes\CSimpleGet\CSimpleGet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Constant\Image Data\MissingIcon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Exploits\No Spread %28WIP%29\No Spread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Classes\CFirearmController\CFirearmController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Exploits\Silent Aim\Silent Aim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\MyImGui\MyImGui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Exploits\No Sway %28WIP%29\No Sway.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

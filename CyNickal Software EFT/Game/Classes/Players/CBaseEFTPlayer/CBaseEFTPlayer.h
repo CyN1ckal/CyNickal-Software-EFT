@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #pragma once
 #include "Game/Classes/CBaseEntity/CBaseEntity.h"
 #include "Game/Classes/Vector.h"
 #include "Game/Classes/CPlayerSkeleton/CPlayerSkeleton.h"
-#include "Game/Classes/CHeldItem/CHeldItem.h"
-#include "Game/Classes/CItem/CItem.h"
 #include "Game/Enums/EPlayerSide.h"
 #include "Game/Enums/ESpawnType.h"
 #include "Game/Enums/EPlayerType.h"
@@ -11,8 +17,9 @@
 class CBaseEFTPlayer : public CBaseEntity
 {
 public:
-	std::unique_ptr<CPlayerSkeleton> m_pSkeleton{ nullptr };
-	std::unique_ptr<CHeldItem> m_pHands{ nullptr };
+	std::optional<CPlayerSkeleton> m_pSkeleton{ std::nullopt };
+	//std::optional<CHandsController> m_pHands{ std::nullopt };
+	uintptr_t m_CorpseAddress{ 0 };
 	float m_Yaw{ 0.0f };
 	EPlayerSide m_Side{ EPlayerSide::UNKNOWN };
 	ESpawnType m_SpawnType{ ESpawnType::UNKNOWN };
@@ -27,6 +34,13 @@ private:
 
 public:
 	CBaseEFTPlayer(uintptr_t EntityAddress) : CBaseEntity(EntityAddress) {}
+
+	~CBaseEFTPlayer() = default;
+	CBaseEFTPlayer(const CBaseEFTPlayer& Copy) = default;
+	CBaseEFTPlayer(CBaseEFTPlayer&& Mov) = default;
+	CBaseEFTPlayer& operator=(const CBaseEFTPlayer& Other) = default;
+	CBaseEFTPlayer& operator=(CBaseEFTPlayer&& Orig) = default;
+
 	void PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh, EPlayerType playerType);
 	void PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh);
@@ -37,7 +51,7 @@ public:
 	void PrepareRead_8(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_9(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_10(VMMDLL_SCATTER_HANDLE vmsh);
-	void Finalize();
+	void Finalize(uintptr_t LocalPlayerAddress);
 	void QuickRead(VMMDLL_SCATTER_HANDLE vmsh, EPlayerType playerType);
 	void QuickFinalize();
 
@@ -53,6 +67,7 @@ public:
 	const Vector3& GetBonePosition(EBoneIndex boneIndex) const;
 	const bool IsLocalPlayer() const;
 	void SetLocalPlayer();
+	const bool IsDead() const;
 
 private:
 	const std::string& GetBossName() const;

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "CObservedPlayer.h"
 #include "Game/Offsets/Offsets.h"
@@ -35,6 +43,7 @@ void CObservedPlayer::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
 
 	VMMDLL_Scatter_PrepareEx(vmsh, m_MovementControllerAddress + Offsets::CMovementController::pObservedPlayerState, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_ObservedMovementStateAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_HealthControllerAddress + Offsets::CHealthController::HealthStatus, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_TagStatus), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_HealthControllerAddress + Offsets::CHealthController::pCorpse, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_CorpseAddress), nullptr);
 }
 
 void CObservedPlayer::PrepareRead_4(VMMDLL_SCATTER_HANDLE vmsh)
@@ -55,7 +64,7 @@ void CObservedPlayer::PrepareRead_5(VMMDLL_SCATTER_HANDLE vmsh)
 	if (IsInvalid())
 		return;
 
-	m_pHands = std::make_unique<CHeldItem>(m_ObservedHandsControllerAddress);
+	m_pHands.emplace(m_ObservedHandsControllerAddress);
 	m_PreviousHandsControllerAddress = m_ObservedHandsControllerAddress;
 	m_pHands->PrepareRead_1(vmsh, EPlayerType::eObservedPlayer);
 }
@@ -142,12 +151,15 @@ void CObservedPlayer::PrepareRead_14(VMMDLL_SCATTER_HANDLE vmsh)
 	m_pHands->PrepareRead_10(vmsh);
 }
 
-void CObservedPlayer::Finalize()
+void CObservedPlayer::Finalize(uintptr_t LocalPlayerAddress)
 {
-	CBaseEFTPlayer::Finalize();
+	CBaseEFTPlayer::Finalize(LocalPlayerAddress);
 
 	if (IsInvalid())
 		return;
+
+	if (m_pHands)
+		m_pHands->Finalize();
 
 	for (int i = 0; i < 32; i++)
 		m_Voice[i] = static_cast<char>(m_wVoice[i]);
@@ -167,6 +179,7 @@ void CObservedPlayer::QuickRead(VMMDLL_SCATTER_HANDLE vmsh)
 		m_pHands->QuickRead(vmsh, EPlayerType::eObservedPlayer);
 
 	VMMDLL_Scatter_PrepareEx(vmsh, m_HealthControllerAddress + Offsets::CHealthController::HealthStatus, sizeof(uint32_t), reinterpret_cast<BYTE*>(&m_TagStatus), nullptr);
+	VMMDLL_Scatter_PrepareEx(vmsh, m_HealthControllerAddress + Offsets::CHealthController::pCorpse, sizeof(uintptr_t), reinterpret_cast<BYTE*>(&m_CorpseAddress), nullptr);
 	VMMDLL_Scatter_PrepareEx(vmsh, m_ObservedMovementStateAddress + Offsets::CObservedMovementState::Rotation, sizeof(float), reinterpret_cast<BYTE*>(&m_Yaw), nullptr);
 }
 
@@ -175,6 +188,9 @@ void CObservedPlayer::QuickFinalize()
 	CBaseEFTPlayer::QuickFinalize();
 
 	if (IsInvalid()) return;
+
+	if (m_pHands)
+		m_pHands->QuickFinalize();
 }
 
 const bool CObservedPlayer::IsInCondition(const ETagStatus status) const

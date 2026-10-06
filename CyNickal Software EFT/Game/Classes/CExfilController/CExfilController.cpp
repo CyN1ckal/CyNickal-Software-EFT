@@ -1,17 +1,27 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"	
 #include "CExfilController.h"
 #include "Game/EFT.h"
 #include "Game/Offsets/Offsets.h"
 
-CExfilController::CExfilController(uintptr_t ExfilControllersAddress) : CBaseEntity(ExfilControllersAddress)
+CExfilController::CExfilController(uintptr_t ExfilControllersAddress, EMap CurrentMap) : CBaseEntity(ExfilControllersAddress)
 {
+	ZoneScoped;
+
 	std::println("[CExfilController] Constructed with {0:X}", m_EntityAddress);
 
-	auto Conn = DMA_Connection::GetInstance();
-	Initialize(Conn);
+	auto Conn = CDMAConnection::GetInstance();
+	Initialize(Conn, CurrentMap);
 }
 
-void CExfilController::Initialize(DMA_Connection* Conn)
+void CExfilController::Initialize(CDMAConnection* Conn, EMap CurrentMap)
 {
 	auto& Proc = EFT::GetProcess();
 
@@ -52,10 +62,10 @@ void CExfilController::Initialize(DMA_Connection* Conn)
 			m_Exfils.emplace_back(CExfilPoint(ExfilPtr));
 	}
 
-	FullUpdate(Conn);
+	FullUpdate(Conn, CurrentMap);
 }
 
-void CExfilController::FullUpdate(DMA_Connection* Conn)
+void CExfilController::FullUpdate(CDMAConnection* Conn, EMap CurrentMap)
 {
 	std::scoped_lock Lock(m_ExfilMutex);
 
@@ -104,5 +114,5 @@ void CExfilController::FullUpdate(DMA_Connection* Conn)
 	VMMDLL_Scatter_CloseHandle(vmsh);
 
 	for (auto& Exfil : m_Exfils)
-		Exfil.Finalize();
+		Exfil.Finalize(CurrentMap);
 }

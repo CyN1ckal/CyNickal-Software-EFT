@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "CBaseEFTPlayer.h"
 #include "Game/Offsets/Offsets.h"
@@ -45,7 +53,7 @@ void CBaseEFTPlayer::PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh)
 
 	if (IsInvalid()) return;
 
-	m_pSkeleton = std::make_unique<CPlayerSkeleton>(m_SkeletonRootAddress);
+	m_pSkeleton.emplace(m_SkeletonRootAddress);
 	m_pSkeleton->PrepareRead_1(vmsh);
 
 	if (m_BotOwnerAddress)
@@ -104,16 +112,13 @@ void CBaseEFTPlayer::PrepareRead_10(VMMDLL_SCATTER_HANDLE vmsh)
 	m_pSkeleton->PrepareRead_8(vmsh);
 }
 
-void CBaseEFTPlayer::Finalize()
+void CBaseEFTPlayer::Finalize(uintptr_t LocalPlayerAddress)
 {
 	if (IsInvalid())
 		return;
 
-	if (m_EntityAddress == EFT::GetMainPlayerAddress())
+	if (m_EntityAddress == LocalPlayerAddress)
 		SetLocalPlayer();
-
-	if (m_pHands)
-		m_pHands->Finalize();
 
 	m_pSkeleton->Finalize();
 }
@@ -129,9 +134,6 @@ void CBaseEFTPlayer::QuickFinalize()
 {
 	if (IsInvalid())
 		return;
-
-	if(m_pHands)
-		m_pHands->QuickFinalize();
 
 	if (m_pSkeleton)
 		m_pSkeleton->QuickFinalize();
@@ -176,7 +178,7 @@ const std::string& CBaseEFTPlayer::GetBossName() const
 	return BossNameMap.contains(m_SpawnType) ? BossNameMap.at(m_SpawnType) : BossLabel;
 }
 
-#include "GUI/Color Picker/Color Picker.h"
+#include "GUI/Windows/Color Picker/Color Picker.h"
 const ImColor CBaseEFTPlayer::GetFuserColor() const
 {
 	if (IsBoss())
@@ -235,7 +237,7 @@ const bool CBaseEFTPlayer::IsInvalid() const
 static Vector3 invalidPosition{ 0.0f,0.0f,0.0f };
 const Vector3& CBaseEFTPlayer::GetBonePosition(EBoneIndex boneIndex) const
 {
-	if (m_pSkeleton == nullptr)
+	if (!m_pSkeleton)
 		return invalidPosition;
 
 	return m_pSkeleton->GetBonePosition(boneIndex);
@@ -249,4 +251,9 @@ const bool CBaseEFTPlayer::IsLocalPlayer() const
 void CBaseEFTPlayer::SetLocalPlayer()
 {
 	m_Flags |= 0x2;
+}
+
+const bool CBaseEFTPlayer::IsDead() const
+{
+	return m_CorpseAddress;
 }

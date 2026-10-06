@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #pragma once
 
 struct Vector3
@@ -17,6 +25,10 @@ struct Vector3
 		float dz = z - other.z;
 		return sqrtf(dx * dx + dy * dy + dz * dz);
 	}
+	Vector3 Normalize() const {
+		float length = sqrtf(x * x + y * y + z * z);
+		return Vector3(x / length, y / length, z / length);
+	}
 };
 
 struct Vector2
@@ -29,6 +41,12 @@ struct Vector2
 		return Vector2(x - rhs.x, y - rhs.y);
 	}
 	float DistanceTo(const Vector2& other) const
+	{
+		float dx = x - other.x;
+		float dy = y - other.y;
+		return sqrtf(dx * dx + dy * dy);
+	}
+	float DistanceTo(const ImVec2& other) const
 	{
 		float dx = x - other.x;
 		float dy = y - other.y;

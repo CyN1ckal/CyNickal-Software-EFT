@@ -1,6 +1,15 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "Database.h"
 #include "Network/Classes/CFileDownload/CFileDownload.hpp"
+#include "json.hpp"
 
 void Database::Initialize()
 {
@@ -36,10 +45,7 @@ void Database::DownloadLatestDB()
 {
 	std::println("[Database] Downloading latest EFT_Data.db from cynickal.com...");
 
-	CFileDownload FileDownloader("https://cynickal.com/EFT_Data.db");
-	std::ofstream OutFile("EFT_Data.db", std::ios::binary);
-	OutFile.write(FileDownloader.GetResponse().data(), FileDownloader.GetResponse().size());
-	OutFile.close();
+	CFileDownload FileDownloader("https://cynickal.com/EFT_Data.db", "EFT_Data.db");
 
 	std::println("[Database] Download complete!");
 }

@@ -1,5 +1,14 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #pragma once
 #include "Game/Classes/Players/CBaseEFTPlayer/CBaseEFTPlayer.h"
+#include "Game/Classes/CHandsController/CHandsController.h"
 
 enum class ETagStatus : uint32_t
 {
@@ -38,11 +47,19 @@ private:
 	wchar_t m_wVoice[32]{ 0 };
 
 public:
+	std::optional<CHandsController> m_pHands{ std::nullopt };
 	uint32_t m_TagStatus{ std::numeric_limits<uint32_t>::max() };
 	char m_Voice[32]{ 0 };
 
 public:
 	CObservedPlayer(uintptr_t EntityAddress) : CBaseEFTPlayer(EntityAddress) {}
+
+	CObservedPlayer& operator=(CObservedPlayer&& Orig) = default;
+	CObservedPlayer& operator=(const CObservedPlayer& Orig) = default;
+	CObservedPlayer(const CObservedPlayer& Cpy) = default;
+	CObservedPlayer(CObservedPlayer&& Mov) = default;
+	~CObservedPlayer() = default;
+
 	void PrepareRead_1(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_2(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_3(VMMDLL_SCATTER_HANDLE vmsh);
@@ -57,7 +74,7 @@ public:
 	void PrepareRead_12(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_13(VMMDLL_SCATTER_HANDLE vmsh);
 	void PrepareRead_14(VMMDLL_SCATTER_HANDLE vmsh);
-	void Finalize();
+	void Finalize(uintptr_t LocalPlayerAddress);
 	void QuickFinalize();
 	void QuickRead(VMMDLL_SCATTER_HANDLE vmsh);
 	const bool IsInCondition(const ETagStatus status) const;

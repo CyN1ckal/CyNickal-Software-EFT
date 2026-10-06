@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 #include "Camera List.h"
 #include "Game/EFT.h"
 #include "Game/Offsets/Offsets.h"
-#include "GUI/Fuser/Fuser.h"
+#include "GUI/Windows/Fuser/Fuser.h"
 
 Matrix44 TransposeMatrix(const Matrix44& Mat)
 {
@@ -66,8 +74,12 @@ bool CameraList::WorldToScreenEx(const Vector3 WorldPosition, Vector2& ScreenPos
 	return true;
 }
 
-bool CameraList::Initialize(DMA_Connection* Conn)
+bool CameraList::CompleteUpdate(CDMAConnection* Conn)
 {
+	ZoneScoped;
+
+	std::scoped_lock Lock(m_CamCacheLock);
+
 	auto& Proc = EFT::GetProcess();
 
 	auto CCamerasAddress = Proc.ReadMem<uintptr_t>(Conn, EFT::GetProcess().GetUnityAddress() + Offsets::pCameras);
@@ -84,6 +96,8 @@ bool CameraList::Initialize(DMA_Connection* Conn)
 
 bool CameraList::W2S(const Vector3 WorldPosition, Vector2& ScreenPosition)
 {
+	std::scoped_lock Lock(m_CamCacheLock);
+
 	if (m_pFPSCamera == nullptr)
 		return false;
 
@@ -92,6 +106,8 @@ bool CameraList::W2S(const Vector3 WorldPosition, Vector2& ScreenPosition)
 
 bool CameraList::OpticW2S(const Vector3 WorldPosition, Vector2& ScreenPosition)
 {
+	std::scoped_lock Lock(m_CamCacheLock);
+
 	auto OpticCamera = GetSelectedOptic();
 	if (OpticCamera == nullptr || m_pFPSCamera == nullptr)
 		return false;
@@ -107,7 +123,7 @@ CCamera* CameraList::GetSelectedOptic()
 	return nullptr;
 }
 
-bool CameraList::CreateCameraCache(DMA_Connection* Conn, uintptr_t CameraHeadAddress, uint32_t NumCameras)
+bool CameraList::CreateCameraCache(CDMAConnection* Conn, uintptr_t CameraHeadAddress, uint32_t NumCameras)
 {
 	auto& Proc = EFT::GetProcess();
 
@@ -205,8 +221,13 @@ CCamera* CameraList::FindWinningOptic(const std::vector<CCamera*>& PotentialOpti
 	return nullptr;
 }
 
-void CameraList::QuickUpdateNecessaryCameras(DMA_Connection* Conn)
+void CameraList::QuickUpdateNecessaryCameras(CDMAConnection* Conn)
 {
+	if (!EFT::pGameWorld)
+		return;
+
+	ZoneScoped;
+
 	auto vmsh = VMMDLL_Scatter_Initialize(Conn->GetHandle(), EFT::GetProcess().GetPID(), VMMDLL_FLAG_NOCACHE);
 
 	auto pSelectedOptic = GetSelectedOptic();

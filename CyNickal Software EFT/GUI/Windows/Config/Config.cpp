@@ -1,0 +1,545 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
+#include "pch.h"
+#include "Config.h"
+
+#include "GUI/Windows/Aimbot/Aimbot.h"
+#include "GUI/Windows/Fuser/Fuser.h"
+#include "GUI/Windows/Fuser/Overlays/Ammo Count/Ammo Count.h"
+#include "GUI/Windows/Color Picker/Color Picker.h"
+#include "GUI/Windows/Radar/Radar.h"
+#include "GUI/Windows/Radar/Draw/Radar Exfils.h"
+#include "GUI/Windows/Radar/Draw/Radar Loot.h"
+#include "GUI/Windows/Fuser/Draw/Fuser Loot.h"
+#include "GUI/Windows/Fuser/Draw/Fuser Players.h"
+#include "GUI/Windows/Fuser/Draw/Fuser Exfils.h"
+#include "GUI/Windows/Keybinds/Keybinds.h"
+#include "GUI/Windows/Main Menu/Main Menu.h"
+#include "GUI/Windows/Flea Bot/Flea Bot.h"
+
+#include <shlobj.h>
+#include <fstream>
+
+std::string Config::getConfigDir() {
+	char path[MAX_PATH];
+	if (SUCCEEDED(SHGetFolderPathA(nullptr, CSIDL_PERSONAL, nullptr, 0, path))) {
+		std::filesystem::path docPath(path);
+		docPath /= "EFT-DMA";
+		docPath /= "Configs";
+		if (!std::filesystem::exists(docPath)) {
+			std::filesystem::create_directories(docPath);
+		}
+		return docPath.string();
+	}
+
+	std::filesystem::path fallback("Configs");
+	if (!std::filesystem::exists(fallback))
+		std::filesystem::create_directory(fallback);
+	return fallback.string();
+}
+
+std::string Config::getConfigPath(const std::string& configName) {
+	std::filesystem::path p = getConfigDir();
+	p /= configName + ".json";
+	return p.string();
+}
+
+void Config::RefreshConfigFilesList(std::vector<std::string>& outList) {
+	outList.clear();
+	try {
+		for (const auto& entry : std::filesystem::directory_iterator(getConfigDir())) {
+			if (entry.is_regular_file() && entry.path().extension() == ".json") {
+				outList.push_back(entry.path().stem().string());
+			}
+		}
+	}
+	catch (const std::filesystem::filesystem_error& e) {
+		std::println("[Config] Error listing config files: {}", e.what());
+	}
+}
+
+void Config::Render()
+{
+	if (!bSettings) return;
+
+	ImGui::Begin("Configs");
+	static char configNameBuf[128] = "default";
+	static int selectedConfig = -1;
+	static std::vector<std::string> configFiles;
+
+	static bool bFirstRun{ true };
+	if (bFirstRun) {
+		RefreshConfigFilesList(configFiles);
+		bFirstRun = false;
+	}
+
+	ImGui::BeginChild("##ConfigsSettings", ImVec2(ImGui::GetContentRegionAvail().x / 2, ImGui::GetContentRegionAvail().y), false);
+
+	ImGui::SetNextItemWidth(180.0f);
+	ImGui::InputText("Config Name", configNameBuf, IM_ARRAYSIZE(configNameBuf));
+
+	if (ImGui::Button("Save Config"))
+	{
+		SaveConfig(configNameBuf);
+		RefreshConfigFilesList(configFiles);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Load Config"))
+	{
+		LoadConfig(configNameBuf);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Delete Config")) {
+		if (selectedConfig >= 0 && selectedConfig < static_cast<int>(configFiles.size())) {
+			std::string fileToDelete = Config::getConfigPath(configFiles[selectedConfig]);
+			if (std::filesystem::exists(fileToDelete)) {
+				std::error_code ec;
+				std::filesystem::remove(fileToDelete, ec);
+				if (!ec) {
+					selectedConfig = -1;
+					strncpy_s(configNameBuf, sizeof(configNameBuf), "default", _TRUNCATE);
+					configNameBuf[sizeof(configNameBuf) - 1] = '\0';
+					RefreshConfigFilesList(configFiles);
+				}
+			}
+		}
+	}
+	if (ImGui::Button("Open Folder")) {
+		ShellExecuteA(nullptr, "open", getConfigDir().c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Refresh List")) {
+		RefreshConfigFilesList(configFiles);
+	}
+	ImGui::EndChild();
+
+	ImGui::SameLine();
+
+	ImGui::BeginChild("##ConfigFilesList", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), false);
+
+	ImGui::Text("Config Files");
+	ImGui::Separator();
+
+	for (size_t i = 0; i < configFiles.size(); ++i) {
+		if (ImGui::Selectable(configFiles[i].c_str(), selectedConfig == static_cast<int>(i))) {
+			selectedConfig = static_cast<int>(i);
+			strncpy_s(configNameBuf, sizeof(configNameBuf), configFiles[i].c_str(), _TRUNCATE);
+			configNameBuf[sizeof(configNameBuf) - 1] = '\0';
+		}
+	}
+
+	ImGui::EndChild();
+	ImGui::End();
+}
+
+static void DeserializeKeybindObj(const json& Table, const std::string& Name, CKeybind& Out)
+{
+	if (!Table.contains(Name))
+		return;
+
+	const auto& k = Table[Name];
+	if (k.contains("m_Key")) Out.m_Key = k["m_Key"].get<uint32_t>();
+	if (k.contains("m_bTargetPC")) Out.m_bTargetPC = k["m_bTargetPC"].get<bool>();
+	if (k.contains("m_bRadarPC")) Out.m_bRadarPC = k["m_bRadarPC"].get<bool>();
+}
+
+void Config::DeserializeKeybinds(const json& Table) {
+	if (Table.contains("bSettings")) {
+		Aimbot::bSettings = Table["bSettings"].get<bool>();
+	}
+	DeserializeKeybindObj(Table, "DMARefresh", Keybinds::DMARefresh);
+	DeserializeKeybindObj(Table, "PlayerRefresh", Keybinds::ManualRefresh);
+	DeserializeKeybindObj(Table, "Aimbot", Keybinds::Aimbot);
+}
+
+static json SerializeKeybindEntryObj(const CKeybind& kb) {
+	return json{
+		{ "m_Key", kb.m_Key },
+		{ "m_bTargetPC", kb.m_bTargetPC },
+		{ "m_bRadarPC", kb.m_bRadarPC }
+	};
+}
+
+json Config::SerializeKeybinds(json& j) {
+	j["Keybinds"] = {
+		{ "bSettings", Keybinds::bSettings },
+		{ "DMARefresh", SerializeKeybindEntryObj(Keybinds::DMARefresh) },
+		{ "ManualRefresh", SerializeKeybindEntryObj(Keybinds::ManualRefresh) },
+		{ "Aimbot", SerializeKeybindEntryObj(Keybinds::Aimbot) }
+	};
+	return j;
+}
+
+json Config::SerializeConfig() {
+	json j;
+
+	j["MainMenu"] = {
+		{"bVSync", MainMenu::bVSync}
+	};
+
+	j["FleaBot"] = {
+		{"bSettings", FleaBot::bSettings}
+	};
+
+	j["Aimbot"] = {
+		{"bSettings", Aimbot::bSettings},
+		{"bMasterToggle", Aimbot::bMasterToggle},
+		{"bDrawFOV", Aimbot::bDrawFOV},
+		{"fSmoothX", Aimbot::fSmoothX},
+		{"fSmoothY", Aimbot::fSmoothY},
+		{"fPixelFOV", Aimbot::fPixelFOV},
+		{"fDeadzoneFov", Aimbot::fDeadzoneFov}
+	};
+
+	j["Fuser"] = {
+		{"bSettings", Fuser::bSettings},
+		{"bMasterToggle", Fuser::bMasterToggle},
+		{"ScreenSize", {Fuser::m_ScreenSize.x, Fuser::m_ScreenSize.y}},
+
+		{"AmmoCounter", {
+			{"bMasterToggle", AmmoCountOverlay::bMasterToggle}
+		}},
+
+		{"Player", {
+			{"bNameText", DrawESPPlayers::bNameText},
+			{"bSkeleton", DrawESPPlayers::bSkeleton},
+			{"bHeadDot", DrawESPPlayers::bHeadDot}
+		}},
+
+		{"Loot", {
+			{"bMasterToggle", DrawESPLoot::bMasterToggle},
+			{"bContainerToggle", DrawESPLoot::bContainerToggle},
+			{"bItemToggle", DrawESPLoot::bItemToggle},
+			{"fMaxItemDistance", DrawESPLoot::fMaxItemDistance},
+			{"fMaxContainerDistance", DrawESPLoot::fMaxContainerDistance},
+			{"m_MinItemPrice", DrawESPLoot::m_MinItemPrice}
+		}}
+	};
+
+	j["Radar"] = {
+
+		{"General", {
+			{"bSettings", Radar::bSettings},
+			{"bMasterToggle", Radar::bMasterToggle},
+			{"bLocalViewRay", Radar::bLocalViewRay},
+			{"bOtherPlayerViewRays", Radar::bOtherPlayerViewRays},
+			{"fScale", Radar::fScale},
+			{"fLocalViewRayLength", Radar::fLocalViewRayLength},
+			{"fOtherViewRayLength", Radar::fOtherViewRayLength},
+			{"fEntityRadius", Radar::fEntityRadius},
+		}},
+		{"Loot", {
+			{"bMasterToggle", DrawRadarLoot::bMasterToggle},
+			{"bLoot", DrawRadarLoot::bLoot},
+			{"bContainers", DrawRadarLoot::bContainers},
+			{"MinLootPrice", DrawRadarLoot::MinLootPrice}
+
+		}},
+		{"Exfils", {
+			{"bMasterToggle", DrawRadarExfils::bMasterToggle}
+		}},
+
+	};
+
+	j["Colors"] = {
+		{"bMasterToggle", ColorPicker::bMasterToggle},
+		{"Radar",{
+			{"m_PMCColor", static_cast<uint32_t>(ColorPicker::Radar::m_PMCColor)},
+			{"m_ScavColor", static_cast<uint32_t>(ColorPicker::Radar::m_ScavColor)},
+			{"m_PlayerScavColor", static_cast<uint32_t>(ColorPicker::Radar::m_PlayerScavColor)},
+			{"m_LocalPlayerColor", static_cast<uint32_t>(ColorPicker::Radar::m_LocalPlayerColor)},
+			{"m_BossColor", static_cast<uint32_t>(ColorPicker::Radar::m_BossColor)},
+			{"m_LootColor", static_cast<uint32_t>(ColorPicker::Radar::m_LootColor)},
+			{"m_ContainerColor", static_cast<uint32_t>(ColorPicker::Radar::m_ContainerColor)},
+			{"m_ExfilColor", static_cast<uint32_t>(ColorPicker::Radar::m_ExfilColor)},
+		}},
+		{"Fuser",{
+			{"m_PMCColor", static_cast<uint32_t>(ColorPicker::Fuser::m_PMCColor)},
+			{"m_ScavColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ScavColor)},
+			{"m_PlayerScavColor", static_cast<uint32_t>(ColorPicker::Fuser::m_PlayerScavColor)},
+			{"m_BossColor", static_cast<uint32_t>(ColorPicker::Fuser::m_BossColor)},
+			{"m_LootColor", static_cast<uint32_t>(ColorPicker::Fuser::m_LootColor)},
+			{"m_ContainerColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ContainerColor)},
+			{"m_ExfilColor", static_cast<uint32_t>(ColorPicker::Fuser::m_ExfilColor)},
+			{"m_WeaponTextColor", static_cast<uint32_t>(ColorPicker::Fuser::m_WeaponTextColor)},
+		}},
+	};
+
+	SerializeKeybinds(j);
+
+	return j;
+}
+
+void Config::DeserializeConfig(const json& j) {
+
+	if (j.contains("MainMenu")) {
+		const auto& mainMenuTable = j["MainMenu"];
+
+		if (mainMenuTable.contains("bVSync")) {
+			MainMenu::bVSync = mainMenuTable["bVSync"].get<bool>();
+		}
+	}
+
+	if (j.contains("FleaBot")) {
+		const auto& fleaBotTable = j["FleaBot"];
+
+		if (fleaBotTable.contains("bSettings")) {
+			FleaBot::bSettings = fleaBotTable["bSettings"].get<bool>();
+		}
+	}
+
+	if (j.contains("Aimbot")) {
+		const auto& aimbotTable = j["Aimbot"];
+
+		if (aimbotTable.contains("bSettings")) {
+			Aimbot::bSettings = aimbotTable["bSettings"].get<bool>();
+		}
+		if (aimbotTable.contains("bMasterToggle")) {
+			Aimbot::bMasterToggle = aimbotTable["bMasterToggle"].get<bool>();
+		}
+		if (aimbotTable.contains("bDrawFOV")) {
+			Aimbot::bDrawFOV = aimbotTable["bDrawFOV"].get<bool>();
+		}
+		if (aimbotTable.contains("fSmoothX")) {
+			Aimbot::fSmoothX = aimbotTable["fSmoothX"].get<float>();
+		}
+		if (aimbotTable.contains("fSmoothY")) {
+			Aimbot::fSmoothY = aimbotTable["fSmoothY"].get<float>();
+		}
+		if (aimbotTable.contains("fPixelFOV")) {
+			Aimbot::fPixelFOV = aimbotTable["fPixelFOV"].get<float>();
+		}
+		if (aimbotTable.contains("fDeadzoneFov")) {
+			Aimbot::fDeadzoneFov = aimbotTable["fDeadzoneFov"].get<float>();
+		}
+	}
+
+	if (j.contains("Fuser")) {
+		const auto& fuserTable = j["Fuser"];
+
+		if (fuserTable.contains("bSettings")) {
+			Fuser::bSettings = fuserTable["bSettings"].get<bool>();
+		}
+		if (fuserTable.contains("bMasterToggle")) {
+			Fuser::bMasterToggle = fuserTable["bMasterToggle"].get<bool>();
+		}
+		if (fuserTable.contains("ScreenSize")) {
+			const auto& screenSizeJson = fuserTable["ScreenSize"];
+			if (screenSizeJson.is_array() && screenSizeJson.size() == 2) {
+				Fuser::m_ScreenSize = ImVec2(screenSizeJson[0].get<float>(), screenSizeJson[1].get<float>());
+			}
+		}
+
+		if (fuserTable.contains("AmmoCounter")) {
+			const auto& AmmoCounterTable = fuserTable["AmmoCounter"];
+
+			if (AmmoCounterTable.contains("bMasterToggle")) {
+				AmmoCountOverlay::bMasterToggle = AmmoCounterTable["bMasterToggle"].get<bool>();
+			}
+		}
+
+		if (fuserTable.contains("Player")) {
+			const auto& PlayerTable = fuserTable["Player"];
+
+			if (PlayerTable.contains("bNameText")) {
+				DrawESPPlayers::bNameText = PlayerTable["bNameText"].get<bool>();
+			}
+			if (PlayerTable.contains("bSkeleton")) {
+				DrawESPPlayers::bSkeleton = PlayerTable["bSkeleton"].get<bool>();
+			}
+			if (PlayerTable.contains("bHeadDot")) {
+				DrawESPPlayers::bHeadDot = PlayerTable["bHeadDot"].get<bool>();
+			}
+		}
+
+		if (fuserTable.contains("Loot")) {
+			const auto& LootTable = fuserTable["Loot"];
+
+			if (LootTable.contains("bMasterToggle")) {
+				DrawESPLoot::bMasterToggle = LootTable["bMasterToggle"].get<bool>();
+			}
+			if (LootTable.contains("bItemToggle")) {
+				DrawESPLoot::bItemToggle = LootTable["bItemToggle"].get<bool>();
+			}
+			if (LootTable.contains("bContainerToggle")) {
+				DrawESPLoot::bContainerToggle = LootTable["bContainerToggle"].get<bool>();
+			}
+			if (LootTable.contains("fMaxContainerDistance")) {
+				DrawESPLoot::fMaxContainerDistance = LootTable["fMaxContainerDistance"].get<float>();
+			}
+			if (LootTable.contains("fMaxItemDistance")) {
+				DrawESPLoot::fMaxItemDistance = LootTable["fMaxItemDistance"].get<float>();
+			}
+			if (LootTable.contains("m_MinItemPrice")) {
+				DrawESPLoot::m_MinItemPrice = LootTable["m_MinItemPrice"].get<int32_t>();
+			}
+		}
+	}
+
+	if (j.contains("Radar")) {
+		const auto& radarTable = j["Radar"];
+
+		if (radarTable.contains("General"))
+		{
+			const auto& GeneralTable = radarTable["General"];
+
+			if (GeneralTable.contains("bSettings")) {
+				Radar::bSettings = GeneralTable["bSettings"].get<bool>();
+			}
+			if (GeneralTable.contains("bMasterToggle")) {
+				Radar::bMasterToggle = GeneralTable["bMasterToggle"].get<bool>();
+			}
+			if (GeneralTable.contains("bLocalViewRay")) {
+				Radar::bLocalViewRay = GeneralTable["bLocalViewRay"].get<bool>();
+			}
+			if (GeneralTable.contains("bOtherPlayerViewRays")) {
+				Radar::bOtherPlayerViewRays = GeneralTable["bOtherPlayerViewRays"].get<bool>();
+			}
+			if (GeneralTable.contains("fScale")) {
+				Radar::fScale = GeneralTable["fScale"].get<float>();
+			}
+			if (GeneralTable.contains("fLocalViewRayLength")) {
+				Radar::fLocalViewRayLength = GeneralTable["fLocalViewRayLength"].get<float>();
+			}
+			if (GeneralTable.contains("fOtherViewRayLength")) {
+				Radar::fOtherViewRayLength = GeneralTable["fOtherViewRayLength"].get<float>();
+			}
+			if (GeneralTable.contains("fEntityRadius")) {
+				Radar::fEntityRadius = GeneralTable["fEntityRadius"].get<float>();
+			}
+		}
+
+		if (radarTable.contains("Loot")) {
+			const auto& LootTable = radarTable["Loot"];
+			if (LootTable.contains("bMasterToggle")) {
+				DrawRadarLoot::bMasterToggle = LootTable["bMasterToggle"].get<bool>();
+			}
+			if (LootTable.contains("bLoot")) {
+				DrawRadarLoot::bLoot = LootTable["bLoot"].get<bool>();
+			}
+			if (LootTable.contains("bContainers")) {
+				DrawRadarLoot::bContainers = LootTable["bContainers"].get<bool>();
+			}
+			if (LootTable.contains("MinLootPrice")) {
+				DrawRadarLoot::MinLootPrice = LootTable["MinLootPrice"].get<int32_t>();
+			}
+		}
+
+		if (radarTable.contains("Exfils")) {
+			const auto& ExfilsTable = radarTable["Exfils"];
+
+			if (ExfilsTable.contains("bMasterToggle")) {
+				DrawRadarExfils::bMasterToggle = ExfilsTable["bMasterToggle"].get<bool>();
+			}
+		}
+	}
+
+	if (j.contains("Colors")) {
+		const auto& colorsTable = j["Colors"];
+
+		if (colorsTable.contains("bMasterToggle")) {
+			ColorPicker::bMasterToggle = colorsTable["bMasterToggle"].get<bool>();
+		}
+
+		if (colorsTable.contains("Radar"))
+		{
+			using namespace ColorPicker::Radar;
+			const auto& RadarTable = colorsTable["Radar"];
+			if (RadarTable.contains("m_PMCColor")) {
+				m_PMCColor = RadarTable["m_PMCColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ScavColor")) {
+				m_ScavColor = RadarTable["m_ScavColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_PlayerScavColor")) {
+				m_PlayerScavColor = RadarTable["m_PlayerScavColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_LocalPlayerColor")) {
+				m_LocalPlayerColor = RadarTable["m_LocalPlayerColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_BossColor")) {
+				m_BossColor = RadarTable["m_BossColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_LootColor")) {
+				m_LootColor = RadarTable["m_LootColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ContainerColor")) {
+				m_ContainerColor = RadarTable["m_ContainerColor"].get<ImU32>();
+			}
+			if (RadarTable.contains("m_ExfilColor")) {
+				m_ExfilColor = RadarTable["m_ExfilColor"].get<ImU32>();
+			}
+		}
+
+		if (colorsTable.contains("Fuser"))
+		{
+			using namespace ColorPicker::Fuser;
+			const auto& FuserTable = colorsTable["Fuser"];
+			if (FuserTable.contains("m_PMCColor")) {
+				m_PMCColor = FuserTable["m_PMCColor"].get<ImU32>();
+			}
+			if (FuserTable.contains("m_ScavColor")) {
+				m_ScavColor = FuserTable["m_ScavColor"].get<ImU32>();
+			}
+			if (FuserTable.contains("m_PlayerScavColor")) {
+				m_PlayerScavColor = FuserTable["m_PlayerScavColor"].get<ImU32>();
+			}
+			if (FuserTable.contains("m_BossColor")) {
+				m_BossColor = FuserTable["m_BossColor"].get<ImU32>();
+			}
+			if (FuserTable.contains("m_LootColor")) {
+				m_LootColor = FuserTable["m_LootColor"].get<ImU32>();
+			}
+			if (FuserTable.contains("m_ContainerColor")) {
+				m_ContainerColor = FuserTable["m_ContainerColor"].get<ImU32>();
+			}
+			if (FuserTable.contains("m_ExfilColor")) {
+				m_ExfilColor = FuserTable["m_ExfilColor"].get<ImU32>();
+			}
+			if (FuserTable.contains("m_WeaponTextColor")) {
+				m_WeaponTextColor = FuserTable["m_WeaponTextColor"].get<ImU32>();
+			}
+		}
+	}
+
+	if (j.contains("Keybinds")) {
+		DeserializeKeybinds(j["Keybinds"]);
+	}
+}
+
+void Config::SaveConfig(const std::string& configName) {
+	std::println("[Config] Saving config: {}", configName);
+	json j = SerializeConfig();
+	std::ofstream file(getConfigPath(configName));
+	if (!file.is_open())
+		return;
+	file << std::setw(4) << j;
+	file.close();
+}
+
+bool Config::LoadConfig(const std::string& configName) {
+	std::println("[Config] Loading config: {}", configName);
+	std::ifstream file(getConfigPath(configName));
+	if (!file.is_open())
+	{
+		std::println("[Config] Failed to open config file: {}", getConfigPath(configName));
+		return false;
+	}
+	json j;
+	try {
+		file >> j;
+	}
+	catch (...) {
+		file.close();
+		return false;
+	}
+	file.close();
+	DeserializeConfig(j);
+	return true;
+}

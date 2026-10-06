@@ -1,14 +1,28 @@
+/*
+ * Copyright (c) 2026 CyNickal Software. All rights reserved.
+ *
+ * This source code is the confidential and proprietary information of
+ * CyNickal Software. Unauthorized copying, distribution, modification,
+ * or use of this file, via any medium, is strictly prohibited without
+ * the prior written consent of CyNickal Software.
+ */
 #include "pch.h"
 
-#include "GUI/Main Window/Main Window.h"
-#include "GUI/Config/Config.h"
+#include "GUI/Windows/Main Window/Main Window.h"
+#include "GUI/Windows/Config/Config.h"
 #include "DMA/DMA Thread.h"
 #include "Makcu/MyMakcu.h"
 #include "Database/Database.h"
+#include "GUI/Texture Manager/Texture Manager.h"
 
 std::atomic<bool> bRunning{ true };
-int main()
-{
+
+#ifdef CATCH2_ENABLE
+#include "Tests/All Tests.h"
+#else
+int main() {
+	tracy::SetThreadName("Main Thread");
+
 	std::println("Hello, EFT_DMA!");
 
 	Database::Initialize();
@@ -23,13 +37,14 @@ int main()
 	MainWindow::Initialize();
 #endif
 
-	while (bRunning)
-	{
-		if (GetAsyncKeyState(VK_END) & 1)	bRunning = false;
+	ResourceManager::Initialize();
+
+	while (bRunning) {
+		if (GetAsyncKeyState(VK_END) & 1) bRunning = false;
 
 #ifndef DLL_FORM
 		MainWindow::OnFrame();
-#else 
+#else
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 #endif
 	}
@@ -44,15 +59,11 @@ int main()
 }
 
 #ifdef DLL_FORM
-DWORD WINAPI StartingThread(HMODULE hMod)
-{
-	return main();
-}
+DWORD WINAPI StartingThread(HMODULE hMod) { return main(); }
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
-{
-	switch (ul_reason_for_call)
-	{
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call,
+	LPVOID lpReserved) {
+	switch (ul_reason_for_call) {
 	case DLL_PROCESS_ATTACH:
 		std::println("[DLL] EFT DMA Injected");
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)StartingThread, hModule, 0, 0);
@@ -67,4 +78,5 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
 	return TRUE;
 }
+#endif
 #endif
